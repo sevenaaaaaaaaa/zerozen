@@ -247,6 +247,8 @@
         case "zz:settings:reset": {
           const defaults = JSON.parse(JSON.stringify(ZZ.Store.DEFAULT_SETTINGS));
           defaults.sites = {};
+          // 订阅与自定义规则一样属于用户内容，恢复默认时保留
+          defaults.subscriptions.items = ((ZZ.Store.settings().subscriptions || {}).items || []).slice();
           await ZZ.Store.saveSettings(defaults);
           await ZZ.Main.rebuild({ dnr: true, refresh: true });
           return { ok: true, settings: ZZ.Store.settings() };
@@ -262,7 +264,7 @@
             until: p.until,
             clearAuto: !!p.clearAuto,
           });
-          ZZ.RuleIndex.build(ZZ.Store.rules(), ZZ.Store.settings().packs);
+          ZZ.RuleIndex.build(ZZ.Store.activeRules(), ZZ.Store.settings().packs);
           const eff = ZZ.Store.profileFor(target);
           const targetTab = typeof p.tabId === "number" ? p.tabId : tabId;
           const tab = await getTab(targetTab, sender);
@@ -285,7 +287,7 @@
           const minutes = p.minutes === undefined ? ZZ.Store.settings().tempMinutes || 30 : Number(p.minutes);
           const until = minutes > 0 ? Date.now() + Math.min(minutes, 24 * 60) * 60000 : 0;
           await ZZ.Store.updateSite(target, { until: until || undefined, clearAuto: p.clearAuto !== false });
-          ZZ.RuleIndex.build(ZZ.Store.rules(), ZZ.Store.settings().packs);
+          ZZ.RuleIndex.build(ZZ.Store.activeRules(), ZZ.Store.settings().packs);
           const targetTab = typeof p.tabId === "number" ? p.tabId : tabId;
           const tab = await getTab(targetTab, sender);
           if (tab && typeof tab.id === "number") {
@@ -429,6 +431,48 @@
           await ZZ.Store.setPack(p.id, p.enabled !== false);
           await ZZ.Main.rebuild({ dnr: true, refresh: true });
           return { ok: true, enabled: ZZ.Store.packEnabled(p.id) };
+        }
+
+        case "zz:subs:list": {
+          return {
+            ok: true,
+            items: ZZ.Subscriptions.list(),
+            presets: ZZ.Subscriptions.PRESETS,
+            config: ZZ.Subscriptions.config(),
+            stats: ZZ.Subscriptions.stats(),
+            dnrBudget: ZZ.Store.settings().dnrBudget,
+          };
+        }
+
+        case "zz:subs:add": {
+          const p = msg.payload || {};
+          return ZZ.Subscriptions.add(p);
+        }
+
+        case "zz:subs:remove": {
+          return ZZ.Subscriptions.remove((msg.payload || {}).id);
+        }
+
+        case "zz:subs:set": {
+          const p = msg.payload || {};
+          return ZZ.Subscriptions.setEnabled(p.id, p.enabled !== false);
+        }
+
+        case "zz:subs:update": {
+          const p = msg.payload || {};
+          if (p.id) return ZZ.Subscriptions.update(p.id, { force: p.force !== false, rebuild: true });
+          return ZZ.Subscriptions.updateAll({ force: p.force !== false, includeDisabled: !!p.includeDisabled });
+        }
+
+        case "zz:subs:config": {
+          const p = msg.payload || {};
+          if (p.dnrBudget !== undefined) {
+            const budget = Math.max(500, Math.min(30000, Number(p.dnrBudget) || 4500));
+            await ZZ.Store.saveSettings({ dnrBudget: budget });
+            await ZZ.Main.rebuild({ dnr: true, refresh: false });
+          }
+          const config = await ZZ.Subscriptions.setConfig(p);
+          return { ok: true, config, dnrBudget: ZZ.Store.settings().dnrBudget };
         }
 
         case "zz:ai:test": {
@@ -859,6 +903,7 @@
             index: ZZ.RuleIndex.stats(),
             dnr: ZZ.Dnr.lastResult,
             rules: ZZ.Store.rules().length,
+            subs: ZZ.Subscriptions.stats(),
             findings: ZZ.Store.findings().length,
             stats: Object.keys(ZZ.Store.stats()).length,
             usage,

@@ -368,7 +368,7 @@
     }
     if (rules.length) {
       await ZZ.Store.addRules(F.dedupe(rules));
-      await ZZ.RuleIndex.build(ZZ.Store.rules(), settings.packs);
+      await ZZ.RuleIndex.build(ZZ.Store.activeRules(), settings.packs);
     }
     const toSave = fresh.filter((f) => !autoApply.includes(f));
     if (toSave.length) await ZZ.Store.addFindings(toSave);

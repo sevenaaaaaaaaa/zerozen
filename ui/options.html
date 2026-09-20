@@ -223,6 +223,7 @@
         </label>
         <div class="zz-tabs">
           <button class="zz-tab active" data-tab="rules">规则</button>
+          <button class="zz-tab" data-tab="subs">订阅</button>
           <button class="zz-tab" data-tab="ai">AI 识别</button>
           <button class="zz-tab" data-tab="scan">批量扫描</button>
           <button class="zz-tab" data-tab="autopilot">自主增强</button>
@@ -295,6 +296,54 @@
           <span class="zz-small zz-muted" id="ruleCount"></span>
           <button class="zz-btn zz-btn-sm" id="btnShowMore">显示更多</button>
         </div>
+      </section>
+
+      <section class="zz-panel" id="panel-subs">
+        <h2>规则订阅</h2>
+        <div class="zz-small zz-muted" style="margin-bottom: 10px">
+          订阅开源过滤列表后，扩展会按周期自动拉取更新（支持 Adblock 语法、hosts 文件、纯域名列表与 ZeroZen JSON）。
+          列表内容只在本地解析，不会上传任何浏览数据。
+        </div>
+
+        <div class="zz-card" style="margin-bottom: 14px">
+          <div class="zz-row" style="flex-wrap: wrap; gap: 12px">
+            <label class="zz-check"><input type="checkbox" id="subsEnabled" /> 启用自动更新</label>
+            <label class="zz-small">更新间隔
+              <input type="number" id="subsInterval" min="6" max="720" step="6" style="width: 72px; margin-left: 6px" /> 小时
+            </label>
+            <label class="zz-small">单个订阅最多
+              <input type="number" id="subsMaxRules" min="500" max="60000" step="500" style="width: 90px; margin-left: 6px" /> 条规则
+            </label>
+            <label class="zz-small">网络规则预算
+              <input type="number" id="subsDnrBudget" min="500" max="30000" step="500" style="width: 90px; margin-left: 6px" /> 条
+            </label>
+          </div>
+          <div class="zz-inline" style="margin-top: 10px">
+            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnSaveSubs">保存设置</button>
+            <button class="zz-btn zz-btn-sm" id="btnUpdateSubs">立即更新全部</button>
+            <span class="zz-small zz-muted" id="subsStatus"></span>
+          </div>
+          <div class="zz-small zz-muted" style="margin-top: 6px">
+            网络拦截由浏览器的动态规则承载，预算越大占用越多（Chrome 121+ 上限约 30000）。外观隐藏规则不占预算。
+          </div>
+        </div>
+
+        <h3>添加订阅</h3>
+        <div class="zz-card" style="margin-bottom: 14px">
+          <div class="zz-row" style="flex-wrap: wrap; gap: 8px">
+            <select id="subsPreset" style="max-width: 320px"></select>
+            <button class="zz-btn zz-btn-sm" id="btnAddPreset">添加所选</button>
+          </div>
+          <div class="zz-row" style="flex-wrap: wrap; gap: 8px; margin-top: 10px">
+            <input type="text" id="subsUrl" placeholder="https://example.com/filter.txt" style="max-width: 360px" />
+            <input type="text" id="subsName" placeholder="自定义名称（可选）" style="max-width: 200px" />
+            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnAddSub">添加订阅</button>
+          </div>
+          <div class="zz-small zz-muted" id="subsAddResult" style="margin-top: 8px"></div>
+        </div>
+
+        <h3>已订阅 <span class="zz-small zz-muted" id="subsCount"></span></h3>
+        <div id="subsList"></div>
       </section>
 
       <section class="zz-panel" id="panel-ai">

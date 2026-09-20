@@ -9,6 +9,7 @@
     scanCache: "zz.scanCache",
     aiCache: "zz.aiCache",
     learn: "zz.learn",
+    subs: "zz.subs",
   };
   const SCHEMA = 1;
 
@@ -105,6 +106,14 @@
     honest: {
       url: "",
     },
+    subscriptions: {
+      enabled: true,
+      intervalHours: 72,
+      maxRules: 15000,
+      timeoutMs: 30000,
+      lastCheckAt: 0,
+      items: [],
+    },
     toolbox: {
       videoDir: "ZeroZen/视频",
       imageDir: "ZeroZen/图片",
@@ -137,6 +146,7 @@
     stats: null,
     scanCache: null,
     aiCache: null,
+    subs: null,
     loaded: null,
   };
 
@@ -176,6 +186,7 @@
           res[KEYS.scanCache] && typeof res[KEYS.scanCache] === "object" ? res[KEYS.scanCache] : {};
         cache.aiCache =
           res[KEYS.aiCache] && typeof res[KEYS.aiCache] === "object" ? res[KEYS.aiCache] : {};
+        cache.subs = res[KEYS.subs] && typeof res[KEYS.subs] === "object" ? res[KEYS.subs] : {};
         return cache;
       })();
       return cache.loaded;
@@ -222,6 +233,48 @@
     async removeRules(ids) {
       const set = new Set(ids || []);
       return Store.saveRules((cache.rules || []).filter((r) => !set.has(r.id)));
+    },
+
+    subs() {
+      return cache.subs || {};
+    },
+
+    async setSubRules(id, rules) {
+      if (!id) return null;
+      const map = Object.assign({}, cache.subs || {});
+      map[id] = { at: Date.now(), rules: Array.isArray(rules) ? rules : [] };
+      cache.subs = map;
+      await write(KEYS.subs, map);
+      return map[id];
+    },
+
+    async dropSubRules(id) {
+      const map = Object.assign({}, cache.subs || {});
+      if (!(id in map)) return false;
+      delete map[id];
+      cache.subs = map;
+      await write(KEYS.subs, map);
+      return true;
+    },
+
+    subRules() {
+      const items = (Store.settings().subscriptions || {}).items || [];
+      const map = cache.subs || {};
+      const out = [];
+      for (const it of items) {
+        if (!it || it.enabled === false) continue;
+        const entry = map[it.id];
+        if (!entry || !Array.isArray(entry.rules)) continue;
+        for (const r of entry.rules) out.push(r);
+      }
+      return out;
+    },
+
+    // 参与规则编译的全部规则：自定义规则 + 已启用订阅规则
+    activeRules() {
+      const user = Store.rules();
+      const subs = Store.subRules();
+      return subs.length ? user.concat(subs) : user;
     },
 
     findings() {

@@ -159,7 +159,9 @@
     if (s === "learn") return 2;
     if (s === "scan") return 3;
     if (s === "import") return 4;
-    return 5;
+    if (s === "builtin") return 5;
+    if (s === "sub") return 6;
+    return 6;
   }
 
   function ruleWeight(rule) {

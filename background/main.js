@@ -14,6 +14,9 @@
   function dnrSignature() {
     const s = ZZ.Store.settings();
     const rules = ZZ.Store.rules().map((r) => r.id + ":" + (r.enabled === false ? 0 : 1));
+    const subs = ((s.subscriptions || {}).items || []).map(
+      (it) => it.id + ":" + (it.enabled === false ? 0 : 1) + ":" + (it.lastUpdatedAt || 0)
+    );
     return hash(
       JSON.stringify({
         enabled: s.enabled,
@@ -21,6 +24,7 @@
         budget: s.dnrBudget,
         packs: s.packs,
         rules,
+        subs,
         version: ZZ.info.version,
       })
     );
@@ -80,7 +84,7 @@
         await ZZ.Store.load();
         await ZZ.RuleIndex.loadPacks();
         const settings = ZZ.Store.settings();
-        ZZ.RuleIndex.build(ZZ.Store.rules(), settings.packs);
+        ZZ.RuleIndex.build(ZZ.Store.activeRules(), settings.packs);
         await Main.installMenus();
         const sig = dnrSignature();
         let savedSig = null;
@@ -96,6 +100,9 @@
         if (ZZ.Autopilot && ZZ.Autopilot.schedule) {
           ZZ.Autopilot.schedule().catch(() => {});
         }
+        if (ZZ.Subscriptions && ZZ.Subscriptions.schedule) {
+          ZZ.Subscriptions.schedule().catch(() => {});
+        }
         return true;
       })();
       return ready;
@@ -110,7 +117,7 @@
     async rebuild(opts) {
       await Main.init();
       const settings = ZZ.Store.settings();
-      ZZ.RuleIndex.build(ZZ.Store.rules(), settings.packs);
+      ZZ.RuleIndex.build(ZZ.Store.activeRules(), settings.packs);
       if (opts && opts.dnr) {
         await ZZ.Dnr.sync();
         await saveSig();

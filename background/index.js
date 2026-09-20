@@ -6,6 +6,7 @@ importScripts(
   "profiles.js",
   "rule-index.js",
   "dnr.js",
+  "subscriptions.js",
   "ai.js",
   "bookmarks.js",
   "learn.js",

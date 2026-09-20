@@ -30,6 +30,12 @@
     scanning: false,
     aiCalls: 0,
     aiBudget: 20,
+    subs: [],
+    subPresets: [],
+    subConfig: null,
+    subStats: null,
+    dnrBudget: 4500,
+    subBusy: false,
     port: null,
   };
 
@@ -52,6 +58,7 @@
     $$(".zz-tab").forEach((btn) => btn.classList.toggle("active", btn.getAttribute("data-tab") === name));
     $$(".zz-panel").forEach((panel) => panel.classList.toggle("active", panel.id === "panel-" + name));
     if (name === "stats") renderDiag();
+    if (name === "subs") loadSubs();
     if (name === "findings") renderFindings();
     if (name === "autopilot") {
       refreshAutopilot();
@@ -829,6 +836,153 @@
         .join("");
   }
 
+  /* ---------------- 规则订阅 ---------------- */
+
+  function subStatusText(item) {
+    if (item.lastStatus === "error") return '<span class="err">失败：' + esc(item.error || "未知错误") + "</span>";
+    if (!item.lastUpdatedAt) return '<span class="zz-muted">尚未更新</span>';
+    const extra = [];
+    if (item.truncated) extra.push("已按上限截断");
+    if (item.usedMirror) extra.push("走了备用地址");
+    if (item.listVersion) extra.push("v" + item.listVersion);
+    return (
+      "更新于 " +
+      esc(UI.fmtTime(item.lastUpdatedAt)) +
+      (extra.length ? '<span class="zz-muted"> · ' + esc(extra.join(" · ")) + "</span>" : "")
+    );
+  }
+
+  function renderSubs() {
+    const box = $("#subsList");
+    if (!box) return;
+    if (!state.subs.length) {
+      box.innerHTML = '<div class="zz-card zz-small zz-muted">还没有订阅。可以先从上面的预设里添加 EasyList 或 anti-AD。</div>';
+    } else {
+      box.innerHTML = state.subs
+        .map((item) => {
+          const counts =
+            (item.ruleCount || 0) +
+            " 条" +
+            (item.networkCount !== undefined
+              ? '<span class="zz-muted"> （网络 ' + (item.networkCount || 0) + " / 外观 " + (item.cosmeticCount || 0) + "）</span>"
+              : "");
+          return (
+            '<div class="zz-card" style="margin-bottom:8px">' +
+            '<div class="zz-row"><b>' +
+            esc(item.name) +
+            "</b>" +
+            '<label class="zz-switch"><input type="checkbox" data-sub-toggle="' +
+            esc(item.id) +
+            '"' +
+            (item.enabled === false ? "" : " checked") +
+            "><span></span></label></div>" +
+            '<div class="zz-small zz-muted" style="margin-top:4px;word-break:break-all">' +
+            esc(item.url) +
+            (item.license ? " · " + esc(item.license) : "") +
+            "</div>" +
+            '<div class="zz-small" style="margin-top:4px">' +
+            counts +
+            " · " +
+            subStatusText(item) +
+            "</div>" +
+            '<div class="zz-inline" style="margin-top:8px">' +
+            '<button class="zz-btn zz-btn-sm" data-sub-update="' +
+            esc(item.id) +
+            '">立即更新</button>' +
+            '<button class="zz-btn zz-btn-sm zz-btn-danger" data-sub-remove="' +
+            esc(item.id) +
+            '">删除</button>' +
+            "</div></div>"
+          );
+        })
+        .join("");
+    }
+    const stats = state.subStats || { total: 0, enabled: 0, rules: 0 };
+    const count = $("#subsCount");
+    if (count) {
+      count.textContent =
+        stats.total + " 个订阅，已启用 " + stats.enabled + " 个，共 " + stats.rules + " 条规则";
+    }
+  }
+
+  function renderSubPresets() {
+    const sel = $("#subsPreset");
+    if (!sel) return;
+    const used = new Set(state.subs.map((s) => s.url));
+    const options = state.subPresets.map((p) => {
+      const taken = used.has(p.url);
+      return (
+        '<option value="' +
+        esc(p.id) +
+        '"' +
+        (taken ? " disabled" : "") +
+        ">" +
+        esc(p.name) +
+        " — " +
+        esc(p.desc) +
+        (taken ? "（已添加）" : "") +
+        "</option>"
+      );
+    });
+    sel.innerHTML = '<option value="">选择预设订阅源…</option>' + options.join("");
+  }
+
+  function fillSubConfig() {
+    const c = state.subConfig;
+    if (!c) return;
+    $("#subsEnabled").checked = c.enabled !== false;
+    $("#subsInterval").value = c.intervalHours;
+    $("#subsMaxRules").value = c.maxRules;
+    $("#subsDnrBudget").value = state.dnrBudget || 4500;
+    const status = $("#subsStatus");
+    if (status) {
+      status.textContent = c.lastCheckAt ? "上次检查：" + UI.fmtTime(c.lastCheckAt) : "尚未检查更新";
+    }
+  }
+
+  async function loadSubs() {
+    const res = await UI.send({ type: "zz:subs:list" });
+    if (!res || !res.ok) return;
+    state.subs = res.items || [];
+    state.subPresets = res.presets || [];
+    state.subConfig = res.config || null;
+    state.subStats = res.stats || null;
+    state.dnrBudget = res.dnrBudget;
+    fillSubConfig();
+    renderSubPresets();
+    renderSubs();
+  }
+
+  function subBusy(on, text) {
+    state.subBusy = on;
+    const btn = $("#btnUpdateSubs");
+    if (btn) {
+      btn.disabled = on;
+      btn.textContent = on ? text || "更新中…" : "立即更新全部";
+    }
+  }
+
+  async function addSub(payload) {
+    const out = $("#subsAddResult");
+    if (out) out.textContent = "正在下载并解析…";
+    const res = await UI.send({ type: "zz:subs:add", payload });
+    if (!res || !res.ok) {
+      if (out) out.innerHTML = '<span class="err">' + esc((res && res.error) || "添加失败") + "</span>";
+      toast((res && res.error) || "添加失败", "err");
+      return;
+    }
+    const r = res.result || {};
+    if (out) {
+      out.innerHTML = r.ok
+        ? "已添加：解析 " + (r.parsed || 0) + " 条，生效 " + (r.added || 0) + " 条" + (r.truncated ? "（已按上限截断）" : "")
+        : '<span class="err">已添加，但首次更新失败：' + esc(r.error || "") + "</span>";
+    }
+    toast(r.ok ? "订阅已添加" : "订阅已添加，但更新失败", r.ok ? "ok" : "err");
+    $("#subsUrl").value = "";
+    $("#subsName").value = "";
+    await loadSubs();
+  }
+
   function bind() {
     $$(".zz-tab").forEach((btn) =>
       btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")))
@@ -1162,6 +1316,87 @@
       } else {
         toast("重置失败：" + ((res && res.error) || "未知错误"), "err");
       }
+    });
+
+    $("#btnSaveSubs").addEventListener("click", async () => {
+      const res = await UI.send({
+        type: "zz:subs:config",
+        payload: {
+          enabled: $("#subsEnabled").checked,
+          intervalHours: Number($("#subsInterval").value),
+          maxRules: Number($("#subsMaxRules").value),
+          dnrBudget: Number($("#subsDnrBudget").value),
+        },
+      });
+      if (res && res.ok) {
+        toast("订阅设置已保存", "ok");
+        await loadSubs();
+      } else {
+        toast("保存失败", "err");
+      }
+    });
+
+    $("#btnUpdateSubs").addEventListener("click", async () => {
+      if (state.subBusy) return;
+      subBusy(true);
+      const res = await UI.send({ type: "zz:subs:update", payload: { force: true } });
+      subBusy(false);
+      if (res && res.ok) {
+        toast("更新完成：" + res.updated + " 个已更新，" + res.notModified + " 个无变化，" + res.failed + " 个失败", res.failed ? "err" : "ok");
+      } else {
+        toast((res && res.error) || "更新失败", "err");
+      }
+      await loadSubs();
+    });
+
+    $("#btnAddPreset").addEventListener("click", async () => {
+      const id = $("#subsPreset").value;
+      if (!id) return toast("请先选择一个预设订阅源", "err");
+      const preset = state.subPresets.find((p) => p.id === id);
+      if (!preset) return;
+      await addSub({ url: preset.url, name: preset.name, presetId: preset.id });
+    });
+
+    $("#btnAddSub").addEventListener("click", async () => {
+      const url = $("#subsUrl").value.trim();
+      if (!url) return toast("请填写订阅地址", "err");
+      await addSub({ url, name: $("#subsName").value.trim() });
+    });
+
+    $("#subsList").addEventListener("click", async (event) => {
+      const updateBtn = event.target.closest("[data-sub-update]");
+      if (updateBtn) {
+        updateBtn.disabled = true;
+        updateBtn.textContent = "更新中…";
+        const res = await UI.send({
+          type: "zz:subs:update",
+          payload: { id: updateBtn.getAttribute("data-sub-update"), force: true },
+        });
+        if (res && res.ok) toast(res.notModified ? "列表没有变化" : "已更新 " + (res.added || 0) + " 条规则", "ok");
+        else toast((res && res.error) || "更新失败", "err");
+        await loadSubs();
+        return;
+      }
+      const removeBtn = event.target.closest("[data-sub-remove]");
+      if (removeBtn) {
+        const id = removeBtn.getAttribute("data-sub-remove");
+        const item = state.subs.find((s) => s.id === id);
+        if (!confirm("删除订阅「" + (item ? item.name : id) + "」及其全部规则？")) return;
+        const res = await UI.send({ type: "zz:subs:remove", payload: { id } });
+        if (res && res.ok) toast("订阅已删除", "ok");
+        await loadSubs();
+      }
+    });
+
+    $("#subsList").addEventListener("change", async (event) => {
+      const input = event.target.closest("[data-sub-toggle]");
+      if (!input) return;
+      const res = await UI.send({
+        type: "zz:subs:set",
+        payload: { id: input.getAttribute("data-sub-toggle"), enabled: input.checked },
+      });
+      if (res && res.ok) toast(input.checked ? "订阅已启用" : "订阅已停用", "ok");
+      await loadSubs();
     });
   }
 

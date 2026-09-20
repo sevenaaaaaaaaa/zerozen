@@ -223,6 +223,180 @@ await S.updateSite("site.example.com", { clearAuto: true });
 assert(S.profileFor("site.example.com").profile === "standard", "clearAuto restores global profile");
 assert(S.profileFor("other.example.com").profile === "standard", "unrelated host uses global profile");
 
+console.log("\n规则订阅");
+
+const subSandbox = makeSandbox();
+const memory = {};
+subSandbox.chrome.storage.local = {
+  async get(keys) {
+    if (keys == null) return { ...memory };
+    const list = Array.isArray(keys) ? keys : [keys];
+    const out = {};
+    for (const k of list) if (k in memory) out[k] = memory[k];
+    return out;
+  },
+  async set(obj) {
+    Object.assign(memory, obj);
+  },
+};
+subSandbox.chrome.alarms = undefined;
+load(
+  subSandbox,
+  "background/lib-compat.js",
+  "background/rule-format.js",
+  "background/store.js",
+  "background/profiles.js",
+  "background/rule-index.js",
+  "background/subscriptions.js"
+);
+const SubZ = subSandbox.ZZ;
+const Subs = SubZ.Subscriptions;
+const T = Subs.__test;
+let rebuilds = 0;
+SubZ.Main = {
+  async init() {
+    return true;
+  },
+  async rebuild() {
+    rebuilds++;
+    return {};
+  },
+};
+
+const hostsText = [
+  "# comment line",
+  "0.0.0.0 ads.hosts-example.com",
+  "127.0.0.1 localhost",
+  "127.0.0.1 tracker.hosts-example.net # inline",
+  "plain-domain-example.org",
+  "##.global-sub-ad",
+].join("\n");
+const pre = T.preprocess(hostsText);
+assert(pre.includes("||ads.hosts-example.com^"), "hosts 0.0.0.0 line converted");
+assert(pre.includes("||tracker.hosts-example.net^"), "hosts line with inline comment converted");
+assert(!pre.includes("localhost"), "localhost entry dropped");
+assert(pre.includes("||plain-domain-example.org^"), "bare domain converted");
+assert(pre.includes("##.global-sub-ad"), "cosmetic rule kept");
+assert(!pre.includes("# comment line"), "hosts comment dropped");
+
+assert(T.normalizeUrl("https://a.example/list.txt"), "https url accepted");
+assert(T.normalizeUrl("javascript:alert(1)") === null, "javascript url rejected");
+assert(T.normalizeUrl("ftp://a.example/x.txt") === null, "ftp url rejected");
+assert(T.normalizeUrl("not a url") === null, "garbage url rejected");
+
+const meta = T.metaOf("! Title: Demo List\n! Version: 202609200\n! Expires: 2 days\n||x.example^");
+assertEqual(meta.title, "Demo List", "list title parsed");
+assertEqual(meta.expiresHours, 48, "expires parsed into hours");
+
+const capped = T.capRules(
+  Array.from({ length: 20 }, (_, i) => ({ kind: "network", n: i })),
+  Array.from({ length: 20 }, (_, i) => ({ kind: "cosmetic", n: i })),
+  10
+);
+assertEqual(capped.length, 10, "cap respects max rules");
+assertEqual(capped.filter((r) => r.kind === "cosmetic").length, 4, "cosmetic rules keep their share of the budget");
+
+const listText = [
+  "! Title: ZeroZen Test List",
+  "! Expires: 1 days",
+  "||ads.subtest.com^",
+  "||ads.subtest.com^",
+  "subtest.com##.sub-ad-banner",
+  "0.0.0.0 hosts.subtest.com",
+  "@@||subtest.com/ok^",
+].join("\n");
+
+const parsedSub = T.parseText(listText, "sub1", 15000);
+assert(!parsedSub.error, "list parses without error");
+assert(parsedSub.rules.every((r) => r.source === "sub" && r.sub === "sub1"), "parsed rules tagged with subscription id");
+assertEqual(parsedSub.rules.filter((r) => r.filter === "||ads.subtest.com^").length, 1, "duplicate lines deduped");
+assert(parsedSub.rules.some((r) => r.filter === "||hosts.subtest.com^"), "hosts entry parsed into network rule");
+assert(parsedSub.rules.some((r) => r.selector === ".sub-ad-banner"), "cosmetic entry parsed");
+
+let served = 0;
+subSandbox.fetch = async (url, opts) => {
+  served++;
+  const headers = (opts && opts.headers) || {};
+  if (headers["If-None-Match"] === "\"v1\"") {
+    return { ok: false, status: 304, headers: { get: () => null }, text: async () => "" };
+  }
+  return {
+    ok: true,
+    status: 200,
+    headers: { get: (k) => (String(k).toLowerCase() === "etag" ? "\"v1\"" : null) },
+    text: async () => listText,
+  };
+};
+
+const SubStore = SubZ.Store;
+await SubStore.load();
+const added = await Subs.add({ url: "https://filters.example.com/list.txt", name: "测试订阅" });
+assert(added.ok, "subscription added");
+assert(added.result && added.result.ok, "first update succeeded");
+const items = Subs.list();
+assertEqual(items.length, 1, "subscription stored in settings");
+assert(items[0].ruleCount > 0, "subscription rules stored");
+assert(items[0].lastStatus === "ok", "subscription status ok");
+assert(rebuilds > 0, "engine rebuild triggered after update");
+
+const subId = items[0].id;
+assertEqual(SubStore.subRules().length, items[0].ruleCount, "subRules returns stored rules");
+assertEqual(
+  SubStore.activeRules().length,
+  SubStore.rules().length + items[0].ruleCount,
+  "activeRules merges user rules and subscription rules"
+);
+
+const again = await Subs.update(subId, { force: false });
+assert(again.ok && again.notModified, "conditional request honours 304");
+assertEqual(Subs.list()[0].ruleCount, items[0].ruleCount, "304 keeps previously stored rules");
+
+await Subs.setEnabled(subId, false);
+assertEqual(SubStore.subRules().length, 0, "disabled subscription contributes no rules");
+assertEqual(SubStore.activeRules().length, SubStore.rules().length, "activeRules drops disabled subscription");
+await Subs.setEnabled(subId, true);
+assert(SubStore.subRules().length > 0, "re-enabled subscription contributes rules again");
+
+const dup = await Subs.add({ url: "https://filters.example.com/list.txt" });
+assert(!dup.ok, "duplicate subscription url rejected");
+const badUrl = await Subs.add({ url: "javascript:alert(1)" });
+assert(!badUrl.ok, "non-http subscription url rejected");
+
+subSandbox.fetch = async () => {
+  throw new Error("boom");
+};
+const failed = await Subs.update(subId, { force: true });
+assert(!failed.ok, "network failure reported");
+assertEqual(Subs.list()[0].lastStatus, "error", "failed update marked in status");
+assert(SubStore.subRules().length > 0, "failed update keeps the last good rules");
+
+await Subs.remove(subId);
+assertEqual(Subs.list().length, 0, "subscription removed");
+assertEqual(SubStore.subRules().length, 0, "removed subscription drops its rules");
+
+assertEqual(T.clampInterval(1), 6, "interval clamped to minimum");
+assertEqual(T.clampInterval(99999), 720, "interval clamped to maximum");
+assertEqual(T.clampMaxRules(10), 500, "max rules clamped to minimum");
+
+console.log("\n订阅规则优先级");
+
+const weightSandbox = makeSandbox();
+loadRuleEngine(weightSandbox);
+const WF = weightSandbox.ZZ.RuleFormat;
+const WIdx = weightSandbox.ZZ.RuleIndex;
+const builtinRule = WF.normalize(
+  { kind: "cosmetic", selector: ".shared-ad", domains: ["weight.example.com"], source: "builtin", note: "builtin" },
+  "builtin"
+);
+const subRule = WF.normalize(
+  { kind: "cosmetic", selector: ".shared-ad", domains: ["weight.example.com"], source: "sub", note: "sub" },
+  "sub"
+);
+WIdx.build([subRule, builtinRule], {});
+const kept = WIdx.current().rules.filter((r) => r.selector === ".shared-ad");
+assertEqual(kept.length, 1, "identical builtin and subscription rules deduped");
+assertEqual(kept[0].source, "builtin", "builtin rule wins over subscription rule");
+
 if (process.exitCode) {
   console.error("\nselftest: FAILED");
 } else {

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, copyFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { execFileSync } from "node:child_process";
 
@@ -9,13 +9,24 @@ const manifest = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
 const version = manifest.version;
 const SHARED = ["background", "content", "ui", "rules", "icons", "README.md", "docs"];
 
+// 递归复制：不用 fs.cpSync，它在部分挂载文件系统上会因为同步元数据失败（EACCES）
+function copyTree(src, dest) {
+  const st = statSync(src);
+  if (!st.isDirectory()) {
+    copyFileSync(src, dest);
+    return;
+  }
+  mkdirSync(dest, { recursive: true });
+  for (const entry of readdirSync(src)) copyTree(join(src, entry), join(dest, entry));
+}
+
 function writeTarget(name, mutate) {
   const dir = join(DIST, name);
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
   for (const item of SHARED) {
     const src = join(ROOT, item);
-    if (existsSync(src)) cpSync(src, join(dir, item), { recursive: true });
+    if (existsSync(src)) copyTree(src, join(dir, item));
   }
   const out = JSON.parse(JSON.stringify(manifest));
   mutate(out);
