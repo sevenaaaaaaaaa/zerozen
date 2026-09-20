@@ -43,7 +43,7 @@
 
   async function historySites(opts) {
     if (!api.history || !api.history.search) {
-      return { ok: false, error: "浏览器未提供历史记录接口（需先授予「浏览记录」权限）" };
+      return { ok: false, error: ZZ.T("浏览器未提供历史记录接口（需先授予「浏览记录」权限）") };
     }
     const s = ZZ.Store.settings();
     const cfg = Object.assign({}, s.autonomous || {}, opts || {});
@@ -54,7 +54,7 @@
     try {
       items = (await ZZ.call(api.history, "search", { text: "", startTime: since, maxResults: 5000 })) || [];
     } catch (e) {
-      return { ok: false, error: (e && e.message) || "读取历史记录失败" };
+      return { ok: false, error: (e && e.message) || ZZ.T("读取历史记录失败") };
     }
     const map = new Map();
     const includeLocal = cfg.includeLocal === true;
@@ -84,12 +84,12 @@
   }
 
   async function run(opts) {
-    if (state.running) return { ok: false, error: "已有自主增强任务在运行" };
+    if (state.running) return { ok: false, error: ZZ.T("已有自主增强任务在运行") };
     const s = ZZ.Store.settings();
     const cfg = Object.assign({}, s.autonomous || {}, opts || {});
-    if (!cfg.enabled && !(opts && opts.force)) return { ok: false, error: "自主增强未启用" };
+    if (!cfg.enabled && !(opts && opts.force)) return { ok: false, error: ZZ.T("自主增强未启用") };
     if (!aiLocalReady()) {
-      return { ok: false, error: "自主增强仅支持本地模型（在「AI 识别」里填写 127.0.0.1 / localhost 的本地地址并启用）" };
+      return { ok: false, error: ZZ.T("自主增强仅支持本地模型（在「AI 识别」里填写 127.0.0.1 / localhost 的本地地址并启用）") };
     }
 
     state.running = true;
@@ -102,7 +102,7 @@
     state.sites = [];
     state.log = [];
     state.startedAt = Date.now();
-    log("读取浏览记录，筛选常访问站点…");
+    log(ZZ.T("读取浏览记录，筛选常访问站点…"));
 
     try {
       const hist = await historySites(cfg);
@@ -117,12 +117,12 @@
       state.sites = sites.map((x) => x.host);
       state.total = sites.length;
       if (!sites.length) {
-        log("没有满足条件（访问 ≥" + hist.minVisits + " 次）的站点");
+        log(ZZ.T("没有满足条件（访问 ≥$1 次）的站点", hist.minVisits));
         state.running = false;
         state.phase = "done";
         return { ok: true, sites: 0, findings: 0, applied: 0 };
       }
-      log("选中 " + sites.length + " 个站点：" + sites.map((x) => x.host).join("、"));
+      log(ZZ.T("选中 $1 个站点：$2", sites.length, sites.map((x) => x.host).join("、")));
 
       state.phase = "scan";
       const res = await ZZ.Scanner.start(
@@ -138,14 +138,14 @@
         null
       );
       if (!res || !res.ok) {
-        state.error = (res && res.error) || "扫描失败";
+        state.error = (res && res.error) || ZZ.T("扫描失败");
         log("× " + state.error, "err");
         state.running = false;
         state.phase = "error";
         return res || { ok: false, error: state.error };
       }
       state.done = sites.length;
-      log("扫描完成，共 " + sites.length + " 个站点");
+      log(ZZ.T("扫描完成，共 $1 个站点", sites.length));
 
       state.phase = "apply";
       const threshold = Number(cfg.threshold) || (s.ai && s.ai.minConfidence) || 0.75;
@@ -174,12 +174,12 @@
           await ZZ.Store.saveFindings(all);
           await ZZ.Main.rebuild({ dnr: true, refresh: true });
           state.applied = pending.length;
-          log("已自动应用 " + pending.length + " 条规则（置信度 ≥" + threshold + "）");
+          log(ZZ.T("已自动应用 $1 条规则（置信度 ≥$2）", pending.length, threshold));
         }
       } else if (pending.length) {
-        log("产生 " + pending.length + " 条待审（未开启自动应用）");
+        log(ZZ.T("产生 $1 条待审（未开启自动应用）", pending.length));
       } else {
-        log("未发现需要处理的新规则");
+        log(ZZ.T("未发现需要处理的新规则"));
       }
 
       await ZZ.Store.saveSettings({ autonomous: Object.assign({}, cfg, { lastRunAt: Date.now() }) });
@@ -210,7 +210,7 @@
       } catch (e) {}
       state.running = false;
       state.phase = "stopped";
-      log("已停止");
+      log(ZZ.T("已停止"));
       return { ok: true };
     },
 

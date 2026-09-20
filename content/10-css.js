@@ -322,6 +322,7 @@
   async function requestRules() {
     const res = await ZZ.send({ type: "zz:get-rules", payload: { host: u.host() } });
     if (!res) return null;
+    if (res.lang && ZZ.I18n) ZZ.I18n.setLang(res.lang);
     applyPayload(res);
     return res;
   }

@@ -5,12 +5,12 @@
   const PRESETS = [
     { id: "openai", label: "OpenAI", baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini", keyHint: "sk-..." },
     { id: "deepseek", label: "DeepSeek", baseUrl: "https://api.deepseek.com/v1", model: "deepseek-chat", keyHint: "sk-..." },
-    { id: "zhipu", label: "智谱 GLM", baseUrl: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-flash", keyHint: "..." },
-    { id: "qwen", label: "通义千问", baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus", keyHint: "sk-..." },
-    { id: "moonshot", label: "月之暗面", baseUrl: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k", keyHint: "sk-..." },
-    { id: "siliconflow", label: "硅基流动", baseUrl: "https://api.siliconflow.cn/v1", model: "Qwen/Qwen2.5-7B-Instruct", keyHint: "sk-..." },
-    { id: "ollama", label: "本地 Ollama", baseUrl: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b", keyHint: "可留空" },
-    { id: "custom", label: "自定义", baseUrl: "", model: "", keyHint: "" },
+    { id: "zhipu", label: ZZ.T("智谱 GLM"), baseUrl: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-flash", keyHint: "..." },
+    { id: "qwen", label: ZZ.T("通义千问"), baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus", keyHint: "sk-..." },
+    { id: "moonshot", label: ZZ.T("月之暗面"), baseUrl: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k", keyHint: "sk-..." },
+    { id: "siliconflow", label: ZZ.T("硅基流动"), baseUrl: "https://api.siliconflow.cn/v1", model: "Qwen/Qwen2.5-7B-Instruct", keyHint: "sk-..." },
+    { id: "ollama", label: ZZ.T("本地 Ollama"), baseUrl: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b", keyHint: ZZ.T("可留空") },
+    { id: "custom", label: ZZ.T("自定义"), baseUrl: "", model: "", keyHint: "" },
   ];
 
   function endpoint(baseUrl) {
@@ -58,7 +58,7 @@
   async function chat(messages, settings, opts) {
     const ai = settings.ai || {};
     const url = endpoint(ai.baseUrl);
-    if (!url) return { ok: false, error: "未配置 API 地址" };
+    if (!url) return { ok: false, error: ZZ.T("未配置 API 地址") };
     const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     const timeoutMs = Math.max(5000, Math.min(ai.timeoutMs || 30000, 120000));
     const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
@@ -104,7 +104,7 @@
       return { ok: true, content, usage, ms: Date.now() - started };
     } catch (e) {
       const aborted = e && e.name === "AbortError";
-      return { ok: false, error: aborted ? "请求超时" : sanitize(e && e.message, settings) };
+      return { ok: false, error: aborted ? ZZ.T("请求超时") : sanitize(e && e.message, settings) };
     } finally {
       if (timer) clearTimeout(timer);
     }
@@ -158,7 +158,7 @@
     async classify(opts) {
       const settings = ZZ.Store.settings();
       const ai = settings.ai || {};
-      if (!ai.enabled) return { ok: false, error: "AI 识别未启用" };
+      if (!ai.enabled) return { ok: false, error: ZZ.T("AI 识别未启用") };
       const host = opts.host;
       const candidates = (opts.candidates || []).slice(0, Math.max(1, ai.maxCandidates || 30));
       if (!candidates.length) return { ok: true, findings: [], cached: 0, calls: 0 };
@@ -196,10 +196,10 @@
         { role: "user", content: ZZ.AiPrompt.candidatePayload(pending, context, settings) },
       ];
       const res = await chat(messages, settings, { maxTokens: 1800 });
-      if (!res.ok) return { ok: false, error: res.error || "AI 请求失败", status: res.status };
+      if (!res.ok) return { ok: false, error: res.error || ZZ.T("AI 请求失败"), status: res.status };
       const parsed = extractJson(res.content);
       if (!parsed || !Array.isArray(parsed.results)) {
-        return { ok: false, error: "AI 返回内容无法解析为 JSON", raw: String(res.content || "").slice(0, 300) };
+        return { ok: false, error: ZZ.T("AI 返回内容无法解析为 JSON"), raw: String(res.content || "").slice(0, 300) };
       }
       const byIndex = {};
       for (const item of parsed.results) {

@@ -55,7 +55,7 @@
           generic: !!c.gen,
           category: (opts && opts.category) || "other",
           confidence: Math.max(0.3, Math.min(0.9, c.score / 100)),
-          reason: "本地启发式命中：" + (c.signals || []).slice(0, 4).join("、"),
+          reason: ZZ.T("本地启发式命中：$1", (c.signals || []).slice(0, 4).join("、")),
           blockDomain: c.adHost || "",
           source: "scan",
           status: "pending",
@@ -127,7 +127,7 @@
               filter: "||" + finding.blockDomain + "^",
               domains: scope === "global" ? [] : [finding.host],
               source: "ai",
-              note: finding.reason || "AI 识别广告域",
+              note: finding.reason || ZZ.T("AI 识别广告域"),
             },
             "ai"
           )
@@ -178,7 +178,7 @@
     },
 
     async start(opts, port) {
-      if (this.state) return { ok: false, error: "已有扫描任务在运行" };
+      if (this.state) return { ok: false, error: ZZ.T("已有扫描任务在运行") };
       const settings = ZZ.Store.settings();
       const scanCache = ZZ.Store.scanCache();
       const now = Date.now();
@@ -377,15 +377,15 @@
 
   async function scanSiteWithTab(site, state) {
     const tab = await ZZ.call(api.tabs, "create", { url: site.url, active: false });
-    if (!tab || typeof tab.id !== "number") return { ok: false, error: "无法创建标签页" };
+    if (!tab || typeof tab.id !== "number") return { ok: false, error: ZZ.T("无法创建标签页") };
     state.currentTabId = tab.id;
     ZZ.call(api.tabs, "update", tab.id, { muted: true }).catch(() => {});
     try {
       const ready = await waitForReady(tab.id, state.opts.pageTimeoutMs || 20000);
-      if (!ready) return { ok: false, error: "页面加载超时" };
+      if (!ready) return { ok: false, error: ZZ.T("页面加载超时") };
       const collected = await Scanner.collectFromTab(tab.id, { deep: true });
       if (!collected || !collected.ok) {
-        return { ok: false, error: (collected && collected.error) || "内容脚本无响应" };
+        return { ok: false, error: (collected && collected.error) || ZZ.T("内容脚本无响应") };
       }
       return {
         ok: true,

@@ -44,6 +44,19 @@
   g.ZZUI = {
     $,
     $$,
+    T: ZZ.T,
+    // 页面入口先调用它：按设置里的语言翻译静态文案
+    async initLocale() {
+      let lang = "auto";
+      try {
+        const res = await api.storage.local.get("zz.settings");
+        const s = (res && res["zz.settings"]) || {};
+        if (s.lang) lang = s.lang;
+      } catch (e) {}
+      ZZ.I18n.setLang(lang);
+      ZZ.I18n.applyDom();
+      return ZZ.I18n.lang();
+    },
     hasPermission,
     requestPermission,
     async ensurePermission(ids) {
@@ -66,7 +79,7 @@
           resolve(res);
         };
         const timer = setTimeout(() => {
-          done({ ok: false, error: "扩展后台无响应，请到浏览器扩展页重载 ZeroZen" });
+          done({ ok: false, error: ZZ.T("扩展后台无响应，请到浏览器扩展页重载 ZeroZen") });
         }, 10000);
         try {
           const ret = api.runtime.sendMessage(message);
@@ -193,7 +206,7 @@
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     },
     categoryLabel(cat) {
-      return (
+      return ZZ.T(
         {
           banner: "横幅广告",
           "search-ad": "搜索广告",
@@ -209,19 +222,21 @@
       );
     },
     kindLabel(rule) {
-      if (rule.kind === "network") return rule.action === "allow" ? "网络放行" : "网络拦截";
-      if (rule.kind === "text") return "文案屏蔽";
-      if (rule.action === "allow") return "外观放行";
-      if (rule.action === "remove") return "元素移除";
-      return "元素隐藏";
+      if (rule.kind === "network") return ZZ.T(rule.action === "allow" ? "网络放行" : "网络拦截");
+      if (rule.kind === "text") return ZZ.T("文案屏蔽");
+      if (rule.action === "allow") return ZZ.T("外观放行");
+      if (rule.action === "remove") return ZZ.T("元素移除");
+      return ZZ.T("元素隐藏");
     },
     sourceLabel(source) {
-      return (
+      return ZZ.T(
         {
           builtin: "内置",
           user: "自定义",
           ai: "AI",
           scan: "扫描",
+          learn: "自动学习",
+          sub: "订阅",
           import: "导入",
         }[source] || source || "其他"
       );

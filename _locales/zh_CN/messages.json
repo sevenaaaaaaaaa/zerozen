@@ -1,0 +1,12 @@
+{
+  "appName": {
+    "message": "ZeroZen 广告净化器",
+    "description": "扩展名称"
+  },
+  "appDesc": {
+    "message": "跨浏览器广告与弹窗屏蔽：规则引擎 + AI 识别 + 收藏夹批量扫描，支持自定义规则导入导出。",
+    "description": "扩展描述"
+  },
+  "cmdPick": { "message": "选取元素并屏蔽" },
+  "cmdAiPage": { "message": "AI 识别本页烦人广告" }
+}

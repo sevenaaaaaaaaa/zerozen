@@ -1,5 +1,7 @@
 importScripts(
   "lib-compat.js",
+  "../i18n/i18n.js",
+  "../i18n/dict-en.js",
   "ai-prompt.js",
   "rule-format.js",
   "store.js",

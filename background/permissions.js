@@ -54,7 +54,13 @@
       return {
         supported: supported(),
         granted: out,
-        items: OPTIONAL.map((p) => Object.assign({ granted: !!out[p.id] }, p)),
+        items: OPTIONAL.map((p) => ({
+          id: p.id,
+          name: ZZ.T(p.name),
+          why: ZZ.T(p.why),
+          features: p.features.map((f) => ZZ.T(f)),
+          granted: !!out[p.id],
+        })),
       };
     },
 

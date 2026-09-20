@@ -84,6 +84,7 @@
         await ZZ.Store.load();
         await ZZ.RuleIndex.loadPacks();
         const settings = ZZ.Store.settings();
+        ZZ.I18n.setLang(settings.lang || "auto");
         ZZ.RuleIndex.build(ZZ.Store.activeRules(), settings.packs);
         await Main.installMenus();
         const sig = dnrSignature();

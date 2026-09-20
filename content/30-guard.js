@@ -57,7 +57,7 @@
     popups++;
     ZZ.Css.reportPopup(1);
     if (popups <= 3) {
-      toast("ZeroZen 已拦截弹窗" + (popups > 1 ? "（本页 " + popups + " 次）" : ""));
+      toast(ZZ.T("ZeroZen 已拦截弹窗") + (popups > 1 ? ZZ.T("（本页 $1 次）", popups) : ""));
     }
   });
 

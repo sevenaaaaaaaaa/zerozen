@@ -2,12 +2,13 @@
   const ZZ = globalThis.ZZ;
   const api = ZZ.browser;
 
-  const MENUS = [
-    { id: "zz-block-element", title: "ZeroZen：屏蔽此元素…", contexts: ["page", "frame", "image", "link"] },
-    { id: "zz-ai-page", title: "ZeroZen：AI 识别本页烦人广告", contexts: ["page", "frame"] },
-    { id: "zz-pick", title: "ZeroZen：选取元素屏蔽", contexts: ["page", "frame", "selection"] },
-    { id: "zz-disable-site", title: "ZeroZen：在此站点停用", contexts: ["page", "frame"] },
-    { id: "zz-options", title: "ZeroZen：打开净化控制台", contexts: ["page", "frame", "action"] },
+  // 语言可能在 Store 加载后才确定，所以每次安装菜单时再取文案
+  const menus = () => [
+    { id: "zz-block-element", title: ZZ.T("ZeroZen：屏蔽此元素…"), contexts: ["page", "frame", "image", "link"] },
+    { id: "zz-ai-page", title: ZZ.T("ZeroZen：AI 识别本页烦人广告"), contexts: ["page", "frame"] },
+    { id: "zz-pick", title: ZZ.T("ZeroZen：选取元素屏蔽"), contexts: ["page", "frame", "selection"] },
+    { id: "zz-disable-site", title: ZZ.T("ZeroZen：在此站点停用"), contexts: ["page", "frame"] },
+    { id: "zz-options", title: ZZ.T("ZeroZen：打开净化控制台"), contexts: ["page", "frame", "action"] },
   ];
 
   const Menus = {
@@ -16,7 +17,7 @@
       try {
         await ZZ.call(api.contextMenus, "removeAll");
       } catch (e) {}
-      for (const item of MENUS) {
+      for (const item of menus()) {
         try {
           api.contextMenus.create({
             id: item.id,

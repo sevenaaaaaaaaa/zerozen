@@ -197,7 +197,9 @@ assert(payloadNone.css === "" || !payloadNone.css.includes(".side-ad"), "no leak
 console.log("\nstore stats");
 
 const storeSandbox = makeSandbox();
-load(storeSandbox, "background/lib-compat.js", "background/profiles.js", "background/rule-format.js", "background/store.js");
+load(storeSandbox, "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js", "background/profiles.js", "background/rule-format.js", "background/store.js");
 const S = storeSandbox.ZZ.Store;
 await S.load();
 await S.bumpStat("stats.example.com", { hidden: 2, popups: 1, lastSeen: 1000 });
@@ -243,6 +245,8 @@ subSandbox.chrome.alarms = undefined;
 load(
   subSandbox,
   "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js",
   "background/rule-format.js",
   "background/store.js",
   "background/profiles.js",
@@ -378,6 +382,86 @@ assertEqual(T.clampInterval(1), 6, "interval clamped to minimum");
 assertEqual(T.clampInterval(99999), 720, "interval clamped to maximum");
 assertEqual(T.clampMaxRules(10), 500, "max rules clamped to minimum");
 
+console.log("\n多语言");
+
+const i18nSandbox = makeSandbox();
+i18nSandbox.chrome.i18n = { getUILanguage: () => "en-US" };
+load(i18nSandbox, "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js", "i18n/i18n.js", "i18n/dict-en.js");
+const I18n = i18nSandbox.ZZ.I18n;
+const TT = i18nSandbox.ZZ.T;
+assertEqual(I18n.lang(), "en", "english ui language detected");
+assertEqual(TT("规则包"), "Rule packs", "key translated to english");
+assertEqual(TT("$1 条规则", 42), "42 rules", "placeholder substituted");
+assertEqual(TT("已选 $1 / $2", 3, 9), "3 / 9 selected", "two placeholders substituted");
+assertEqual(TT("这条没有翻译"), "这条没有翻译", "untranslated key falls back to the source text");
+assertEqual(TT(""), "", "empty string is safe");
+assertEqual(TT("$1 条规则"), " rules", "missing substitution renders empty");
+I18n.setLang("zh");
+assertEqual(TT("规则包"), "规则包", "chinese ui returns the source text");
+assertEqual(TT("已选 $1 / $2", 1, 2), "已选 1 / 2", "chinese keeps placeholders working");
+I18n.setLang("auto");
+assertEqual(I18n.lang(), "en", "auto falls back to the detected language");
+
+const zhSandbox = makeSandbox();
+zhSandbox.chrome.i18n = { getUILanguage: () => "zh-CN" };
+load(zhSandbox, "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js", "i18n/i18n.js", "i18n/dict-en.js");
+assertEqual(zhSandbox.ZZ.I18n.lang(), "zh", "chinese ui language detected");
+assertEqual(zhSandbox.ZZ.T("规则包"), "规则包", "chinese browser keeps chinese");
+
+// applyDom：把 data-i18n 标注的节点翻译一遍
+const domSandbox = makeSandbox();
+function fakeEl(attrs) {
+  return {
+    attrs,
+    textContent: attrs["data-i18n"] || "",
+    getAttribute(name) {
+      return Object.prototype.hasOwnProperty.call(this.attrs, name) ? this.attrs[name] : null;
+    },
+    setAttribute(name, value) {
+      this.attrs[name] = value;
+    },
+  };
+}
+const elText = fakeEl({ "data-i18n": "规则包" });
+const elPh = fakeEl({ "data-i18n-ph": "搜索选择器 / 域名 / 说明" });
+const elTitle = fakeEl({ "data-i18n-title": "总开关" });
+const elPlain = fakeEl({});
+elPlain.textContent = "untouched";
+domSandbox.chrome.i18n = { getUILanguage: () => "en" };
+domSandbox.document = {
+  documentElement: {
+    getAttribute: () => null,
+    setAttribute(name, value) {
+      domSandbox.document.documentElement[name] = value;
+    },
+    querySelectorAll(sel) {
+      if (sel === "[data-i18n]") return [elText];
+      if (sel === "[data-i18n-ph]") return [elPh];
+      if (sel === "[data-i18n-title]") return [elTitle];
+      return [];
+    },
+  },
+};
+load(domSandbox, "background/lib-compat.js", "i18n/i18n.js", "i18n/dict-en.js");
+const applied = domSandbox.ZZ.I18n.applyDom();
+assertEqual(applied, 3, "applyDom touched every annotated node");
+assertEqual(elText.textContent, "Rule packs", "text node translated");
+assertEqual(elPh.attrs.placeholder, "Search selector / domain / note", "placeholder translated");
+assertEqual(elTitle.attrs.title, "Master switch", "title translated");
+assertEqual(elPlain.textContent, "untouched", "unannotated node untouched");
+assertEqual(domSandbox.document.documentElement.lang, "en", "document language attribute set");
+
+const noI18nSandbox = makeSandbox();
+noI18nSandbox.chrome.i18n = undefined;
+load(noI18nSandbox, "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js", "i18n/i18n.js", "i18n/dict-en.js");
+assertEqual(noI18nSandbox.ZZ.I18n.lang(), "en", "missing i18n api still resolves a language");
+
 console.log("\nAI 识别");
 
 const aiSandbox = makeSandbox();
@@ -397,6 +481,8 @@ aiSandbox.chrome.storage.local = {
 load(
   aiSandbox,
   "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js",
   "background/ai-prompt.js",
   "background/rule-format.js",
   "background/store.js",
@@ -539,6 +625,8 @@ learnSandbox.chrome.storage.local = {
 load(
   learnSandbox,
   "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js",
   "background/rule-format.js",
   "background/store.js",
   "background/profiles.js",
@@ -580,6 +668,8 @@ const scanSandbox = makeSandbox();
 load(
   scanSandbox,
   "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js",
   "background/rule-format.js",
   "background/store.js",
   "background/profiles.js",
@@ -618,7 +708,9 @@ permSandbox.chrome.permissions = {
   onAdded: { addListener() {} },
   onRemoved: { addListener() {} },
 };
-load(permSandbox, "background/lib-compat.js", "background/permissions.js");
+load(permSandbox, "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js", "background/permissions.js");
 const Perms = permSandbox.ZZ.Perms;
 const permStatus = await Perms.status();
 assert(permStatus.supported, "permissions api detected");
@@ -635,7 +727,9 @@ assertEqual((await Perms.status()).granted.bookmarks, false, "permission revoke 
 console.log("\nwebRequest 延后授权");
 
 const lateSandbox = makeSandbox();
-load(lateSandbox, "background/lib-compat.js", "background/counts.js", "background/sniffer.js");
+load(lateSandbox, "background/lib-compat.js",
+  "i18n/i18n.js",
+  "i18n/dict-en.js", "background/counts.js", "background/sniffer.js");
 lateSandbox.ZZ.RuleIndex = { current: () => ({ networkHosts: new Set() }) };
 // 未授权时安装：不应挂上监听器，也不能把自己标记成已安装
 lateSandbox.ZZ.Counts.installNetworkCounter();

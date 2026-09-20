@@ -42,7 +42,7 @@
     state.box.style.top = r.top + "px";
     state.box.style.width = Math.max(2, r.width) + "px";
     state.box.style.height = Math.max(2, r.height) + "px";
-    const sel = u.uniqueSelector(state.target) || "(无法生成唯一选择器)";
+    const sel = u.uniqueSelector(state.target) || ZZ.T("(无法生成唯一选择器)");
     const tag = state.target.tagName.toLowerCase();
     state.label.textContent = tag + "  ·  " + Math.round(r.width) + "×" + Math.round(r.height);
     state.label.title = sel;
@@ -126,18 +126,18 @@
     panel.className = "zz-picker-panel";
     panel.setAttribute("data-zz-ui", "1");
     panel.innerHTML = [
-      '<div class="zz-picker-head">屏蔽元素<button class="zz-picker-x" data-act="cancel">×</button></div>',
+      '<div class="zz-picker-head">' + ZZ.T("屏蔽元素") + '<button class="zz-picker-x" data-act="cancel">×</button></div>',
       '<input class="zz-picker-input" data-role="selector" spellcheck="false">',
-      '<label class="zz-picker-opt"><input type="checkbox" data-role="global"> 应用到所有网站（通用规则）</label>',
+      '<label class="zz-picker-opt"><input type="checkbox" data-role="global"> ' + ZZ.T("应用到所有网站（通用规则）") + "</label>",
       '<div class="zz-picker-actions-row">',
-      '  <label class="zz-picker-radio"><input type="radio" name="zz-act" value="hide" checked> 隐藏</label>',
-      '  <label class="zz-picker-radio"><input type="radio" name="zz-act" value="remove"> 移除</label>',
+      '  <label class="zz-picker-radio"><input type="radio" name="zz-act" value="hide" checked> ' + ZZ.T("隐藏") + "</label>",
+      '  <label class="zz-picker-radio"><input type="radio" name="zz-act" value="remove"> ' + ZZ.T("移除") + "</label>",
       "</div>",
       '<div class="zz-picker-hint" data-role="hint"></div>',
       '<div class="zz-picker-actions">',
-      '  <button class="zz-btn zz-btn-primary" data-act="apply">应用</button>',
-      '  <button class="zz-btn" data-act="allow">在此站放行同类元素</button>',
-      '  <button class="zz-btn zz-btn-ghost" data-act="cancel">取消</button>',
+      '  <button class="zz-btn zz-btn-primary" data-act="apply">' + ZZ.T("应用") + "</button>",
+      '  <button class="zz-btn" data-act="allow">' + ZZ.T("在此站放行同类元素") + "</button>",
+      '  <button class="zz-btn zz-btn-ghost" data-act="cancel">' + ZZ.T("取消") + "</button>",
       "</div>",
     ].join("");
     document.body.appendChild(panel);
@@ -147,19 +147,19 @@
     const globalCb = panel.querySelector('[data-role="global"]');
     if (!state.gen) {
       globalCb.disabled = true;
-      globalCb.parentElement.title = "该元素没有可复用的通用选择器";
+      globalCb.parentElement.title = ZZ.T("该元素没有可复用的通用选择器");
     }
     const hint = panel.querySelector('[data-role="hint"]');
     const updateHint = () => {
       const sel = input.value.trim();
       const count = u.matchCount(sel, 9999);
-      const scope = globalCb.checked ? "所有网站" : u.host();
+      const scope = globalCb.checked ? ZZ.T("所有网站") : u.host();
       hint.textContent =
         count < 0
-          ? "选择器无效"
+          ? ZZ.T("选择器无效")
           : count === 0
-          ? "当前不匹配任何元素（仍可保存规则）"
-          : "将影响 " + count + " 个元素 · 作用范围：" + scope;
+          ? ZZ.T("当前不匹配任何元素（仍可保存规则）")
+          : ZZ.T("将影响 $1 个元素 · 作用范围：$2", count, scope);
       hint.classList.toggle("zz-picker-hint-warn", count < 0 || count > 300);
     };
     input.addEventListener("input", updateHint);
@@ -220,7 +220,7 @@
         host: u.host(),
       },
     });
-    toast(res && res.ok ? "已添加屏蔽规则" : "添加失败：" + ((res && res.error) || "未知错误"));
+    toast(res && res.ok ? ZZ.T("已添加屏蔽规则") : ZZ.T("添加失败：$1", (res && res.error) || ZZ.T("未知错误")));
     stop();
   }
 
@@ -229,16 +229,16 @@
       type: "zz:picker:allow",
       payload: { selector, scope: isGlobal ? "global" : "site", host: u.host() },
     });
-    toast(res && res.ok ? "已放行" : "操作失败：" + ((res && res.error) || "未知错误"));
+    toast(res && res.ok ? ZZ.T("已放行") : ZZ.T("操作失败：$1", (res && res.error) || ZZ.T("未知错误")));
     stop();
   }
 
   function checkSelector(selector, isGlobal) {
-    if (!selector) return "请填写选择器";
-    if (!u.isValidSelector(selector)) return "选择器语法无效";
+    if (!selector) return ZZ.T("请填写选择器");
+    if (!u.isValidSelector(selector)) return ZZ.T("选择器语法无效");
     const count = u.matchCount(selector, 9999);
-    if (count > 400) return "选择器匹配 " + count + " 个元素，范围过大，请调整";
-    if (isGlobal && count > 200) return "通用规则匹配元素过多，请缩小范围";
+    if (count > 400) return ZZ.T("选择器匹配 $1 个元素，范围过大，请调整", count);
+    if (isGlobal && count > 200) return ZZ.T("通用规则匹配元素过多，请缩小范围");
     return "";
   }
 
@@ -282,7 +282,7 @@
   }
 
   function cancel() {
-    toast("已取消元素选取");
+    toast(ZZ.T("已取消元素选取"));
     stop();
   }
 

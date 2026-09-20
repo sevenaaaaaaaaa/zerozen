@@ -7,7 +7,8 @@
 - [ ] `npm test` 全绿
 - [ ] `npm run build` 生成 `dist/zerozen-chrome-<version>.zip` 与 `dist/zerozen-firefox-<version>.xpi`
 - [ ] `manifest.json` 版本号与 `package.json` 一致
-- [ ] 隐私政策已放到可公开访问的网址（内容见 `docs/privacy-policy.md`）
+- [ ] 隐私政策已放到可公开访问的网址（中文见 `docs/privacy-policy.md`，英文见 `docs/privacy-policy.en.md`）
+- [ ] `npm run i18n` 无缺失译文，英文界面逐屏走查过一遍
 - [ ] 截图与图标已就绪（见下）
 - [ ] 联系邮箱在开发者账号中已验证
 
@@ -15,10 +16,10 @@
 
 | 字段 | 内容 |
 | --- | --- |
-| 名称 | ZeroZen 广告净化器 |
+| 名称 | ZeroZen 广告净化器（英文：ZeroZen Ad Cleaner，由 `_locales` 按浏览器语言切换） |
 | 简介（132 字符内） | 规则引擎 + AI 识别的广告与弹窗屏蔽器，内置 7100+ 条规则，支持订阅开源列表、点选屏蔽与批量扫描。 |
 | 类别 | 生产工具 / Privacy & Security |
-| 语言 | 简体中文 |
+| 语言 | 简体中文 + English（界面跟随浏览器语言，`default_locale` 为 en） |
 | 单一用途声明 | 屏蔽网页广告与打扰性元素（Block advertisements and intrusive page elements） |
 
 ## 2. 详细描述（可直接粘贴）
@@ -37,6 +38,24 @@ ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 隐私：没有后端服务器，不收集、不上传任何浏览数据。只有你主动启用 AI 识别或添加规则订阅时，扩展才会向你自己填写的地址发起请求。收藏夹、浏览记录、下载权限都不在安装时申请，用到时才询问，并可随时收回。
 
 隐私政策：<在此填写公开网址>
+```
+
+## 2b. 英文描述（Chrome Web Store / AMO 的英文 listing）
+
+```
+ZeroZen is a fully local ad and popup cleaner.
+
+• 35 built-in rule packs, 7100+ rules covering search, video, social, forums, shopping, news and sites across Japan, Korea, Russia, Europe, South-East Asia, India, Latin America and Greater China
+• Subscribe to EasyList / EasyPrivacy / anti-AD / AdGuard and any other filter list, refreshed automatically
+• Network blocking runs on the browser's declarativeNetRequest engine — the extension never sees request contents
+• Press Alt+Z to click any element and turn it into a rule (hide / remove / allow)
+• Optionally plug in your own OpenAI-compatible endpoint to catch native ads that rules miss (off by default)
+• Compatible / Standard / Strict protection levels, automatic fallback when a site detects ad blocking, and a one-click temporary pause
+• Clean view and reader mode strip sidebars and overlays for distraction-free reading
+
+Privacy: no backend server, no data collection, no uploads. The only outbound requests are the AI endpoint and the filter lists you configure yourself. Bookmarks, history and downloads permissions are requested only when you first use those features, and can be revoked at any time.
+
+Privacy policy: <fill in the public URL>
 ```
 
 ## 3. 权限用途说明（审核必填）
@@ -70,6 +89,7 @@ ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 | 截图 3 | 1280×800 · 弹窗：本页净化数量、档位切换、临时解除 | 待补 |
 | 截图 4 | 1280×800 · Alt+Z 元素选取器高亮与生成规则面板 | 待补 |
 | 截图 5 | 1280×800 · 同一页面净化前后对比 | 待补 |
+| 英文截图 | 同上 5 张，界面语言切到 English（控制台「规则 → 界面语言」） | 待补 |
 | 宣传图（可选） | 440×280 小图 / 1400×560 大图 | 待补 |
 
 截图里不要出现个人邮箱、书签名称、浏览记录等个人信息。

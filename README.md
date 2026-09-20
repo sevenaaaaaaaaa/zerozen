@@ -1,5 +1,7 @@
 # ZeroZen 广告净化器
 
+[English](README.en.md)
+
 跨浏览器（Chrome / Firefox / Safari）广告与弹窗屏蔽扩展：**规则引擎 + AI 自主识别 + 收藏夹批量扫描**，支持自定义规则导入导出。
 
 内置 35 个规则包、7100+ 条规则（含 EasyList / AdGuard / uBlock 等开源列表的去重合并），覆盖搜索引擎、国内外视频/直播、社交平台（微博/小红书/知乎/Reddit/LinkedIn/X/Facebook）、论坛 BBS、技术社区（CSDN/掘金/博客园）、电商、下载站、成人站点，以及日本/韩国/俄罗斯/欧洲/东南亚/印度/拉美/港澳台等区域站点，音乐、游戏、体育、财经、旅游、教育、工具网盘等品类站点，还有小说/漫画类长尾站点的模板化广告。
@@ -31,6 +33,7 @@
 | 下载器 | 内置任务管理器：新建直链下载、实时进度/速度、暂停/继续/取消/重试、打开文件/所在文件夹、清除记录；支持多线程 Range 分段加速（服务器支持时） |
 | 诚实付费 | 阅读保存、视频嗅探、图片发现、网盘收集采用诚实付费：功能免费，觉得好用请在控制台配置的支持链接付费 |
 | 站点控制 | 总开关 + 单站点停用；弹窗拦截、AI 自动屏蔽等逐项可调 |
+| 多语言 | 中英双语界面，跟随浏览器语言，可在控制台固定 |
 | 统计 | 每个站点累计隐藏元素数、拦截请求数、拦截弹窗数，工具栏图标显示本页净化数量 |
 
 ## 安装
@@ -168,6 +171,8 @@ Safari 不支持收藏夹接口，批量扫描请使用「自定义站点列表�
 
 ```
 manifest.json            扩展清单（Chrome/Firefox 双 background 声明，可直接加载）
+_locales/                商店文案（扩展名称、描述、快捷键说明）
+i18n/                    界面多语言：i18n.js（运行时）+ dict-en*.js（中→英词典）
 background/              服务工作线程：规则编译、DNR 同步、AI、扫描、消息路由
   rule-format.js         规则格式、Adblock 解析/导出、校验
   rule-index.js          域名索引、CSS 生成、DNR 编译
@@ -189,12 +194,13 @@ scripts/                 图标生成、语法检查、规则校验、编译自�
 纯 JavaScript，无构建依赖直接加载源码目录即可调试。
 
 ```bash
-npm run check       # 语法检查 + manifest 引用完整性 + 规则包 id 校验
+npm run check       # 语法检查 + manifest 引用完整性 + 规则包 id 校验 + 中英文案完整性
 npm run validate    # 规则包内容校验 + 引擎编译校验（选择器安全性、DNR 预算）
 npm run selftest    # 沙箱自测：规则解析/导入导出/DNR 编译/档位/订阅/AI/自动学习/权限（185 条断言）
 npm test            # 以上三项
 npm run icons       # 重新生成图标（无第三方依赖的 PNG 编码器）
-  npm run import:lists # 重新下载合并开源过滤列表，生成 rules/pack-oss.json
+npm run i18n        # 只跑文案完整性检查，列出缺失译文
+npm run import:lists # 重新下载合并开源过滤列表，生成 rules/pack-oss.json
 npm run build       # 生成 dist/{chrome,firefox,safari} 与 zip/xpi
 ```
 
@@ -214,6 +220,14 @@ npm run build       # 生成 dist/{chrome,firefox,safari} 与 zip/xpi
 - 视频嗅探支持 AES-128 加密的 m3u8；SAMPLE-AES/DRM 流无法下载。TS 分片不做转码，播放器若需要 mp4 可用 `ffmpeg -i in.ts -c copy out.mp4` 转封装。
 - 下载器的多线程分段依赖服务器支持 `Range`，单文件上限 800MB，任务运行期间需保持工具箱页面打开；普通模式由浏览器接管，可关闭页面、支持断点续传。
 - 阅读模式/图片/下载工具箱的文件只会写入 `下载` 目录下的 `ZeroZen/` 子目录，不会碰其他文件。
+
+## 多语言
+
+界面语言跟随浏览器：中文浏览器显示中文，其余语言显示英文；也可以在「规则 → 界面语言」里固定为「跟随浏览器 / 简体中文 / English」。
+
+译文放在 `i18n/dict-en.js`（扩展页面与后台）和 `i18n/dict-en-content.js`（内容脚本），**key 就是代码里的中文原文**，所以新增文案只需要在词典里加一行。`npm run check` 会检查：任何带中文的字符串字面量都必须有译文，且译文里的 `$1/$2` 占位符要和原文一致。不需要翻译的中文（广告检测关键词、下载目录名、网盘品牌名）登记在 `i18n/not-translated.json`。
+
+`_locales/{en,zh_CN}/messages.json` 只放扩展名称、描述与快捷键说明这几条商店要用的文案，`default_locale` 设为 `en`。
 
 ## 权限与隐私
 

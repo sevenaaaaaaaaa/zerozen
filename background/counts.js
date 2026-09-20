@@ -101,7 +101,7 @@
       if (api.action.setTitle) {
         ZZ.call(api.action, "setTitle", {
           tabId,
-          title: text ? "ZeroZen：本页已净化 " + c.total + " 项" : "ZeroZen 广告净化器",
+          title: text ? ZZ.T("ZeroZen：本页已净化 $1 项", c.total) : ZZ.T("ZeroZen 广告净化器"),
         }).catch(() => {});
       }
     },

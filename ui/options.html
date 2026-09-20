@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <title>ZeroZen 净化控制台</title>
+    <title data-i18n="ZeroZen 净化控制台">ZeroZen 净化控制台</title>
     <link rel="stylesheet" href="ui.css" />
     <style>
       body {
@@ -214,21 +214,21 @@
       <div class="zz-topbar-inner">
         <div class="zz-brand">
           <img src="../icons/icon48.png" alt="" />
-          <span>ZeroZen<b class="zz-brand-sub"> 净化控制台</b></span>
+          <span>ZeroZen<b class="zz-brand-sub" data-i18n="净化控制台">净化控制台</b></span>
         </div>
-        <span class="zz-tag" id="engineBadge">规则加载中…</span>
-        <label class="zz-switch" title="总开关">
+        <span class="zz-tag" id="engineBadge" data-i18n="规则加载中…">规则加载中…</span>
+        <label class="zz-switch" title="总开关" data-i18n-title="总开关">
           <input type="checkbox" id="globalEnabled" />
           <span></span>
         </label>
         <div class="zz-tabs">
-          <button class="zz-tab active" data-tab="rules">规则</button>
-          <button class="zz-tab" data-tab="subs">订阅</button>
-          <button class="zz-tab" data-tab="ai">AI 识别</button>
-          <button class="zz-tab" data-tab="scan">批量扫描</button>
-          <button class="zz-tab" data-tab="autopilot">自主增强</button>
-          <button class="zz-tab" data-tab="findings">待审 <b id="findingsBadge">0</b></button>
-          <button class="zz-tab" data-tab="stats">统计与诊断</button>
+          <button class="zz-tab active" data-tab="rules" data-i18n="规则">规则</button>
+          <button class="zz-tab" data-tab="subs" data-i18n="订阅">订阅</button>
+          <button class="zz-tab" data-tab="ai" data-i18n="AI 识别">AI 识别</button>
+          <button class="zz-tab" data-tab="scan" data-i18n="批量扫描">批量扫描</button>
+          <button class="zz-tab" data-tab="autopilot" data-i18n="自主增强">自主增强</button>
+          <button class="zz-tab" data-tab="findings"><span data-i18n="待审">待审</span> <b id="findingsBadge">0</b></button>
+          <button class="zz-tab" data-tab="stats" data-i18n="统计与诊断">统计与诊断</button>
         </div>
       </div>
     </div>
@@ -239,54 +239,59 @@
       <section class="zz-panel active" id="panel-rules">
         <div class="zz-card" style="margin-bottom: 14px">
           <div class="zz-row" style="flex-wrap: wrap; gap: 12px">
-            <label class="zz-small">默认保护档位
+            <label class="zz-small"><span data-i18n="默认保护档位">默认保护档位</span>
               <select id="profileSelect" style="margin-left: 6px">
-                <option value="compat">兼容（仅通用拦截与视频规则）</option>
-                <option value="standard">标准（推荐）</option>
-                <option value="strict">严格（移除式处理，可能影响站点）</option>
+                <option value="compat" data-i18n="兼容（仅通用拦截与视频规则）">兼容（仅通用拦截与视频规则）</option>
+                <option value="standard" data-i18n="标准（推荐）">标准（推荐）</option>
+                <option value="strict" data-i18n="严格（移除式处理，可能影响站点）">严格（移除式处理，可能影响站点）</option>
               </select>
             </label>
-            <label class="zz-check"><input type="checkbox" id="autoFallback" /> 检测到反广告拦截时自动回落档位</label>
-            <label class="zz-small">临时解除默认时长
-              <input type="number" id="tempMinutes" min="5" max="720" step="5" style="width: 72px; margin-left: 6px" /> 分钟
+            <label class="zz-check"><input type="checkbox" id="autoFallback" /> <span data-i18n="检测到反广告拦截时自动回落档位">检测到反广告拦截时自动回落档位</span></label>
+            <label class="zz-small"><span data-i18n="界面语言">界面语言</span>
+              <select id="langSelect" style="margin-left: 6px">
+                <option value="auto" data-i18n="跟随浏览器">跟随浏览器</option>
+                <option value="zh">简体中文</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label class="zz-small"><span data-i18n="临时解除默认时长">临时解除默认时长</span>
+              <input type="number" id="tempMinutes" min="5" max="720" step="5" style="width: 72px; margin-left: 6px" /> <span data-i18n="分钟">分钟</span>
             </label>
           </div>
-          <div class="zz-small zz-muted" style="margin-top: 6px">
-            单个站点的档位可在弹窗里快速切换；「严格」会移除广告容器并强制解锁滚动，「兼容」只保留通用拦截与视频规则。
-          </div>
+          <div class="zz-small zz-muted" style="margin-top: 6px" data-i18n="单个站点的档位可在弹窗里快速切换；「严格」会移除广告容器并强制解锁滚动，「兼容」只保留通用拦截与视频规则。">单个站点的档位可在弹窗里快速切换；「严格」会移除广告容器并强制解锁滚动，「兼容」只保留通用拦截与视频规则。</div>
         </div>
 
-        <h2>规则包</h2>
+        <h2 data-i18n="规则包">规则包</h2>
         <div id="packGrid"></div>
 
-        <h2>自定义规则</h2>
+        <h2 data-i18n="自定义规则">自定义规则</h2>
         <div class="zz-toolbar">
-          <input type="text" id="ruleSearch" placeholder="搜索选择器 / 域名 / 说明" style="max-width: 280px" />
+          <input type="text" id="ruleSearch" placeholder="搜索选择器 / 域名 / 说明" data-i18n-ph="搜索选择器 / 域名 / 说明" style="max-width: 280px" />
           <select id="ruleSource" style="max-width: 160px">
-            <option value="all">全部来源</option>
-            <option value="user">自定义</option>
+            <option value="all" data-i18n="全部来源">全部来源</option>
+            <option value="user" data-i18n="自定义">自定义</option>
             <option value="ai">AI</option>
-            <option value="scan">扫描</option>
-            <option value="learn">自动学习</option>
-            <option value="import">导入</option>
+            <option value="scan" data-i18n="扫描">扫描</option>
+            <option value="learn" data-i18n="自动学习">自动学习</option>
+            <option value="import" data-i18n="导入">导入</option>
           </select>
-          <button class="zz-btn zz-btn-sm" id="btnImport">导入规则</button>
-          <button class="zz-btn zz-btn-sm" id="btnExportNative">导出 JSON</button>
-          <button class="zz-btn zz-btn-sm" id="btnExportAdblock">导出 Adblock</button>
-          <button class="zz-btn zz-btn-sm" id="btnCopyRules">复制 JSON</button>
-          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnClearUser">清空自定义</button>
+          <button class="zz-btn zz-btn-sm" id="btnImport" data-i18n="导入规则">导入规则</button>
+          <button class="zz-btn zz-btn-sm" id="btnExportNative" data-i18n="导出 JSON">导出 JSON</button>
+          <button class="zz-btn zz-btn-sm" id="btnExportAdblock" data-i18n="导出 Adblock">导出 Adblock</button>
+          <button class="zz-btn zz-btn-sm" id="btnCopyRules" data-i18n="复制 JSON">复制 JSON</button>
+          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnClearUser" data-i18n="清空自定义">清空自定义</button>
         </div>
 
         <div class="zz-card zz-hidden" id="importPanel" style="margin-bottom: 12px">
           <div class="zz-row">
-            <b>粘贴规则</b>
-            <span class="zz-small zz-muted">支持 ZeroZen JSON、Adblock 语法子集、纯域名列表</span>
+            <b data-i18n="粘贴规则">粘贴规则</b>
+            <span class="zz-small zz-muted" data-i18n="支持 ZeroZen JSON、Adblock 语法子集、纯域名列表">支持 ZeroZen JSON、Adblock 语法子集、纯域名列表</span>
           </div>
-          <textarea id="importText" placeholder="&#10;||ads.example.com^&#10;example.com##.ad-banner&#10;@@||example.com/ok^&#10;或粘贴 JSON / 一行一个域名"></textarea>
+          <textarea id="importText" placeholder="&#10;||ads.example.com^&#10;example.com##.ad-banner&#10;@@||example.com/ok^&#10;或粘贴 JSON / 一行一个域名" data-i18n-ph="&#10;||ads.example.com^&#10;example.com##.ad-banner&#10;@@||example.com/ok^&#10;或粘贴 JSON / 一行一个域名"></textarea>
           <div class="zz-inline" style="margin-top: 8px">
-            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnImportText">导入文本</button>
-            <button class="zz-btn zz-btn-sm" id="btnImportFile">从文件导入</button>
-            <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnImportCancel">收起</button>
+            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnImportText" data-i18n="导入文本">导入文本</button>
+            <button class="zz-btn zz-btn-sm" id="btnImportFile" data-i18n="从文件导入">从文件导入</button>
+            <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnImportCancel" data-i18n="收起">收起</button>
           </div>
           <div class="zz-small zz-muted" id="importResult" style="margin-top: 8px"></div>
         </div>
@@ -294,282 +299,272 @@
         <div class="zz-scroll"><table id="ruleTable"></table></div>
         <div class="zz-inline" style="margin-top: 10px">
           <span class="zz-small zz-muted" id="ruleCount"></span>
-          <button class="zz-btn zz-btn-sm" id="btnShowMore">显示更多</button>
+          <button class="zz-btn zz-btn-sm" id="btnShowMore" data-i18n="显示更多">显示更多</button>
         </div>
       </section>
 
       <section class="zz-panel" id="panel-subs">
-        <h2>规则订阅</h2>
-        <div class="zz-small zz-muted" style="margin-bottom: 10px">
-          订阅开源过滤列表后，扩展会按周期自动拉取更新（支持 Adblock 语法、hosts 文件、纯域名列表与 ZeroZen JSON）。
-          列表内容只在本地解析，不会上传任何浏览数据。
-        </div>
+        <h2 data-i18n="规则订阅">规则订阅</h2>
+        <div class="zz-small zz-muted" style="margin-bottom: 10px" data-i18n="订阅开源过滤列表后，扩展会按周期自动拉取更新（支持 Adblock 语法、hosts 文件、纯域名列表与 ZeroZen JSON）。 列表内容只在本地解析，不会上传任何浏览数据。">订阅开源过滤列表后，扩展会按周期自动拉取更新（支持 Adblock 语法、hosts 文件、纯域名列表与 ZeroZen JSON）。 列表内容只在本地解析，不会上传任何浏览数据。</div>
 
         <div class="zz-card" style="margin-bottom: 14px">
           <div class="zz-row" style="flex-wrap: wrap; gap: 12px">
-            <label class="zz-check"><input type="checkbox" id="subsEnabled" /> 启用自动更新</label>
-            <label class="zz-small">更新间隔
-              <input type="number" id="subsInterval" min="6" max="720" step="6" style="width: 72px; margin-left: 6px" /> 小时
+            <label class="zz-check"><input type="checkbox" id="subsEnabled" /> <span data-i18n="启用自动更新">启用自动更新</span></label>
+            <label class="zz-small"><span data-i18n="更新间隔">更新间隔</span>
+              <input type="number" id="subsInterval" min="6" max="720" step="6" style="width: 72px; margin-left: 6px" /> <span data-i18n="小时">小时</span>
             </label>
-            <label class="zz-small">单个订阅最多
-              <input type="number" id="subsMaxRules" min="500" max="60000" step="500" style="width: 90px; margin-left: 6px" /> 条规则
+            <label class="zz-small"><span data-i18n="单个订阅最多">单个订阅最多</span>
+              <input type="number" id="subsMaxRules" min="500" max="60000" step="500" style="width: 90px; margin-left: 6px" /> <span data-i18n="条规则">条规则</span>
             </label>
-            <label class="zz-small">网络规则预算
-              <input type="number" id="subsDnrBudget" min="500" max="30000" step="500" style="width: 90px; margin-left: 6px" /> 条
+            <label class="zz-small"><span data-i18n="网络规则预算">网络规则预算</span>
+              <input type="number" id="subsDnrBudget" min="500" max="30000" step="500" style="width: 90px; margin-left: 6px" /> <span data-i18n="条">条</span>
             </label>
           </div>
           <div class="zz-inline" style="margin-top: 10px">
-            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnSaveSubs">保存设置</button>
-            <button class="zz-btn zz-btn-sm" id="btnUpdateSubs">立即更新全部</button>
+            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnSaveSubs" data-i18n="保存设置">保存设置</button>
+            <button class="zz-btn zz-btn-sm" id="btnUpdateSubs" data-i18n="立即更新全部">立即更新全部</button>
             <span class="zz-small zz-muted" id="subsStatus"></span>
           </div>
-          <div class="zz-small zz-muted" style="margin-top: 6px">
-            网络拦截由浏览器的动态规则承载，预算越大占用越多（Chrome 121+ 上限约 30000）。外观隐藏规则不占预算。
-          </div>
+          <div class="zz-small zz-muted" style="margin-top: 6px" data-i18n="网络拦截由浏览器的动态规则承载，预算越大占用越多（Chrome 121+ 上限约 30000）。外观隐藏规则不占预算。">网络拦截由浏览器的动态规则承载，预算越大占用越多（Chrome 121+ 上限约 30000）。外观隐藏规则不占预算。</div>
         </div>
 
-        <h3>添加订阅</h3>
+        <h3 data-i18n="添加订阅">添加订阅</h3>
         <div class="zz-card" style="margin-bottom: 14px">
           <div class="zz-row" style="flex-wrap: wrap; gap: 8px">
             <select id="subsPreset" style="max-width: 320px"></select>
-            <button class="zz-btn zz-btn-sm" id="btnAddPreset">添加所选</button>
+            <button class="zz-btn zz-btn-sm" id="btnAddPreset" data-i18n="添加所选">添加所选</button>
           </div>
           <div class="zz-row" style="flex-wrap: wrap; gap: 8px; margin-top: 10px">
             <input type="text" id="subsUrl" placeholder="https://example.com/filter.txt" style="max-width: 360px" />
-            <input type="text" id="subsName" placeholder="自定义名称（可选）" style="max-width: 200px" />
-            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnAddSub">添加订阅</button>
+            <input type="text" id="subsName" placeholder="自定义名称（可选）" data-i18n-ph="自定义名称（可选）" style="max-width: 200px" />
+            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnAddSub" data-i18n="添加订阅">添加订阅</button>
           </div>
           <div class="zz-small zz-muted" id="subsAddResult" style="margin-top: 8px"></div>
         </div>
 
-        <h3>已订阅 <span class="zz-small zz-muted" id="subsCount"></span></h3>
+        <h3><span data-i18n="已订阅">已订阅</span> <span class="zz-small zz-muted" id="subsCount"></span></h3>
         <div id="subsList"></div>
       </section>
 
       <section class="zz-panel" id="panel-ai">
-        <h2>AI 识别</h2>
+        <h2 data-i18n="AI 识别">AI 识别</h2>
         <div class="zz-note">
-          AI 用于识别规则覆盖不到的广告（原生软文、假下载按钮、站点特有弹窗）。插件只把元素的<b>结构化描述</b>（标签、class、尺寸、位置的短文本）发送给你配置的接口，
-          <b>不会上传网页正文或截图</b>。API Key 仅保存在浏览器本地存储中。
+          <span data-i18n="AI 用于识别规则覆盖不到的广告（原生软文、假下载按钮、站点特有弹窗）。插件只把元素的">AI 用于识别规则覆盖不到的广告（原生软文、假下载按钮、站点特有弹窗）。插件只把元素的</span><b data-i18n="结构化描述">结构化描述</b><span data-i18n="（标签、class、尺寸、位置的短文本）发送给你配置的接口，">（标签、class、尺寸、位置的短文本）发送给你配置的接口，</span>
+          <b data-i18n="不会上传网页正文或截图">不会上传网页正文或截图</b><span data-i18n="。API Key 仅保存在浏览器本地存储中。">。API Key 仅保存在浏览器本地存储中。</span>
         </div>
         <div style="margin-top: 14px" class="zz-inline">
-          <label class="zz-check"><input type="checkbox" id="aiEnabled" /> 启用 AI 识别</label>
-          <label class="zz-check"><input type="checkbox" id="aiAutoApply" /> 高置信度自动屏蔽</label>
-          <label class="zz-check"><input type="checkbox" id="aiSendText" /> 发送元素短文本</label>
+          <label class="zz-check"><input type="checkbox" id="aiEnabled" /> <span data-i18n="启用 AI 识别">启用 AI 识别</span></label>
+          <label class="zz-check"><input type="checkbox" id="aiAutoApply" /> <span data-i18n="高置信度自动屏蔽">高置信度自动屏蔽</span></label>
+          <label class="zz-check"><input type="checkbox" id="aiSendText" /> <span data-i18n="发送元素短文本">发送元素短文本</span></label>
         </div>
-        <h3>接口预设</h3>
+        <h3 data-i18n="接口预设">接口预设</h3>
         <div class="zz-inline" id="presets"></div>
         <div class="zz-grid" style="margin-top: 12px">
           <div class="zz-field">
-            <label>接口地址（OpenAI 兼容 /v1）</label>
+            <label data-i18n="接口地址（OpenAI 兼容 /v1）">接口地址（OpenAI 兼容 /v1）</label>
             <input type="text" id="aiBaseUrl" placeholder="https://api.openai.com/v1" />
           </div>
           <div class="zz-field">
-            <label>模型</label>
+            <label data-i18n="模型">模型</label>
             <input type="text" id="aiModel" placeholder="gpt-4o-mini" />
           </div>
           <div class="zz-field">
-            <label>API Key（本地 Ollama 可留空）</label>
+            <label data-i18n="API Key（本地 Ollama 可留空）">API Key（本地 Ollama 可留空）</label>
             <input type="password" id="aiApiKey" placeholder="sk-..." autocomplete="off" />
           </div>
           <div class="zz-field">
-            <label>单次最多分析元素数</label>
+            <label data-i18n="单次最多分析元素数">单次最多分析元素数</label>
             <input type="number" id="aiMaxCandidates" min="5" max="60" />
           </div>
           <div class="zz-field">
-            <label>自动屏蔽置信度阈值（0-1）</label>
+            <label data-i18n="自动屏蔽置信度阈值（0-1）">自动屏蔽置信度阈值（0-1）</label>
             <input type="number" id="aiMinConfidence" min="0.3" max="1" step="0.05" />
           </div>
           <div class="zz-field">
-            <label>单次扫描最多调用次数</label>
+            <label data-i18n="单次扫描最多调用次数">单次扫描最多调用次数</label>
             <input type="number" id="aiBudget" min="1" max="200" />
           </div>
           <div class="zz-field">
-            <label>请求超时（毫秒）</label>
+            <label data-i18n="请求超时（毫秒）">请求超时（毫秒）</label>
             <input type="number" id="aiTimeout" min="5000" max="120000" step="1000" />
           </div>
           <div class="zz-field">
-            <label>理由语言</label>
+            <label data-i18n="理由语言">理由语言</label>
             <select id="aiReasonLang">
-              <option value="zh">简体中文</option>
+              <option value="zh" data-i18n="简体中文">简体中文</option>
               <option value="en">English</option>
             </select>
           </div>
         </div>
         <div class="zz-field">
-          <label>自定义提示词（追加到系统提示，可选）</label>
-          <textarea id="aiCustomPrompt" style="min-height: 80px" placeholder="例如：优先屏蔽带『推广』字样的卡片，不要动视频播放器"></textarea>
+          <label data-i18n="自定义提示词（追加到系统提示，可选）">自定义提示词（追加到系统提示，可选）</label>
+          <textarea id="aiCustomPrompt" style="min-height: 80px" placeholder="例如：优先屏蔽带『推广』字样的卡片，不要动视频播放器" data-i18n-ph="例如：优先屏蔽带『推广』字样的卡片，不要动视频播放器"></textarea>
         </div>
         <div class="zz-inline">
-          <button class="zz-btn zz-btn-primary zz-btn-sm" id="btnSaveAi">保存设置</button>
-          <button class="zz-btn zz-btn-sm" id="btnTestAi">测试连接</button>
+          <button class="zz-btn zz-btn-primary zz-btn-sm" id="btnSaveAi" data-i18n="保存设置">保存设置</button>
+          <button class="zz-btn zz-btn-sm" id="btnTestAi" data-i18n="测试连接">测试连接</button>
           <span class="zz-small zz-muted" id="aiTestResult"></span>
         </div>
       </section>
 
       <section class="zz-panel" id="panel-scan">
-        <h2>批量扫描并生成个性化规则</h2>
+        <h2 data-i18n="批量扫描并生成个性化规则">批量扫描并生成个性化规则</h2>
         <div class="zz-note">
-          <b>快扫</b>：直接抓取网页 HTML 做结构分析，速度快、不打开标签页，适合几百个站点；对 JS 渲染的广告（YouTube、Reddit、LinkedIn）不敏感。
-          <b>渲染扫描</b>：后台静默打开标签页，等页面渲染后分析，更准但更慢。AI 复核可选，会消耗你的 API 额度。
+          <b data-i18n="快扫">快扫</b><span data-i18n="：直接抓取网页 HTML 做结构分析，速度快、不打开标签页，适合几百个站点；对 JS 渲染的广告（YouTube、Reddit、LinkedIn）不敏感。">：直接抓取网页 HTML 做结构分析，速度快、不打开标签页，适合几百个站点；对 JS 渲染的广告（YouTube、Reddit、LinkedIn）不敏感。</span>
+          <b data-i18n="渲染扫描">渲染扫描</b><span data-i18n="：后台静默打开标签页，等页面渲染后分析，更准但更慢。AI 复核可选，会消耗你的 API 额度。">：后台静默打开标签页，等页面渲染后分析，更准但更慢。AI 复核可选，会消耗你的 API 额度。</span>
         </div>
         <div class="zz-inline" style="margin-top: 12px">
-          <label class="zz-check"><input type="radio" name="scanMode" value="fast" checked /> 快扫（推荐）</label>
-          <label class="zz-check"><input type="radio" name="scanMode" value="render" /> 渲染扫描</label>
-          <label class="zz-check"><input type="checkbox" id="scanAi" /> AI 复核</label>
-          <label class="zz-check"><input type="checkbox" id="scanSkip" checked /> 跳过 3 天内扫过的站点</label>
+          <label class="zz-check"><input type="radio" name="scanMode" value="fast" checked /> <span data-i18n="快扫（推荐）">快扫（推荐）</span></label>
+          <label class="zz-check"><input type="radio" name="scanMode" value="render" /> <span data-i18n="渲染扫描">渲染扫描</span></label>
+          <label class="zz-check"><input type="checkbox" id="scanAi" /> <span data-i18n="AI 复核">AI 复核</span></label>
+          <label class="zz-check"><input type="checkbox" id="scanSkip" checked /> <span data-i18n="跳过 3 天内扫过的站点">跳过 3 天内扫过的站点</span></label>
         </div>
 
-        <h3>来源一：浏览器收藏夹</h3>
+        <h3 data-i18n="来源一：浏览器收藏夹">来源一：浏览器收藏夹</h3>
         <div class="zz-inline">
           <select id="folderSelect" style="max-width: 320px"></select>
-          <button class="zz-btn zz-btn-sm" id="btnLoadBookmarks">读取收藏夹</button>
+          <button class="zz-btn zz-btn-sm" id="btnLoadBookmarks" data-i18n="读取收藏夹">读取收藏夹</button>
           <span class="zz-small zz-muted" id="bookmarkInfo"></span>
         </div>
 
-        <h3>来源二：自定义站点列表</h3>
-        <textarea id="scanUrls" placeholder="https://example.com&#10;news.example.org/path&#10;（一行一个网址）" style="min-height: 90px"></textarea>
+        <h3 data-i18n="来源二：自定义站点列表">来源二：自定义站点列表</h3>
+        <textarea id="scanUrls" placeholder="https://example.com&#10;news.example.org/path&#10;（一行一个网址）" data-i18n-ph="https://example.com&#10;news.example.org/path&#10;（一行一个网址）" style="min-height: 90px"></textarea>
         <div class="zz-inline" style="margin-top: 8px">
-          <button class="zz-btn zz-btn-sm" id="btnMergeUrls">合并到待扫描列表</button>
-          <span class="zz-small zz-muted" id="siteInfo">尚未选择站点</span>
+          <button class="zz-btn zz-btn-sm" id="btnMergeUrls" data-i18n="合并到待扫描列表">合并到待扫描列表</button>
+          <span class="zz-small zz-muted" id="siteInfo" data-i18n="尚未选择站点">尚未选择站点</span>
         </div>
 
-        <h3>待扫描站点 <span class="zz-small zz-muted" id="siteCount"></span></h3>
+        <h3><span data-i18n="待扫描站点">待扫描站点</span> <span class="zz-small zz-muted" id="siteCount"></span></h3>
         <div class="zz-inline" style="margin-bottom: 8px">
-          <button class="zz-btn zz-btn-sm" id="btnSelectAll">全选</button>
-          <button class="zz-btn zz-btn-sm" id="btnSelectNone">全不选</button>
-          <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnClearSites">清空列表</button>
+          <button class="zz-btn zz-btn-sm" id="btnSelectAll" data-i18n="全选">全选</button>
+          <button class="zz-btn zz-btn-sm" id="btnSelectNone" data-i18n="全不选">全不选</button>
+          <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnClearSites" data-i18n="清空列表">清空列表</button>
         </div>
         <div class="zz-grid" id="siteGrid"></div>
 
         <div class="zz-inline" style="margin-top: 14px">
-          <button class="zz-btn zz-btn-primary" id="btnStartScan">开始扫描</button>
-          <button class="zz-btn" id="btnStopScan" disabled>停止</button>
+          <button class="zz-btn zz-btn-primary" id="btnStartScan" data-i18n="开始扫描">开始扫描</button>
+          <button class="zz-btn" id="btnStopScan" disabled data-i18n="停止">停止</button>
           <label class="zz-check" style="max-width: 190px">
-            延迟
+            <span data-i18n="延迟">延迟</span>
             <input type="number" id="scanDelay" min="0" max="10000" step="100" style="width: 80px" />
             ms
           </label>
           <label class="zz-check" style="max-width: 170px">
-            并发
+            <span data-i18n="并发">并发</span>
             <input type="number" id="scanConcurrency" min="1" max="3" style="width: 60px" />
           </label>
           <label class="zz-check" style="max-width: 190px">
-            上限
+            <span data-i18n="上限">上限</span>
             <input type="number" id="scanMaxSites" min="1" max="2000" style="width: 80px" />
-            站
+            <span data-i18n="站">站</span>
           </label>
         </div>
         <div class="zz-progress"><i id="scanBar"></i></div>
         <div class="zz-log" id="scanLog" style="margin-top: 12px"></div>
 
-        <h3>本次识别结果</h3>
+        <h3 data-i18n="本次识别结果">本次识别结果</h3>
         <div class="zz-inline" style="margin-bottom: 8px">
-          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplyFindings">应用选中为规则（本站）</button>
-          <button class="zz-btn zz-btn-sm" id="btnApplyFindingsGlobal">应用为通用规则</button>
-          <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnDismissFindings">忽略选中</button>
+          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplyFindings" data-i18n="应用选中为规则（本站）">应用选中为规则（本站）</button>
+          <button class="zz-btn zz-btn-sm" id="btnApplyFindingsGlobal" data-i18n="应用为通用规则">应用为通用规则</button>
+          <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnDismissFindings" data-i18n="忽略选中">忽略选中</button>
           <span class="zz-small zz-muted" id="applyInfo"></span>
         </div>
         <div id="scanFindings" class="zz-list"></div>
       </section>
 
       <section class="zz-panel" id="panel-autopilot">
-        <h2>自主增强</h2>
+        <h2 data-i18n="自主增强">自主增强</h2>
         <div class="zz-card">
           <div class="zz-small zz-muted">
-            读取浏览记录，找出常访问的站点并自动扫描，再用本地小模型复核，把高置信度的识别结果直接变成规则。
-            <b>仅支持本地模型</b>（Ollama / LM Studio 等 127.0.0.1 或局域网地址），数据不会发往任何云端；
-            需要授予「浏览记录」权限，扩展只在本地聚合访问次数。
+            <span data-i18n="读取浏览记录，找出常访问的站点并自动扫描，再用本地小模型复核，把高置信度的识别结果直接变成规则。">读取浏览记录，找出常访问的站点并自动扫描，再用本地小模型复核，把高置信度的识别结果直接变成规则。</span>
+            <b data-i18n="仅支持本地模型">仅支持本地模型</b><span data-i18n="（Ollama / LM Studio 等 127.0.0.1 或局域网地址），数据不会发往任何云端； 需要授予「浏览记录」权限，扩展只在本地聚合访问次数。">（Ollama / LM Studio 等 127.0.0.1 或局域网地址），数据不会发往任何云端； 需要授予「浏览记录」权限，扩展只在本地聚合访问次数。</span>
           </div>
           <div class="zz-row" style="margin-top: 10px; flex-wrap: wrap; gap: 12px">
-            <label class="zz-check"><input type="checkbox" id="autoEnabled" /> 启用自主增强</label>
-            <label class="zz-check"><input type="checkbox" id="autoApplyFindings" /> 自动应用高置信度结果</label>
-            <label class="zz-check"><input type="checkbox" id="autoWeekly" /> 每周自动运行一次</label>
+            <label class="zz-check"><input type="checkbox" id="autoEnabled" /> <span data-i18n="启用自主增强">启用自主增强</span></label>
+            <label class="zz-check"><input type="checkbox" id="autoApplyFindings" /> <span data-i18n="自动应用高置信度结果">自动应用高置信度结果</span></label>
+            <label class="zz-check"><input type="checkbox" id="autoWeekly" /> <span data-i18n="每周自动运行一次">每周自动运行一次</span></label>
           </div>
           <div class="zz-row" style="margin-top: 8px; flex-wrap: wrap; gap: 12px">
-            <label class="zz-small">最少访问次数 <input type="number" id="autoMinVisits" min="1" max="50" style="width: 64px; margin-left: 4px" /></label>
-            <label class="zz-small">单次最多站点 <input type="number" id="autoMaxSites" min="1" max="50" style="width: 64px; margin-left: 4px" /></label>
-            <label class="zz-small">置信度阈值 <input type="number" id="autoThreshold" min="0.3" max="1" step="0.05" style="width: 72px; margin-left: 4px" /></label>
+            <label class="zz-small"><span data-i18n="最少访问次数">最少访问次数</span> <input type="number" id="autoMinVisits" min="1" max="50" style="width: 64px; margin-left: 4px" /></label>
+            <label class="zz-small"><span data-i18n="单次最多站点">单次最多站点</span> <input type="number" id="autoMaxSites" min="1" max="50" style="width: 64px; margin-left: 4px" /></label>
+            <label class="zz-small"><span data-i18n="置信度阈值">置信度阈值</span> <input type="number" id="autoThreshold" min="0.3" max="1" step="0.05" style="width: 72px; margin-left: 4px" /></label>
           </div>
           <div class="zz-row" style="margin-top: 10px">
-            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnAutoRun">立即运行一次</button>
-            <button class="zz-btn zz-btn-sm" id="btnAutoStop" disabled>停止</button>
-            <span class="zz-small zz-muted" id="autoState">未运行</span>
+            <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnAutoRun" data-i18n="立即运行一次">立即运行一次</button>
+            <button class="zz-btn zz-btn-sm" id="btnAutoStop" disabled data-i18n="停止">停止</button>
+            <span class="zz-small zz-muted" id="autoState" data-i18n="未运行">未运行</span>
           </div>
           <div class="zz-log" id="autoLog" style="margin-top: 10px; max-height: 220px"></div>
         </div>
 
-        <h2>AI 自动学习</h2>
+        <h2 data-i18n="AI 自动学习">AI 自动学习</h2>
         <div class="zz-card">
-          <div class="zz-small zz-muted">
-            从手动屏蔽、AI 确认和扫描结果里学习选择器模式；同一模式在多个站点出现时，自动升级为通用规则。
-          </div>
+          <div class="zz-small zz-muted" data-i18n="从手动屏蔽、AI 确认和扫描结果里学习选择器模式；同一模式在多个站点出现时，自动升级为通用规则。">从手动屏蔽、AI 确认和扫描结果里学习选择器模式；同一模式在多个站点出现时，自动升级为通用规则。</div>
           <div class="zz-row" style="margin-top: 8px; flex-wrap: wrap; gap: 12px">
-            <label class="zz-check"><input type="checkbox" id="learnAuto" /> 满足条件时自动升级为通用规则</label>
-            <label class="zz-small">最少出现站点数 <input type="number" id="learnMinSites" min="2" max="10" style="width: 64px; margin-left: 4px" /></label>
+            <label class="zz-check"><input type="checkbox" id="learnAuto" /> <span data-i18n="满足条件时自动升级为通用规则">满足条件时自动升级为通用规则</span></label>
+            <label class="zz-small"><span data-i18n="最少出现站点数">最少出现站点数</span> <input type="number" id="learnMinSites" min="2" max="10" style="width: 64px; margin-left: 4px" /></label>
           </div>
           <div class="zz-list" id="learnList" style="margin-top: 10px"></div>
         </div>
       </section>
 
-      <section class="zz-panel" id="panel-findings">        <h2>AI / 扫描待确认</h2>
+      <section class="zz-panel" id="panel-findings">        <h2 data-i18n="AI / 扫描待确认">AI / 扫描待确认</h2>
         <div class="zz-toolbar">
           <select id="findingStatus" style="max-width: 160px">
-            <option value="pending">待确认</option>
-            <option value="applied">已应用</option>
-            <option value="dismissed">已忽略</option>
-            <option value="all">全部</option>
+            <option value="pending" data-i18n="待确认">待确认</option>
+            <option value="applied" data-i18n="已应用">已应用</option>
+            <option value="dismissed" data-i18n="已忽略">已忽略</option>
+            <option value="all" data-i18n="全部">全部</option>
           </select>
-          <input type="text" id="findingHost" placeholder="按域名过滤" style="max-width: 220px" />
-          <button class="zz-btn zz-btn-sm" id="btnRefreshFindings">刷新</button>
-          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplySel">应用选中（本站）</button>
-          <button class="zz-btn zz-btn-sm" id="btnApplySelGlobal">应用为通用</button>
-          <button class="zz-btn zz-btn-sm" id="btnDismissSel">忽略选中</button>
-          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnDeleteSel">删除选中</button>
+          <input type="text" id="findingHost" placeholder="按域名过滤" data-i18n-ph="按域名过滤" style="max-width: 220px" />
+          <button class="zz-btn zz-btn-sm" id="btnRefreshFindings" data-i18n="刷新">刷新</button>
+          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplySel" data-i18n="应用选中（本站）">应用选中（本站）</button>
+          <button class="zz-btn zz-btn-sm" id="btnApplySelGlobal" data-i18n="应用为通用">应用为通用</button>
+          <button class="zz-btn zz-btn-sm" id="btnDismissSel" data-i18n="忽略选中">忽略选中</button>
+          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnDeleteSel" data-i18n="删除选中">删除选中</button>
         </div>
         <div id="findingList" class="zz-list"></div>
       </section>
 
       <section class="zz-panel" id="panel-stats">
-        <h2>下载工具箱</h2>
+        <h2 data-i18n="下载工具箱">下载工具箱</h2>
         <div class="zz-card">
           <div class="zz-row" style="flex-wrap: wrap; gap: 12px">
-            <label class="zz-small">保存目录前缀</label>
-            <label class="zz-small">视频 <input type="text" id="videoDir" style="width: 150px" /></label>
-            <label class="zz-small">图片 <input type="text" id="imageDir" style="width: 150px" /></label>
-            <label class="zz-small">阅读/资源 <input type="text" id="articleDir" style="width: 150px" /></label>
-            <label class="zz-small">下载并发 <input type="number" id="dlConcurrency" min="1" max="8" style="width: 60px" /></label>
+            <label class="zz-small" data-i18n="保存目录前缀">保存目录前缀</label>
+            <label class="zz-small"><span data-i18n="视频">视频</span> <input type="text" id="videoDir" style="width: 150px" /></label>
+            <label class="zz-small"><span data-i18n="图片">图片</span> <input type="text" id="imageDir" style="width: 150px" /></label>
+            <label class="zz-small"><span data-i18n="阅读/资源">阅读/资源</span> <input type="text" id="articleDir" style="width: 150px" /></label>
+            <label class="zz-small"><span data-i18n="下载并发">下载并发</span> <input type="number" id="dlConcurrency" min="1" max="8" style="width: 60px" /></label>
           </div>
           <div class="zz-row" style="flex-wrap: wrap; gap: 12px; margin-top: 8px">
-            <label class="zz-small">诚实付费链接 <input type="text" id="honestUrl" placeholder="https://… 打赏/付费页" style="width: 320px" /></label>
+            <label class="zz-small"><span data-i18n="诚实付费链接">诚实付费链接</span> <input type="text" id="honestUrl" placeholder="https://… 打赏/付费页" data-i18n-ph="https://… 打赏/付费页" style="width: 320px" /></label>
           </div>
-          <div class="zz-small zz-muted" style="margin-top: 6px">
-            视频嗅探下载、图片发现、网盘资源收集与阅读模式保存均采用诚实付费：功能免费，觉得好用请支持作者；留空则只在界面提示。
-          </div>
+          <div class="zz-small zz-muted" style="margin-top: 6px" data-i18n="视频嗅探下载、图片发现、网盘资源收集与阅读模式保存均采用诚实付费：功能免费，觉得好用请支持作者；留空则只在界面提示。">视频嗅探下载、图片发现、网盘资源收集与阅读模式保存均采用诚实付费：功能免费，觉得好用请支持作者；留空则只在界面提示。</div>
         </div>
 
-        <h2>可选权限</h2>
-        <div class="zz-small zz-muted" style="margin-bottom: 8px">
-          这些权限安装时不会申请，只有用到对应功能时才需要授权，随时可以收回。
-        </div>
+        <h2 data-i18n="可选权限">可选权限</h2>
+        <div class="zz-small zz-muted" style="margin-bottom: 8px" data-i18n="这些权限安装时不会申请，只有用到对应功能时才需要授权，随时可以收回。">这些权限安装时不会申请，只有用到对应功能时才需要授权，随时可以收回。</div>
         <div id="permList"></div>
 
-        <h2>运行状态</h2>
+        <h2 data-i18n="运行状态">运行状态</h2>
         <div class="zz-kv" id="diagGrid"></div>
         <div class="zz-inline" style="margin-top: 12px">
-          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnSyncDnr">重新同步网络规则</button>
-          <button class="zz-btn zz-btn-sm" id="btnRefreshDiag">刷新</button>
-          <button class="zz-btn zz-btn-sm" id="btnExportAll">导出全部规则</button>
-          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnResetStats">清除统计数据</button>
-          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnResetAll">恢复默认设置</button>
+          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnSyncDnr" data-i18n="重新同步网络规则">重新同步网络规则</button>
+          <button class="zz-btn zz-btn-sm" id="btnRefreshDiag" data-i18n="刷新">刷新</button>
+          <button class="zz-btn zz-btn-sm" id="btnExportAll" data-i18n="导出全部规则">导出全部规则</button>
+          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnResetStats" data-i18n="清除统计数据">清除统计数据</button>
+          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnResetAll" data-i18n="恢复默认设置">恢复默认设置</button>
         </div>
 
-        <h2>站点统计</h2>
+        <h2 data-i18n="站点统计">站点统计</h2>
         <div class="zz-scroll"><table id="statsTable"></table></div>
       </section>
     </div>
 
     <script src="../background/lib-compat.js"></script>
+    <script src="../i18n/i18n.js"></script>
+    <script src="../i18n/dict-en.js"></script>
     <script src="../background/rule-format.js"></script>
     <script src="../content/00-lib.js"></script>
     <script src="../content/20-detector.js"></script>

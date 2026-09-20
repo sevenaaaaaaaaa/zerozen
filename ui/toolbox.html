@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <title>ZeroZen 下载工具箱</title>
+    <title data-i18n="ZeroZen 下载工具箱">ZeroZen 下载工具箱</title>
     <link rel="stylesheet" href="ui.css" />
     <style>
       body {
@@ -130,41 +130,41 @@
     <div class="zz-header" style="padding: 0">
       <div class="zz-brand">
         <img src="../icons/icon48.png" alt="" />
-        <span>ZeroZen<b class="zz-brand-sub"> 下载工具箱</b></span>
+        <span>ZeroZen<b class="zz-brand-sub" data-i18n="下载工具箱">下载工具箱</b></span>
       </div>
-      <span class="zz-tag" id="ctxLabel">读取页面…</span>
+      <span class="zz-tag" id="ctxLabel" data-i18n="读取页面…">读取页面…</span>
     </div>
 
     <div class="zz-tool-tabs">
-      <button class="zz-tool-tab active" data-view="video">视频（m3u8）</button>
-      <button class="zz-tool-tab" data-view="image">图片发现</button>
-      <button class="zz-tool-tab" data-view="netdisk">网盘资源</button>
-      <button class="zz-tool-tab" data-view="downloader">下载器</button>
+      <button class="zz-tool-tab active" data-view="video" data-i18n="视频（m3u8）">视频（m3u8）</button>
+      <button class="zz-tool-tab" data-view="image" data-i18n="图片发现">图片发现</button>
+      <button class="zz-tool-tab" data-view="netdisk" data-i18n="网盘资源">网盘资源</button>
+      <button class="zz-tool-tab" data-view="downloader" data-i18n="下载器">下载器</button>
     </div>
 
     <div class="zz-tool-panel active" id="view-video">
       <div class="zz-tool-row">
-        <label class="zz-small">标题 <input type="text" id="videoTitle" style="width: 360px" /></label>
-        <label class="zz-small">保存目录 <input type="text" id="videoDir" style="width: 180px" /></label>
-        <button class="zz-btn zz-btn-sm" id="btnStreams">刷新嗅探</button>
-        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnM3u8">下载选中</button>
+        <label class="zz-small"><span data-i18n="标题">标题</span> <input type="text" id="videoTitle" style="width: 360px" /></label>
+        <label class="zz-small"><span data-i18n="保存目录">保存目录</span> <input type="text" id="videoDir" style="width: 180px" /></label>
+        <button class="zz-btn zz-btn-sm" id="btnStreams" data-i18n="刷新嗅探">刷新嗅探</button>
+        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnM3u8" data-i18n="下载选中">下载选中</button>
       </div>
       <div class="zz-tool-list" id="streamList"></div>
       <div class="zz-tool-row">
-        <label class="zz-check"><input type="checkbox" id="tsAsMp4" /> TS 流直接命名为 .mp4（不做转码）</label>
-        <span class="zz-small zz-muted">fMP4 流会自动保存为 .mp4；TS 流默认 .ts，可用 ffmpeg 转封装。</span>
+        <label class="zz-check"><input type="checkbox" id="tsAsMp4" /> <span data-i18n="TS 流直接命名为 .mp4（不做转码）">TS 流直接命名为 .mp4（不做转码）</span></label>
+        <span class="zz-small zz-muted" data-i18n="fMP4 流会自动保存为 .mp4；TS 流默认 .ts，可用 ffmpeg 转封装。">fMP4 流会自动保存为 .mp4；TS 流默认 .ts，可用 ffmpeg 转封装。</span>
       </div>
-      <div class="zz-tool-log" id="videoLog" style="margin-top: 10px">等待选择视频流…</div>
+      <div class="zz-tool-log" id="videoLog" style="margin-top: 10px" data-i18n="等待选择视频流…">等待选择视频流…</div>
     </div>
 
     <div class="zz-tool-panel" id="view-image">
       <div class="zz-tool-row">
-        <button class="zz-btn zz-btn-sm" id="btnImages">扫描本页图片</button>
-        <span class="zz-small">最小尺寸 <input type="number" id="imgMin" value="0" min="0" step="16" style="width: 70px" /> px</span>
-        <button class="zz-btn zz-btn-sm" id="btnImgAll">全选</button>
-        <button class="zz-btn zz-btn-sm" id="btnImgNone">全不选</button>
-        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnImgDownload">下载选中</button>
-        <label class="zz-small">目录 <input type="text" id="imageDir" style="width: 160px" /></label>
+        <button class="zz-btn zz-btn-sm" id="btnImages" data-i18n="扫描本页图片">扫描本页图片</button>
+        <span class="zz-small"><span data-i18n="最小尺寸">最小尺寸</span> <input type="number" id="imgMin" value="0" min="0" step="16" style="width: 70px" /> px</span>
+        <button class="zz-btn zz-btn-sm" id="btnImgAll" data-i18n="全选">全选</button>
+        <button class="zz-btn zz-btn-sm" id="btnImgNone" data-i18n="全不选">全不选</button>
+        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnImgDownload" data-i18n="下载选中">下载选中</button>
+        <label class="zz-small"><span data-i18n="目录">目录</span> <input type="text" id="imageDir" style="width: 160px" /></label>
       </div>
       <div class="zz-chipbar" id="imgFormats"></div>
       <div class="zz-small zz-muted" id="imgInfo" style="margin-top: 6px"></div>
@@ -174,10 +174,10 @@
 
     <div class="zz-tool-panel" id="view-netdisk">
       <div class="zz-tool-row">
-        <button class="zz-btn zz-btn-sm" id="btnNetdisk">扫描本页资源</button>
-        <button class="zz-btn zz-btn-sm" id="btnCopyAll">复制全部</button>
-        <button class="zz-btn zz-btn-sm" id="btnExport">导出 TXT</button>
-        <span class="zz-small zz-muted">自动提取网盘链接与提取码，仅收集不代替你下载/转存。</span>
+        <button class="zz-btn zz-btn-sm" id="btnNetdisk" data-i18n="扫描本页资源">扫描本页资源</button>
+        <button class="zz-btn zz-btn-sm" id="btnCopyAll" data-i18n="复制全部">复制全部</button>
+        <button class="zz-btn zz-btn-sm" id="btnExport" data-i18n="导出 TXT">导出 TXT</button>
+        <span class="zz-small zz-muted" data-i18n="自动提取网盘链接与提取码，仅收集不代替你下载/转存。">自动提取网盘链接与提取码，仅收集不代替你下载/转存。</span>
       </div>
       <div class="zz-tool-list" id="netdiskList"></div>
       <div class="zz-tool-log" id="netdiskLog" style="margin-top: 10px"></div>
@@ -186,36 +186,38 @@
     <div class="zz-tool-panel" id="view-downloader">
       <div class="zz-card" style="margin-bottom: 12px">
         <div class="zz-tool-row">
-          <input type="text" id="dlUrl" placeholder="粘贴下载地址（http/https，直链或视频文件）" style="flex: 1; min-width: 300px" />
-          <button class="zz-btn zz-btn-sm" id="btnDlPaste">粘贴</button>
+          <input type="text" id="dlUrl" placeholder="粘贴下载地址（http/https，直链或视频文件）" data-i18n-ph="粘贴下载地址（http/https，直链或视频文件）" style="flex: 1; min-width: 300px" />
+          <button class="zz-btn zz-btn-sm" id="btnDlPaste" data-i18n="粘贴">粘贴</button>
         </div>
         <div class="zz-tool-row">
-          <label class="zz-small">文件名 <input type="text" id="dlName" placeholder="留空自动识别" style="width: 260px" /></label>
-          <label class="zz-small">目录 <input type="text" id="dlDir" style="width: 180px" /></label>
-          <label class="zz-check"><input type="checkbox" id="dlMulti" /> 多线程分段</label>
-          <label class="zz-small">线程 <input type="number" id="dlThreads" min="2" max="8" value="4" style="width: 56px" /></label>
-          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnDlStart">开始下载</button>
+          <label class="zz-small"><span data-i18n="文件名">文件名</span> <input type="text" id="dlName" placeholder="留空自动识别" data-i18n-ph="留空自动识别" style="width: 260px" /></label>
+          <label class="zz-small"><span data-i18n="目录">目录</span> <input type="text" id="dlDir" style="width: 180px" /></label>
+          <label class="zz-check"><input type="checkbox" id="dlMulti" /> <span data-i18n="多线程分段">多线程分段</span></label>
+          <label class="zz-small"><span data-i18n="线程">线程</span> <input type="number" id="dlThreads" min="2" max="8" value="4" style="width: 56px" /></label>
+          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnDlStart" data-i18n="开始下载">开始下载</button>
         </div>
-        <div class="zz-small zz-muted">多线程分段需要服务器支持 Range；大文件会占用较多内存，任务需保持本页面打开，失败可改回默认模式。</div>
+        <div class="zz-small zz-muted" data-i18n="多线程分段需要服务器支持 Range；大文件会占用较多内存，任务需保持本页面打开，失败可改回默认模式。">多线程分段需要服务器支持 Range；大文件会占用较多内存，任务需保持本页面打开，失败可改回默认模式。</div>
       </div>
 
       <div class="zz-tool-row">
-        <input type="text" id="dlQuery" placeholder="搜索文件名 / 地址" style="max-width: 220px" />
-        <button class="zz-btn zz-btn-sm" data-dlfilter="all">全部</button>
-        <button class="zz-btn zz-btn-sm" data-dlfilter="progressing">进行中</button>
-        <button class="zz-btn zz-btn-sm" data-dlfilter="complete">已完成</button>
-        <button class="zz-btn zz-btn-sm" data-dlfilter="failed">失败</button>
+        <input type="text" id="dlQuery" placeholder="搜索文件名 / 地址" data-i18n-ph="搜索文件名 / 地址" style="max-width: 220px" />
+        <button class="zz-btn zz-btn-sm" data-dlfilter="all" data-i18n="全部">全部</button>
+        <button class="zz-btn zz-btn-sm" data-dlfilter="progressing" data-i18n="进行中">进行中</button>
+        <button class="zz-btn zz-btn-sm" data-dlfilter="complete" data-i18n="已完成">已完成</button>
+        <button class="zz-btn zz-btn-sm" data-dlfilter="failed" data-i18n="失败">失败</button>
         <span style="flex:1"></span>
-        <button class="zz-btn zz-btn-sm" id="btnDlRefresh">刷新</button>
-        <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnDlClear">清除已完成记录</button>
+        <button class="zz-btn zz-btn-sm" id="btnDlRefresh" data-i18n="刷新">刷新</button>
+        <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnDlClear" data-i18n="清除已完成记录">清除已完成记录</button>
       </div>
       <div class="zz-tool-list" id="dlList"></div>
-      <div class="zz-tool-log" id="dlLog" style="margin-top: 10px">就绪</div>
+      <div class="zz-tool-log" id="dlLog" style="margin-top: 10px" data-i18n="就绪">就绪</div>
     </div>
 
     <div class="zz-pay" id="payLine"></div>
 
     <script src="../background/lib-compat.js"></script>
+    <script src="../i18n/i18n.js"></script>
+    <script src="../i18n/dict-en.js"></script>
     <script src="ui-lib.js"></script>
     <script src="toolbox.js"></script>
   </body>

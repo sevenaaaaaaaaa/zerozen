@@ -46,7 +46,7 @@
       case "zz:rules-updated": {
         ZZ.bus.emit("rules-updated");
         if (msg.payload && msg.payload.reason === "antiadblock" && u.isTop()) {
-          ZZ.notice("ZeroZen：检测到反广告拦截，已自动切换为兼容档");
+          ZZ.notice(ZZ.T("ZeroZen：检测到反广告拦截，已自动切换为兼容档"));
         }
         sendResponse({ ok: true });
         return false;
@@ -55,7 +55,7 @@
         ZZ.bus.emit("site-disabled");
         if (msg.payload && msg.payload.reason === "antiadblock" && u.isTop()) {
           const minutes = msg.payload.until ? Math.max(1, Math.round((msg.payload.until - Date.now()) / 60000)) : 30;
-          ZZ.notice("ZeroZen：本站反拦截较强，已临时放行 " + minutes + " 分钟");
+          ZZ.notice(ZZ.T("ZeroZen：本站反拦截较强，已临时放行 $1 分钟", minutes));
         }
         sendResponse({ ok: true });
         return false;

@@ -2,6 +2,7 @@
   const UI = globalThis.ZZUI;
   const $ = UI.$;
   const $$ = UI.$$;
+  const T = UI.T;
   const api = globalThis.ZZ.browser;
   const F = globalThis.ZZ.RuleFormat;
   const Detector = globalThis.ZZ.Detector;
@@ -84,10 +85,16 @@
     }
     const st = $("#autoState");
     if (st) {
-      if (res.running) st.textContent = "运行中：" + (res.phase || "") + " " + res.done + "/" + res.total;
-      else if (res.error) st.textContent = "上次失败：" + res.error;
-      else if (res.lastRunAt) st.textContent = "上次运行：" + new Date(res.lastRunAt).toLocaleString() + "，站点 " + res.sites.length + "，应用 " + res.applied;
-      else st.textContent = res.localReady ? "未运行" : "需配置本地模型";
+      if (res.running) st.textContent = T("运行中：$1 $2/$3", res.phase || "", res.done, res.total);
+      else if (res.error) st.textContent = T("上次失败：$1", res.error);
+      else if (res.lastRunAt)
+        st.textContent = T(
+          "上次运行：$1，站点 $2，应用 $3",
+          new Date(res.lastRunAt).toLocaleString(),
+          res.sites.length,
+          res.applied
+        );
+      else st.textContent = T(res.localReady ? "未运行" : "需配置本地模型");
     }
     const runBtn = $("#btnAutoRun");
     const stopBtn = $("#btnAutoStop");
@@ -108,7 +115,8 @@
     if (!res || !box) return;
     const list = res.patterns || [];
     if (!list.length) {
-      box.innerHTML = '<div class="zz-small zz-muted">还没有学习记录：使用元素选取器、AI 确认或扫描应用规则后，这里会出现可复用的模式。</div>';
+      box.innerHTML =
+        '<div class="zz-small zz-muted">' + T("还没有学习记录：使用元素选取器、AI 确认或扫描应用规则后，这里会出现可复用的模式。") + "</div>";
       return;
     }
     box.innerHTML = list
@@ -119,16 +127,15 @@
           esc(p.selector) +
           "</span>" +
           (p.applied
-            ? '<span class="zz-tag zz-tag-ai">已升级</span>'
+            ? '<span class="zz-tag zz-tag-ai">' + T("已升级") + "</span>"
             : '<button class="zz-btn zz-btn-sm zz-btn-primary" data-learn-apply="' +
               esc(p.selector) +
-              '">升级为通用规则</button>') +
+              '">' +
+              T("升级为通用规则") +
+              "</button>") +
           "</div>" +
-          '<div class="zz-small zz-muted" style="margin-top:4px">出现 ' +
-          p.count +
-          " 次 · " +
-          p.sites +
-          " 个站点" +
+          '<div class="zz-small zz-muted" style="margin-top:4px">' +
+          T("出现 $1 次 · $2 个站点", p.count, p.sites) +
           (p.hosts && p.hosts.length ? "：" + esc(p.hosts.join("、")) : "") +
           "</div></div>"
       )
@@ -166,6 +173,7 @@
     $("#globalEnabled").checked = !!s.enabled;
     $("#profileSelect").value = s.profile || "standard";
     $("#autoFallback").checked = s.autoFallback !== false;
+    $("#langSelect").value = s.lang || "auto";
     $("#tempMinutes").value = s.tempMinutes || 30;
     $("#aiEnabled").checked = !!s.ai.enabled;
     $("#aiAutoApply").checked = !!s.ai.autoApply;
@@ -173,7 +181,7 @@
     $("#aiBaseUrl").value = s.ai.baseUrl || "";
     $("#aiModel").value = s.ai.model || "";
     $("#aiApiKey").value = s.ai.apiKey || "";
-    $("#aiApiKey").placeholder = state.hasApiKey ? "已保存（留空则不修改）" : "sk-...";
+    $("#aiApiKey").placeholder = state.hasApiKey ? T("已保存（留空则不修改）") : "sk-...";
     $("#aiMaxCandidates").value = s.ai.maxCandidates || 30;
     $("#aiMinConfidence").value = s.ai.minConfidence || 0.75;
     $("#aiBudget").value = s.ai.budgetPerScan || 20;
@@ -200,9 +208,9 @@
     $("#learnAuto").checked = learn.autoApply !== false;
     $("#learnMinSites").value = learn.minSites || 2;
     const tb = s.toolbox || {};
-    $("#videoDir").value = tb.videoDir || "ZeroZen/视频";
-    $("#imageDir").value = tb.imageDir || "ZeroZen/图片";
-    $("#articleDir").value = tb.articleDir || "ZeroZen/阅读";
+    $("#videoDir").value = tb.videoDir || T("ZeroZen/视频");
+    $("#imageDir").value = tb.imageDir || T("ZeroZen/图片");
+    $("#articleDir").value = tb.articleDir || T("ZeroZen/阅读");
     $("#dlConcurrency").value = tb.concurrency || 4;
     $("#honestUrl").value = (s.honest && s.honest.url) || "";
     renderPresets();
@@ -229,10 +237,10 @@
     const res = await UI.send({ type: "zz:settings:set", payload: { settings: patch } });
     if (res && res.ok) {
       state.settings = Object.assign({}, state.settings, res.settings);
-      if (!quiet) toast("设置已保存", "ok");
+      if (!quiet) toast(T("设置已保存"), "ok");
       return true;
     }
-    toast("保存失败：" + ((res && res.error) || "未知错误"), "err");
+    toast(T("保存失败：$1", (res && res.error) || T("未知错误")), "err");
     return false;
   }
 
@@ -257,7 +265,7 @@
     const ok = await saveSettings(patch);
     if (ok) {
       $("#aiApiKey").value = "";
-      $("#aiApiKey").placeholder = "已保存（留空则不修改）";
+      $("#aiApiKey").placeholder = T("已保存（留空则不修改）");
       if (state.settings && state.settings.ai) state.aiBudget = state.settings.ai.budgetPerScan || 20;
     }
   }
@@ -281,7 +289,7 @@
     if (!grid) return;
     const groups = state.groups && state.groups.length
       ? state.groups
-      : [{ id: "common", name: "规则包", desc: "" }];
+      : [{ id: "common", name: T("规则包"), desc: "" }];
     const html = groups
       .map((group) => {
         const packs = state.packs.filter((p) => (p.group || "common") === group.id);
@@ -302,8 +310,8 @@
               esc(pack.desc) +
               "</div>" +
               (count !== undefined
-                ? '<div class="zz-small zz-muted">' + count + " 条规则</div>"
-                : '<div class="zz-small zz-muted">加载中…</div>') +
+                ? '<div class="zz-small zz-muted">' + T("$1 条规则", count) + "</div>"
+                : '<div class="zz-small zz-muted">' + T("加载中…") + "</div>") +
               "</div>"
             );
           })
@@ -326,7 +334,7 @@
         type: "zz:packs:set",
         payload: { id: input.getAttribute("data-pack"), enabled: input.checked },
       });
-      if (res && res.ok) toast("规则包已更新，页面将自动刷新规则", "ok");
+      if (res && res.ok) toast(T("规则包已更新，页面将自动刷新规则"), "ok");
       await loadConfig();
     };
   }
@@ -343,7 +351,7 @@
 
   function ruleSummary(rule) {
     if (rule.kind === "network") return rule.regexFilter || rule.filter;
-    if (rule.kind === "text") return "文案包含：" + rule.text + (rule.tag ? "（" + rule.tag + "）" : "");
+    if (rule.kind === "text") return T("文案包含：$1", rule.text) + (rule.tag ? "（" + rule.tag + "）" : "");
     return rule.selector;
   }
 
@@ -351,9 +359,23 @@
     const table = $("#ruleTable");
     const rows = state.rules.slice(0, state.ruleLimit);
     const head =
-      "<tr><th>类型</th><th>规则</th><th>作用域</th><th>来源</th><th>启用</th><th></th></tr>";
+      "<tr><th>" +
+      T("类型") +
+      "</th><th>" +
+      T("规则") +
+      "</th><th>" +
+      T("作用域") +
+      "</th><th>" +
+      T("来源") +
+      "</th><th>" +
+      T("启用") +
+      "</th><th></th></tr>";
     if (!rows.length) {
-      table.innerHTML = head + '<tr><td colspan="6" class="zz-muted">暂无自定义规则。点击「导入规则」或使用 AI 识别 / 批量扫描生成。</td></tr>';
+      table.innerHTML =
+        head +
+        '<tr><td colspan="6" class="zz-muted">' +
+        T("暂无自定义规则。点击「导入规则」或使用 AI 识别 / 批量扫描生成。") +
+        "</td></tr>";
       $("#ruleCount").textContent = "";
       return;
     }
@@ -361,7 +383,7 @@
       head +
       rows
         .map((rule) => {
-          const scope = rule.domains && rule.domains.length ? rule.domains.join(", ") : "所有站点";
+          const scope = rule.domains && rule.domains.length ? rule.domains.join(", ") : T("所有站点");
           const kind = UI.kindLabel(rule);
           return (
             "<tr>" +
@@ -388,13 +410,16 @@
             "></td>" +
             '<td><button class="zz-btn zz-btn-sm zz-btn-ghost zz-btn-danger" data-del="' +
             esc(rule.id) +
-            '">删除</button></td>' +
+            '">' +
+            T("删除") +
+            "</button></td>" +
             "</tr>"
           );
         })
         .join("");
     $("#ruleCount").textContent =
-      "共 " + state.rules.length + " 条自定义规则" + (state.ruleTotal > state.rules.length ? "（显示前 " + rows.length + " 条）" : "");
+      T("共 $1 条自定义规则", state.rules.length) +
+      (state.ruleTotal > state.rules.length ? T("（显示前 $1 条）", rows.length) : "");
     $("#btnShowMore").style.display = state.rules.length > state.ruleLimit ? "" : "none";
   }
 
@@ -430,20 +455,23 @@
       "</span>" +
       '<span class="zz-small zz-muted">' +
       esc(finding.host) +
-      " · 置信度 " +
-      conf +
-      "%" +
-      (finding.status && finding.status !== "pending" ? " · " + esc(finding.status === "applied" ? "已应用" : "已忽略") : "") +
+      " · " +
+      T("置信度 $1%", conf) +
+      (finding.status && finding.status !== "pending"
+        ? " · " + esc(T(finding.status === "applied" ? "已应用" : "已忽略"))
+        : "") +
       "</span></div>" +
       '<div class="zz-code">' +
       esc(finding.selector) +
       "</div>" +
-      (finding.sample ? '<div class="zz-small zz-muted">文本：' + esc(finding.sample) + "</div>" : "") +
-      (finding.reason ? '<div class="zz-small zz-muted">理由：' + esc(finding.reason) + "</div>" : "") +
+      (finding.sample ? '<div class="zz-small zz-muted">' + T("文本：") + esc(finding.sample) + "</div>" : "") +
+      (finding.reason ? '<div class="zz-small zz-muted">' + T("理由：") + esc(finding.reason) + "</div>" : "") +
       "</div>" +
       '<button class="zz-btn zz-btn-sm zz-btn-ghost zz-btn-danger" data-finding-del="' +
       esc(id) +
-      '">删除</button>' +
+      '">' +
+      T("删除") +
+      "</button>" +
       "</div>"
     );
   }
@@ -452,7 +480,7 @@
     const list = $("#findingList");
     if (!list) return;
     if (!state.findings.length) {
-      list.innerHTML = '<div class="zz-muted zz-small">暂无记录。可以先用「批量扫描」或页面上的 AI 识别。</div>';
+      list.innerHTML = '<div class="zz-muted zz-small">' + T("暂无记录。可以先用「批量扫描」或页面上的 AI 识别。") + "</div>";
     } else {
       list.innerHTML = state.findings.map((f) => findingCard(f, false)).join("");
     }
@@ -466,14 +494,14 @@
   function renderScanFindings() {
     const box = $("#scanFindings");
     if (!state.scanFindings.length) {
-      box.innerHTML = '<div class="zz-small zz-muted">扫描结果会显示在这里，可勾选后一键应用为规则。</div>';
+      box.innerHTML = '<div class="zz-small zz-muted">' + T("扫描结果会显示在这里，可勾选后一键应用为规则。") + "</div>";
       $("#applyInfo").textContent = "";
       return;
     }
     box.innerHTML = state.scanFindings
       .map((f) => findingCard(f, state.scanSelected.has(f.id)))
       .join("");
-    $("#applyInfo").textContent = "显示 " + state.scanFindings.length + " 条，已选 " + state.scanSelected.size + " 条";
+    $("#applyInfo").textContent = T("显示 $1 条，已选 $2 条", state.scanFindings.length, state.scanSelected.size);
   }
 
   function addScanFindings(list) {
@@ -492,12 +520,12 @@
   async function loadBookmarks(folderId) {
     const res = await UI.send({ type: "zz:bookmarks:preview", payload: { folderId: folderId || "" } });
     if (!res || !res.supported) {
-      $("#bookmarkInfo").textContent = "此浏览器不支持收藏夹接口（Safari 常见），请使用下方自定义站点列表";
+      $("#bookmarkInfo").textContent = T("此浏览器不支持收藏夹接口（Safari 常见），请使用下方自定义站点列表");
       return;
     }
     const select = $("#folderSelect");
     if (select.options.length <= 1) {
-      const options = ['<option value="">全部书签（' + res.total + " 个站点）</option>"];
+      const options = ['<option value="">' + T("全部书签（$1 个站点）", res.total) + "</option>"];
       for (const folder of res.folders) {
         if (!folder.count) continue;
         options.push(
@@ -506,7 +534,7 @@
       }
       select.innerHTML = options.join("");
     }
-    $("#bookmarkInfo").textContent = "共 " + res.total + " 个站点";
+    $("#bookmarkInfo").textContent = T("共 $1 个站点", res.total);
     state.bookmarks = res.sites || [];
     mergeSites(state.bookmarks);
   }
@@ -522,7 +550,7 @@
       added++;
     }
     state.sites = Array.from(map.values());
-    $("#siteInfo").textContent = "已加入 " + added + " 个站点，待扫描 " + state.sites.length + " 个";
+    $("#siteInfo").textContent = T("已加入 $1 个站点，待扫描 $2 个", added, state.sites.length);
     renderSites();
   }
 
@@ -541,7 +569,7 @@
       )
       .join("");
     $("#siteCount").textContent =
-      "已选 " + state.sites.filter((s) => s.checked).length + " / " + state.sites.length;
+      T("已选 $1 / $2", state.sites.filter((s) => s.checked).length, state.sites.length);
   }
 
   function scanLogLine(text, kind) {
@@ -575,7 +603,7 @@
   async function startScan() {
     let sites = state.sites.filter((s) => s.checked);
     if (!sites.length) {
-      toast("请先选择要扫描的站点", "err");
+      toast(T("请先选择要扫描的站点"), "err");
       return;
     }
     if (!state.settings || !state.settings.ai) {
@@ -597,16 +625,16 @@
       const before = sites.length;
       const day = 24 * 60 * 60 * 1000;
       sites = sites.filter((s) => !cache[s.host] || Date.now() - (cache[s.host].at || 0) > 3 * day);
-      if (before !== sites.length) scanLogLine("已跳过 " + (before - sites.length) + " 个 3 天内扫描过的站点");
+      if (before !== sites.length) scanLogLine(T("已跳过 $1 个 3 天内扫描过的站点", before - sites.length));
       if (!sites.length) {
-        scanLogLine("没有需要扫描的站点（可取消勾选「跳过 3 天内扫过的站点」）");
+        scanLogLine(T("没有需要扫描的站点（可取消勾选「跳过 3 天内扫过的站点」）"));
         state.scanning = false;
         $("#btnStartScan").disabled = false;
         $("#btnStopScan").disabled = true;
         return;
       }
     }
-    scanLogLine("开始扫描 " + sites.length + " 个站点（" + (opts.mode === "fast" ? "快扫" : "渲染扫描") + "）");
+    scanLogLine(T("开始扫描 $1 个站点（$2）", sites.length, T(opts.mode === "fast" ? "快扫" : "渲染扫描")));
     await saveSettings(
       {
         scanning: {
@@ -627,7 +655,7 @@
   async function runFastScan(sites, opts) {
     const aiEnabled = state.settings.ai.enabled && opts.aiReview;
     if (opts.aiReview && !state.settings.ai.enabled) {
-      scanLogLine("AI 未启用，本次仅做本地启发式分析（在「AI 识别」面板启用后可复核）");
+      scanLogLine(T("AI 未启用，本次仅做本地启发式分析（在「AI 识别」面板启用后可复核）"));
     }
     let done = 0;
     const queue = sites.slice();
@@ -649,7 +677,9 @@
           } else {
             const found = (res.findings || []).length;
             scanLogLine(
-              "√ " + site.host + "：候选 " + res.candidates + " 个" + (found ? "，生成 " + found + " 条待审规则" : "，未发现广告"),
+              "√ " +
+                T("$1：候选 $2 个", site.host, res.candidates) +
+                (found ? T("，生成 $1 条待审规则", found) : T("，未发现广告")),
               found ? "ok" : ""
             );
             addScanFindings(res.findings || []);
@@ -657,7 +687,7 @@
         } catch (e) {
           done++;
           setProgress(done, sites.length);
-          scanLogLine("× " + site.host + "：" + ((e && e.message) || "失败"), "err");
+          scanLogLine("× " + site.host + "：" + ((e && e.message) || T("失败")), "err");
         }
         if (opts.delayMs) await new Promise((r) => setTimeout(r, opts.delayMs));
       }
@@ -670,7 +700,7 @@
     const html = await res.text();
     const doc = new DOMParser().parseFromString(html, "text/html");
     const detected = Detector.collectFromDocument(doc, { threshold: 20, cap: 40, url: site.url });
-    if (!detected.ok) throw new Error(detected.error || "解析失败");
+    if (!detected.ok) throw new Error(detected.error || T("解析失败"));
     const candidates = detected.candidates || [];
     if (!candidates.length) return { candidates: 0, findings: [] };
     if (aiEnabled && state.aiCalls < state.aiBudget) {
@@ -679,7 +709,9 @@
         type: "zz:ai:classify",
         payload: { host: site.host, url: site.url, title: detected.title, candidates },
       });
-      if (!r || !r.ok) return { candidates: candidates.length, findings: [], error: "AI：" + ((r && r.error) || "失败") };
+      if (!r || !r.ok) {
+        return { candidates: candidates.length, findings: [], error: "AI：" + ((r && r.error) || T("失败")) };
+      }
       return { candidates: candidates.length, findings: r.findings || [] };
     }
     const r = await UI.send({
@@ -696,13 +728,13 @@
       state.port.onDisconnect.addListener(() => {
         state.port = null;
         if (state.scanning) {
-          scanLogLine("× 后台连接已断开（服务工作线程可能被浏览器回收），扫描已中断", "err");
+          scanLogLine("× " + T("后台连接已断开（服务工作线程可能被浏览器回收），扫描已中断"), "err");
           finishScan(0, 0);
         }
       });
       state.port.postMessage({ type: "zz:scan:start", payload: Object.assign({ sites }, opts) });
     } catch (e) {
-      scanLogLine("× 无法启动后台扫描：" + e.message, "err");
+      scanLogLine("× " + T("无法启动后台扫描：$1", e.message), "err");
       state.scanning = false;
       $("#btnStartScan").disabled = false;
       $("#btnStopScan").disabled = true;
@@ -714,7 +746,7 @@
     if (msg.type === "zz:scan:started") {
       setProgress(0, msg.payload.total);
       if (msg.payload.skippedByLimit) {
-        scanLogLine("跳过 " + msg.payload.skippedByLimit + " 个站点（超出上限）");
+        scanLogLine(T("跳过 $1 个站点（超出上限）", msg.payload.skippedByLimit));
       }
       return;
     }
@@ -722,9 +754,12 @@
       const p = msg.payload;
       setProgress(p.index, p.total);
       if (p.status === "done") {
-        scanLogLine("√ " + p.site + "：候选 " + (p.candidates || 0) + " 个，生成 " + p.findings + " 条待审规则", p.findings ? "ok" : "");
+        scanLogLine(
+          "√ " + T("$1：候选 $2 个，生成 $3 条待审规则", p.site, p.candidates || 0, p.findings),
+          p.findings ? "ok" : ""
+        );
       } else {
-        scanLogLine("× " + p.site + "：" + (p.error || "失败"), "err");
+        scanLogLine("× " + p.site + "：" + (p.error || T("失败")), "err");
       }
       return;
     }
@@ -735,7 +770,7 @@
     if (msg.type === "zz:scan:done") {
       if (msg.payload.error) scanLogLine("× " + msg.payload.error, "err");
       finishScan(msg.payload.total || 0, msg.payload.done || 0);
-      if (msg.payload.aiCalls) scanLogLine("AI 调用 " + msg.payload.aiCalls + " 次");
+      if (msg.payload.aiCalls) scanLogLine(T("AI 调用 $1 次", msg.payload.aiCalls));
       loadScanResults();
     }
   }
@@ -745,7 +780,7 @@
     const hosts = state.scannedHosts || new Set();
     const list = ((res && res.findings) || []).filter((f) => !hosts.size || hosts.has(f.host));
     const added = addScanFindings(list.slice(0, 200));
-    scanLogLine(added ? "已载入 " + added + " 条待审结果" : "没有新的待审结果");
+    scanLogLine(added ? T("已载入 $1 条待审结果", added) : T("没有新的待审结果"));
     await loadFindings();
   }
 
@@ -753,31 +788,31 @@
     state.scanning = false;
     $("#btnStartScan").disabled = false;
     $("#btnStopScan").disabled = true;
-    $("#btnStopScan").textContent = "停止";
+    $("#btnStopScan").textContent = T("停止");
     setProgress(done || 1, total || 1);
-    scanLogLine("扫描结束");
+    scanLogLine(T("扫描结束"));
   }
 
   async function applyByIds(ids, scope) {
     if (!ids.length) {
-      toast("请先勾选要处理的条目", "err");
+      toast(T("请先勾选要处理的条目"), "err");
       return;
     }
     const res = await UI.send({ type: "zz:findings:apply", payload: { ids, scope } });
     if (res && res.ok && res.rules > 0) {
-      toast("已应用 " + res.rules + " 条规则", "ok");
+      toast(T("已应用 $1 条规则", res.rules), "ok");
       const appliedSet = new Set(ids);
       for (const id of appliedSet) state.scanSelected.delete(id);
       state.scanFindings = state.scanFindings.filter((f) => !appliedSet.has(f.id));
       renderScanFindings();
     } else if (res && res.ok) {
-      toast("这些条目已应用过或规则重复，未新增规则", "err");
+      toast(T("这些条目已应用过或规则重复，未新增规则"), "err");
       const appliedSet = new Set(ids);
       for (const id of appliedSet) state.scanSelected.delete(id);
       state.scanFindings = state.scanFindings.filter((f) => !appliedSet.has(f.id));
       renderScanFindings();
     } else {
-      toast("应用失败：" + ((res && res.error) || "未知错误"), "err");
+      toast(T("应用失败：$1", (res && res.error) || T("未知错误")), "err");
       return;
     }
     await loadFindings();
@@ -790,23 +825,23 @@
     const dnr = res.dnr || {};
     const index = res.index || {};
     const cards = [
-      ["已启用网络规则", dnr.applied || 0],
-      ["可用外观规则", index.cosmetic || 0],
-      ["可拦截域名", index.networkHosts || 0],
-      ["自定义规则", res.rules || 0],
-      ["待审条目", res.findings || 0],
-      ["已统计站点", res.stats || 0],
-      ["存储占用", res.usage ? (res.usage / 1024).toFixed(1) + " KB" : "—"],
-      ["浏览器", (res.browser.firefox ? "Firefox" : res.browser.safari ? "Safari" : "Chromium") + " · v" + res.browser.version],
+      [T("已启用网络规则"), dnr.applied || 0],
+      [T("可用外观规则"), index.cosmetic || 0],
+      [T("可拦截域名"), index.networkHosts || 0],
+      [T("自定义规则"), res.rules || 0],
+      [T("待审条目"), res.findings || 0],
+      [T("已统计站点"), res.stats || 0],
+      [T("存储占用"), res.usage ? (res.usage / 1024).toFixed(1) + " KB" : "—"],
+      [T("浏览器"), (res.browser.firefox ? "Firefox" : res.browser.safari ? "Safari" : "Chromium") + " · v" + res.browser.version],
     ];
     $("#diagGrid").innerHTML = cards
       .map(([label, value]) => '<div class="zz-card"><span class="zz-small zz-muted">' + esc(label) + "</span><br><b>" + esc(value) + "</b></div>")
       .join("");
     $("#engineBadge").textContent =
-      "规则 " + (index.cosmetic + index.network + index.text) + " 条 · 网络生效 " + (dnr.applied || 0) + " 条";
+      T("规则 $1 条 · 网络生效 $2 条", index.cosmetic + index.network + index.text, dnr.applied || 0);
     if (dnr.error && !state.dnrWarned) {
       state.dnrWarned = true;
-      toast("网络规则降级：" + dnr.error, "err");
+      toast(T("网络规则降级：$1", dnr.error), "err");
     }
     loadStats();
   }
@@ -816,11 +851,21 @@
     const rows = (res && res.stats) || [];
     const table = $("#statsTable");
     if (!rows.length) {
-      table.innerHTML = '<tr><td class="zz-muted">暂无数据，浏览网页后这里会累计每个站点的净化统计。</td></tr>';
+      table.innerHTML = '<tr><td class="zz-muted">' + T("暂无数据，浏览网页后这里会累计每个站点的净化统计。") + "</td></tr>";
       return;
     }
     table.innerHTML =
-      "<tr><th>站点</th><th>隐藏元素</th><th>网络拦截</th><th>弹窗</th><th>最后访问</th></tr>" +
+      "<tr><th>" +
+      T("站点") +
+      "</th><th>" +
+      T("隐藏元素") +
+      "</th><th>" +
+      T("网络拦截") +
+      "</th><th>" +
+      T("弹窗") +
+      "</th><th>" +
+      T("最后访问") +
+      "</th></tr>" +
       rows
         .slice(0, 300)
         .map(
@@ -847,7 +892,7 @@
     if (!box) return;
     const items = state.perms || [];
     if (!items.length) {
-      box.innerHTML = '<div class="zz-card zz-small zz-muted">当前浏览器不支持可选权限，相关功能按已授予处理。</div>';
+      box.innerHTML = '<div class="zz-card zz-small zz-muted">' + T("当前浏览器不支持可选权限，相关功能按已授予处理。") + "</div>";
       return;
     }
     box.innerHTML = items
@@ -858,18 +903,27 @@
           '</b><span class="zz-small ' +
           (p.granted ? "" : "zz-muted") +
           '">' +
-          (p.granted ? "已授权" : "未授权") +
+          T(p.granted ? "已授权" : "未授权") +
           "</span></div>" +
           '<div class="zz-small zz-muted" style="margin-top:4px">' +
           esc(p.why) +
           "</div>" +
-          '<div class="zz-small zz-muted" style="margin-top:2px">涉及功能：' +
+          '<div class="zz-small zz-muted" style="margin-top:2px">' +
+          T("涉及功能：") +
           esc((p.features || []).join("、")) +
           "</div>" +
           '<div class="zz-inline" style="margin-top:8px">' +
           (p.granted
-            ? '<button class="zz-btn zz-btn-sm zz-btn-danger" data-perm-remove="' + esc(p.id) + '">收回权限</button>'
-            : '<button class="zz-btn zz-btn-sm zz-btn-primary" data-perm-grant="' + esc(p.id) + '">授予权限</button>') +
+            ? '<button class="zz-btn zz-btn-sm zz-btn-danger" data-perm-remove="' +
+              esc(p.id) +
+              '">' +
+              T("收回权限") +
+              "</button>"
+            : '<button class="zz-btn zz-btn-sm zz-btn-primary" data-perm-grant="' +
+              esc(p.id) +
+              '">' +
+              T("授予权限") +
+              "</button>") +
           "</div></div>"
       )
       .join("");
@@ -885,15 +939,16 @@
   /* ---------------- 规则订阅 ---------------- */
 
   function subStatusText(item) {
-    if (item.lastStatus === "error") return '<span class="err">失败：' + esc(item.error || "未知错误") + "</span>";
-    if (!item.lastUpdatedAt) return '<span class="zz-muted">尚未更新</span>';
+    if (item.lastStatus === "error") {
+      return '<span class="err">' + esc(T("失败：$1", item.error || T("未知错误"))) + "</span>";
+    }
+    if (!item.lastUpdatedAt) return '<span class="zz-muted">' + T("尚未更新") + "</span>";
     const extra = [];
-    if (item.truncated) extra.push("已按上限截断");
-    if (item.usedMirror) extra.push("走了备用地址");
+    if (item.truncated) extra.push(T("已按上限截断"));
+    if (item.usedMirror) extra.push(T("走了备用地址"));
     if (item.listVersion) extra.push("v" + item.listVersion);
     return (
-      "更新于 " +
-      esc(UI.fmtTime(item.lastUpdatedAt)) +
+      T("更新于 $1", esc(UI.fmtTime(item.lastUpdatedAt))) +
       (extra.length ? '<span class="zz-muted"> · ' + esc(extra.join(" · ")) + "</span>" : "")
     );
   }
@@ -902,15 +957,18 @@
     const box = $("#subsList");
     if (!box) return;
     if (!state.subs.length) {
-      box.innerHTML = '<div class="zz-card zz-small zz-muted">还没有订阅。可以先从上面的预设里添加 EasyList 或 anti-AD。</div>';
+      box.innerHTML = '<div class="zz-card zz-small zz-muted">' + T("还没有订阅。可以先从上面的预设里添加 EasyList 或 anti-AD。") + "</div>";
     } else {
       box.innerHTML = state.subs
         .map((item) => {
           const counts =
             (item.ruleCount || 0) +
-            " 条" +
+            " " +
+            T("条") +
             (item.networkCount !== undefined
-              ? '<span class="zz-muted"> （网络 ' + (item.networkCount || 0) + " / 外观 " + (item.cosmeticCount || 0) + "）</span>"
+              ? '<span class="zz-muted"> ' +
+                T("（网络 $1 / 外观 $2）", item.networkCount || 0, item.cosmeticCount || 0) +
+                "</span>"
               : "");
           return (
             '<div class="zz-card" style="margin-bottom:8px">' +
@@ -934,10 +992,14 @@
             '<div class="zz-inline" style="margin-top:8px">' +
             '<button class="zz-btn zz-btn-sm" data-sub-update="' +
             esc(item.id) +
-            '">立即更新</button>' +
+            '">' +
+            T("立即更新") +
+            "</button>" +
             '<button class="zz-btn zz-btn-sm zz-btn-danger" data-sub-remove="' +
             esc(item.id) +
-            '">删除</button>' +
+            '">' +
+            T("删除") +
+            "</button>" +
             "</div></div>"
           );
         })
@@ -947,7 +1009,7 @@
     const count = $("#subsCount");
     if (count) {
       count.textContent =
-        stats.total + " 个订阅，已启用 " + stats.enabled + " 个，共 " + stats.rules + " 条规则";
+        T("$1 个订阅，已启用 $2 个，共 $3 条规则", stats.total, stats.enabled, stats.rules);
     }
   }
 
@@ -966,11 +1028,11 @@
         esc(p.name) +
         " — " +
         esc(p.desc) +
-        (taken ? "（已添加）" : "") +
+        (taken ? T("（已添加）") : "") +
         "</option>"
       );
     });
-    sel.innerHTML = '<option value="">选择预设订阅源…</option>' + options.join("");
+    sel.innerHTML = '<option value="">' + T("选择预设订阅源…") + "</option>" + options.join("");
   }
 
   function fillSubConfig() {
@@ -982,7 +1044,7 @@
     $("#subsDnrBudget").value = state.dnrBudget || 4500;
     const status = $("#subsStatus");
     if (status) {
-      status.textContent = c.lastCheckAt ? "上次检查：" + UI.fmtTime(c.lastCheckAt) : "尚未检查更新";
+      status.textContent = c.lastCheckAt ? T("上次检查：$1", UI.fmtTime(c.lastCheckAt)) : T("尚未检查更新");
     }
   }
 
@@ -1004,26 +1066,26 @@
     const btn = $("#btnUpdateSubs");
     if (btn) {
       btn.disabled = on;
-      btn.textContent = on ? text || "更新中…" : "立即更新全部";
+      btn.textContent = on ? text || T("更新中…") : T("立即更新全部");
     }
   }
 
   async function addSub(payload) {
     const out = $("#subsAddResult");
-    if (out) out.textContent = "正在下载并解析…";
+    if (out) out.textContent = T("正在下载并解析…");
     const res = await UI.send({ type: "zz:subs:add", payload });
     if (!res || !res.ok) {
-      if (out) out.innerHTML = '<span class="err">' + esc((res && res.error) || "添加失败") + "</span>";
-      toast((res && res.error) || "添加失败", "err");
+      if (out) out.innerHTML = '<span class="err">' + esc((res && res.error) || T("添加失败")) + "</span>";
+      toast((res && res.error) || T("添加失败"), "err");
       return;
     }
     const r = res.result || {};
     if (out) {
       out.innerHTML = r.ok
-        ? "已添加：解析 " + (r.parsed || 0) + " 条，生效 " + (r.added || 0) + " 条" + (r.truncated ? "（已按上限截断）" : "")
-        : '<span class="err">已添加，但首次更新失败：' + esc(r.error || "") + "</span>";
+        ? T("已添加：解析 $1 条，生效 $2 条", r.parsed || 0, r.added || 0) + (r.truncated ? T("（已按上限截断）") : "")
+        : '<span class="err">' + T("已添加，但首次更新失败：$1", esc(r.error || "")) + "</span>";
     }
-    toast(r.ok ? "订阅已添加" : "订阅已添加，但更新失败", r.ok ? "ok" : "err");
+    toast(T(r.ok ? "订阅已添加" : "订阅已添加，但更新失败"), r.ok ? "ok" : "err");
     $("#subsUrl").value = "";
     $("#subsName").value = "";
     await loadSubs();
@@ -1040,6 +1102,11 @@
 
     $("#profileSelect").addEventListener("change", (event) => {
       saveSettings({ profile: event.target.value });
+    });
+
+    $("#langSelect").addEventListener("change", async (event) => {
+      await saveSettings({ lang: event.target.value }, true);
+      location.reload();
     });
 
     $("#autoFallback").addEventListener("change", (event) => {
@@ -1078,15 +1145,15 @@
     });
     $("#btnAutoRun").addEventListener("click", async () => {
       if (!(await UI.ensurePermission("history"))) {
-        return toast("自主增强需要「浏览记录」权限，仅在本地按域名统计访问次数", "err");
+        return toast(T("自主增强需要「浏览记录」权限，仅在本地按域名统计访问次数"), "err");
       }
       $("#btnAutoRun").disabled = true;
-      $("#autoState").textContent = "启动中…";
+      $("#autoState").textContent = T("启动中…");
       const res = await UI.send({ type: "zz:autopilot:run" });
       if (!res || !res.ok) {
-        toast("自主增强启动失败：" + ((res && res.error) || "未知错误"), "err");
+        toast(T("自主增强启动失败：$1", (res && res.error) || T("未知错误")), "err");
       } else {
-        toast("自主增强完成：站点 " + res.sites + "，应用 " + res.applied + " 条", "ok");
+        toast(T("自主增强完成：站点 $1，应用 $2 条", res.sites, res.applied), "ok");
       }
       refreshAutopilot();
       loadLearn();
@@ -1108,19 +1175,19 @@
       if (!btn) return;
       btn.disabled = true;
       const res = await UI.send({ type: "zz:learn:apply", payload: { selector: btn.getAttribute("data-learn-apply") } });
-      if (res && res.ok) toast("已升级为通用规则", "ok");
-      else toast("升级失败：" + ((res && res.error) || "未知错误"), "err");
+      if (res && res.ok) toast(T("已升级为通用规则"), "ok");
+      else toast(T("升级失败：$1", (res && res.error) || T("未知错误")), "err");
       loadLearn();
     });
 
     $("#videoDir").addEventListener("change", (event) => {
-      saveSettings({ toolbox: { videoDir: event.target.value.trim() || "ZeroZen/视频" } });
+      saveSettings({ toolbox: { videoDir: event.target.value.trim() || T("ZeroZen/视频") } });
     });
     $("#imageDir").addEventListener("change", (event) => {
-      saveSettings({ toolbox: { imageDir: event.target.value.trim() || "ZeroZen/图片" } });
+      saveSettings({ toolbox: { imageDir: event.target.value.trim() || T("ZeroZen/图片") } });
     });
     $("#articleDir").addEventListener("change", (event) => {
-      saveSettings({ toolbox: { articleDir: event.target.value.trim() || "ZeroZen/阅读" } });
+      saveSettings({ toolbox: { articleDir: event.target.value.trim() || T("ZeroZen/阅读") } });
     });
     $("#dlConcurrency").addEventListener("change", (event) => {
       const v = Math.max(1, Math.min(8, Number(event.target.value) || 4));
@@ -1159,21 +1226,20 @@
     $("#btnImportText").addEventListener("click", async () => {
       const text = $("#importText").value;
       if (!text.trim()) {
-        toast("请先粘贴规则内容", "err");
+        toast(T("请先粘贴规则内容"), "err");
         return;
       }
       const res = await UI.send({ type: "zz:rules:add", payload: { text, source: "import" } });
       if (res && res.ok) {
         $("#importResult").textContent =
-          "导入成功 " + res.added + " 条，重复 " + res.duplicates + " 条，跳过 " +
-          (res.skippedCount || 0) + " 条" +
+          T("导入成功 $1 条，重复 $2 条，跳过 $3 条", res.added, res.duplicates, res.skippedCount || 0) +
           (res.skipped && res.skipped.length
-            ? "；示例：" + res.skipped.slice(0, 3).map((s) => "第" + s.line + "行 " + s.reason).join("；")
+            ? T("；示例：$1", res.skipped.slice(0, 3).map((s) => T("第 $1 行 $2", s.line, s.reason)).join("；"))
             : "");
-        toast("导入完成", "ok");
+        toast(T("导入完成"), "ok");
         await loadRules();
       } else {
-        toast("导入失败：" + ((res && res.error) || "未知错误"), "err");
+        toast(T("导入失败：$1", (res && res.error) || T("未知错误")), "err");
       }
     });
 
@@ -1181,14 +1247,14 @@
       const file = await UI.pickFile(".json,.txt,.list");
       if (!file) return;
       $("#importText").value = file.text.slice(0, 200000);
-      toast("已读取 " + file.name + "，点击「导入文本」生效");
+      toast(T("已读取 $1，点击「导入文本」生效", file.name));
     });
 
     $("#btnExportNative").addEventListener("click", async () => {
       const res = await UI.send({ type: "zz:rules:export", payload: { format: "native", source: state.ruleSource === "all" ? "all" : state.ruleSource } });
       if (res && res.ok) {
         UI.download("zerozen-rules-" + Date.now() + ".json", res.text);
-        toast("已导出 " + res.count + " 条规则", "ok");
+        toast(T("已导出 $1 条规则", res.count), "ok");
       }
     });
 
@@ -1196,19 +1262,19 @@
       const res = await UI.send({ type: "zz:rules:export", payload: { format: "adblock", source: state.ruleSource === "all" ? "all" : state.ruleSource } });
       if (res && res.ok) {
         UI.download("zerozen-rules-" + Date.now() + ".txt", res.text);
-        toast("已导出 Adblock 格式 " + res.count + " 条", "ok");
+        toast(T("已导出 Adblock 格式 $1 条", res.count), "ok");
       }
     });
 
     $("#btnCopyRules").addEventListener("click", async () => {
       const res = await UI.send({ type: "zz:rules:export", payload: { format: "native" } });
-      if (res && res.ok && (await UI.copy(res.text))) toast("规则 JSON 已复制到剪贴板", "ok");
+      if (res && res.ok && (await UI.copy(res.text))) toast(T("规则 JSON 已复制到剪贴板"), "ok");
     });
 
     $("#btnClearUser").addEventListener("click", async () => {
-      if (!confirm("确定清空全部自定义/AI/导入规则？内置规则包不受影响。")) return;
+      if (!confirm(T("确定清空全部自定义/AI/导入规则？内置规则包不受影响。"))) return;
       await UI.send({ type: "zz:rules:clear", payload: {} });
-      toast("已清空自定义规则", "ok");
+      toast(T("已清空自定义规则"), "ok");
       await loadRules();
     });
 
@@ -1225,21 +1291,22 @@
       const btn = event.target.closest("button[data-del]");
       if (!btn) return;
       await UI.send({ type: "zz:rules:remove", payload: { ids: [btn.getAttribute("data-del")] } });
-      toast("规则已删除", "ok");
+      toast(T("规则已删除"), "ok");
       await loadRules();
     });
 
     $("#btnSaveAi").addEventListener("click", saveAi);
     $("#btnTestAi").addEventListener("click", async () => {
-      $("#aiTestResult").textContent = "测试中…";
+      $("#aiTestResult").textContent = T("测试中…");
       await saveAi();
       const res = await UI.send({ type: "zz:ai:test" });
-      $("#aiTestResult").textContent = res && res.ok ? "连接成功（" + res.ms + "ms）" : "失败：" + ((res && res.error) || "未知错误");
+      $("#aiTestResult").textContent =
+        res && res.ok ? T("连接成功（$1ms）", res.ms) : T("失败：$1", (res && res.error) || T("未知错误"));
     });
 
     $("#btnLoadBookmarks").addEventListener("click", async () => {
       if (!(await UI.ensurePermission("bookmarks"))) {
-        return toast("读取收藏夹需要「收藏夹」权限，可在统计与诊断页随时收回", "err");
+        return toast(T("读取收藏夹需要「收藏夹」权限，可在统计与诊断页随时收回"), "err");
       }
       loadBookmarks($("#folderSelect").value);
     });
@@ -1279,7 +1346,7 @@
       const idx = Number(input.getAttribute("data-site"));
       if (state.sites[idx]) state.sites[idx].checked = input.checked;
       $("#siteCount").textContent =
-        "已选 " + state.sites.filter((s) => s.checked).length + " / " + state.sites.length;
+        T("已选 $1 / $2", state.sites.filter((s) => s.checked).length, state.sites.length);
     });
 
     $("#btnStartScan").addEventListener("click", startScan);
@@ -1287,7 +1354,7 @@
       state.scanning = false;
       if (state.port) state.port.postMessage({ type: "zz:scan:stop" });
       else await UI.send({ type: "zz:scan:stop" });
-      scanLogLine("已请求停止");
+      scanLogLine(T("已请求停止"));
       $("#btnStopScan").disabled = true;
     });
 
@@ -1316,9 +1383,9 @@
     $("#btnDismissSel").addEventListener("click", () => dismissIds(selectedFindingIds($("#findingList"))));
     $("#btnDeleteSel").addEventListener("click", async () => {
       const ids = selectedFindingIds($("#findingList"));
-      if (!ids.length) return toast("请先勾选条目", "err");
+      if (!ids.length) return toast(T("请先勾选条目"), "err");
       await UI.send({ type: "zz:findings:remove", payload: { ids } });
-      toast("已删除 " + ids.length + " 条记录", "ok");
+      toast(T("已删除 $1 条记录", ids.length), "ok");
       await loadFindings();
     });
     $("#findingList").addEventListener("click", async (event) => {
@@ -1334,7 +1401,7 @@
       if (input.checked) state.scanSelected.add(id);
       else state.scanSelected.delete(id);
       $("#applyInfo").textContent =
-        "显示 " + state.scanFindings.length + " 条，已选 " + state.scanSelected.size + " 条";
+        T("显示 $1 条，已选 $2 条", state.scanFindings.length, state.scanSelected.size);
     });
     $("#scanFindings").addEventListener("click", async (event) => {
       const btn = event.target.closest("button[data-finding-del]");
@@ -1347,7 +1414,12 @@
 
     $("#btnSyncDnr").addEventListener("click", async () => {
       const res = await UI.send({ type: "zz:dnr:sync" });
-      toast(res && !res.error ? "网络规则已同步：" + (res.applied || 0) + " 条" : "同步降级：" + ((res && res.error) || "未知"), res && !res.error ? "ok" : "err");
+      toast(
+        res && !res.error
+          ? T("网络规则已同步：$1 条", res.applied || 0)
+          : T("同步降级：$1", (res && res.error) || T("未知")),
+        res && !res.error ? "ok" : "err"
+      );
       renderDiag();
     });
     $("#btnRefreshDiag").addEventListener("click", renderDiag);
@@ -1356,19 +1428,19 @@
       if (res && res.ok) UI.download("zerozen-all-rules.json", res.text);
     });
     $("#btnResetStats").addEventListener("click", async () => {
-      if (!confirm("清除所有站点的统计计数与扫描记录？")) return;
+      if (!confirm(T("清除所有站点的统计计数与扫描记录？"))) return;
       await UI.send({ type: "zz:stats:reset" });
-      toast("统计已清除", "ok");
+      toast(T("统计已清除"), "ok");
       await renderDiag();
     });
     $("#btnResetAll").addEventListener("click", async () => {
-      if (!confirm("恢复默认设置？自定义规则与待审记录会保留。")) return;
+      if (!confirm(T("恢复默认设置？自定义规则与待审记录会保留。"))) return;
       const res = await UI.send({ type: "zz:settings:reset" });
       if (res && res.ok) {
-        toast("已恢复默认设置，正在刷新…", "ok");
+        toast(T("已恢复默认设置，正在刷新…"), "ok");
         setTimeout(() => location.reload(), 600);
       } else {
-        toast("重置失败：" + ((res && res.error) || "未知错误"), "err");
+        toast(T("重置失败：$1", (res && res.error) || T("未知错误")), "err");
       }
     });
 
@@ -1377,7 +1449,7 @@
       if (grant) {
         const id = grant.getAttribute("data-perm-grant");
         const ok = await UI.ensurePermission(id);
-        toast(ok ? "权限已授予" : "未授予权限", ok ? "ok" : "err");
+        toast(T(ok ? "权限已授予" : "未授予权限"), ok ? "ok" : "err");
         await loadPerms();
         return;
       }
@@ -1387,7 +1459,7 @@
         if (res && res.ok) {
           state.perms = res.items || state.perms;
           renderPerms();
-          toast(res.removed ? "权限已收回" : "收回失败", res.removed ? "ok" : "err");
+          toast(T(res.removed ? "权限已收回" : "收回失败"), res.removed ? "ok" : "err");
         }
       }
     });
@@ -1403,10 +1475,10 @@
         },
       });
       if (res && res.ok) {
-        toast("订阅设置已保存", "ok");
+        toast(T("订阅设置已保存"), "ok");
         await loadSubs();
       } else {
-        toast("保存失败", "err");
+        toast(T("保存失败"), "err");
       }
     });
 
@@ -1416,16 +1488,19 @@
       const res = await UI.send({ type: "zz:subs:update", payload: { force: true } });
       subBusy(false);
       if (res && res.ok) {
-        toast("更新完成：" + res.updated + " 个已更新，" + res.notModified + " 个无变化，" + res.failed + " 个失败", res.failed ? "err" : "ok");
+        toast(
+          T("更新完成：$1 个已更新，$2 个无变化，$3 个失败", res.updated, res.notModified, res.failed),
+          res.failed ? "err" : "ok"
+        );
       } else {
-        toast((res && res.error) || "更新失败", "err");
+        toast((res && res.error) || T("更新失败"), "err");
       }
       await loadSubs();
     });
 
     $("#btnAddPreset").addEventListener("click", async () => {
       const id = $("#subsPreset").value;
-      if (!id) return toast("请先选择一个预设订阅源", "err");
+      if (!id) return toast(T("请先选择一个预设订阅源"), "err");
       const preset = state.subPresets.find((p) => p.id === id);
       if (!preset) return;
       await addSub({ url: preset.url, name: preset.name, presetId: preset.id });
@@ -1433,7 +1508,7 @@
 
     $("#btnAddSub").addEventListener("click", async () => {
       const url = $("#subsUrl").value.trim();
-      if (!url) return toast("请填写订阅地址", "err");
+      if (!url) return toast(T("请填写订阅地址"), "err");
       await addSub({ url, name: $("#subsName").value.trim() });
     });
 
@@ -1441,13 +1516,13 @@
       const updateBtn = event.target.closest("[data-sub-update]");
       if (updateBtn) {
         updateBtn.disabled = true;
-        updateBtn.textContent = "更新中…";
+        updateBtn.textContent = T("更新中…");
         const res = await UI.send({
           type: "zz:subs:update",
           payload: { id: updateBtn.getAttribute("data-sub-update"), force: true },
         });
-        if (res && res.ok) toast(res.notModified ? "列表没有变化" : "已更新 " + (res.added || 0) + " 条规则", "ok");
-        else toast((res && res.error) || "更新失败", "err");
+        if (res && res.ok) toast(res.notModified ? T("列表没有变化") : T("已更新 $1 条规则", res.added || 0), "ok");
+        else toast((res && res.error) || T("更新失败"), "err");
         await loadSubs();
         return;
       }
@@ -1455,9 +1530,9 @@
       if (removeBtn) {
         const id = removeBtn.getAttribute("data-sub-remove");
         const item = state.subs.find((s) => s.id === id);
-        if (!confirm("删除订阅「" + (item ? item.name : id) + "」及其全部规则？")) return;
+        if (!confirm(T("删除订阅「$1」及其全部规则？", item ? item.name : id))) return;
         const res = await UI.send({ type: "zz:subs:remove", payload: { id } });
-        if (res && res.ok) toast("订阅已删除", "ok");
+        if (res && res.ok) toast(T("订阅已删除"), "ok");
         await loadSubs();
       }
     });
@@ -1469,7 +1544,7 @@
         type: "zz:subs:set",
         payload: { id: input.getAttribute("data-sub-toggle"), enabled: input.checked },
       });
-      if (res && res.ok) toast(input.checked ? "订阅已启用" : "订阅已停用", "ok");
+      if (res && res.ok) toast(T(input.checked ? "订阅已启用" : "订阅已停用"), "ok");
       await loadSubs();
     });
   }
@@ -1483,9 +1558,9 @@
   }
 
   async function dismissIds(ids) {
-    if (!ids.length) return toast("请先勾选条目", "err");
+    if (!ids.length) return toast(T("请先勾选条目"), "err");
     await UI.send({ type: "zz:findings:dismiss", payload: { ids } });
-    toast("已忽略 " + ids.length + " 条", "ok");
+    toast(T("已忽略 $1 条", ids.length), "ok");
     const set = new Set(ids);
     for (const id of set) state.scanSelected.delete(id);
     state.scanFindings = state.scanFindings.filter((f) => !set.has(f.id));
@@ -1494,6 +1569,7 @@
   }
 
   async function init() {
+    await UI.initLocale();
     bind();
     await loadConfig();
     await loadRules();
@@ -1505,7 +1581,7 @@
     if (hash && $(`[data-tab="${hash}"]`)) switchTab(hash);
     const status = await UI.send({ type: "zz:scan:status" });
     if (status && status.running) {
-      toast("后台扫描进行中：" + status.done + "/" + status.total + "，可打开批量扫描查看", "ok");
+      toast(T("后台扫描进行中：$1/$2，可打开批量扫描查看", status.done, status.total), "ok");
     }
     setInterval(async () => {
       if (state.tab === "stats") await renderDiag();

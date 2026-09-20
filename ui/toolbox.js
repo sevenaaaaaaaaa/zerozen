@@ -3,6 +3,7 @@
   const $raw = UI.$;
   const $ = (sel) => (typeof sel === "string" && sel[0] !== "#" && sel[0] !== "." && sel[0] !== "[" ? $raw("#" + sel) : $raw(sel));
   const $$ = UI.$$;
+  const T = UI.T;
   const api = globalThis.ZZ.browser;
 
   const state = {
@@ -67,7 +68,7 @@
 
   async function download(url, filename) {
     const granted = await UI.ensurePermission("downloads");
-    if (!granted) throw new Error("需要「下载」权限才能保存文件");
+    if (!granted) throw new Error(T("需要「下载」权限才能保存文件"));
     const opts = { url, filename, saveAs: false, conflictAction: "uniquify" };
     return new Promise((resolve, reject) => {
       try {
@@ -92,8 +93,8 @@
     const settings = await UI.send({ type: "zz:settings:get" });
     if (settings && settings.ok) {
       state.settings = settings.settings;
-      $("#videoDir").value = (state.settings.toolbox && state.settings.toolbox.videoDir) || "ZeroZen/视频";
-      $("#imageDir").value = (state.settings.toolbox && state.settings.toolbox.imageDir) || "ZeroZen/图片";
+      $("#videoDir").value = (state.settings.toolbox && state.settings.toolbox.videoDir) || T("ZeroZen/视频");
+      $("#imageDir").value = (state.settings.toolbox && state.settings.toolbox.imageDir) || T("ZeroZen/图片");
       $("#tsAsMp4").checked = !!(state.settings.toolbox && state.settings.toolbox.tsAsMp4);
     }
     const res = await UI.send({ type: "zz:toolbox:context", payload: { tabId: ctxTabId() } });
@@ -104,14 +105,14 @@
       $("#ctxLabel").textContent = (res.title || res.url || "").slice(0, 48);
       $("#videoTitle").value = state.title;
     } else {
-      $("#ctxLabel").textContent = "找不到网页，请在网页上打开工具箱";
+      $("#ctxLabel").textContent = T("找不到网页，请在网页上打开工具箱");
     }
     const payUrl = (state.settings && state.settings.honest && state.settings.honest.url) || "";
     $("#payLine").innerHTML =
-      "视频嗅探下载、图片发现、网盘资源收集均采用 <b>诚实付费</b>：免费使用，觉得好用请支持作者。" +
+      T("视频嗅探下载、图片发现、网盘资源收集均采用 <b>诚实付费</b>：免费使用，觉得好用请支持作者。") +
       (payUrl
-        ? ' <a href="' + payUrl + '" target="_blank" rel="noreferrer">前往付费/打赏</a>'
-        : ' <span style="color:#d97706">（付费链接可在控制台「统计与诊断」里配置）</span>');
+        ? ' <a href="' + payUrl + '" target="_blank" rel="noreferrer">' + T("前往付费/打赏") + "</a>"
+        : ' <span style="color:#d97706">' + T("（付费链接可在控制台「统计与诊断」里配置）") + "</span>");
   }
 
   // ---------- tabs ----------
@@ -128,13 +129,17 @@
     if (!state.streams.length) {
       box.innerHTML =
         '<div class="zz-card" style="padding:12px">' +
-        "<b>还没有发现视频流</b>" +
+        "<b>" + T("还没有发现视频流") + "</b>" +
         '<ol class="zz-small" style="margin:8px 0 0 18px;color:inherit">' +
-        "<li>回到刚才的网页，先点一下播放（播几秒即可）</li>" +
-        "<li>再回到这里点「刷新嗅探」</li>" +
-        "<li>勾选流后点「下载选中」，文件会进浏览器下载目录的 ZeroZen/视频</li>" +
+        "<li>" + T("回到刚才的网页，先点一下播放（播几秒即可）") + "</li>" +
+        "<li>" + T("再回到这里点「刷新嗅探」") + "</li>" +
+        "<li>" + T("勾选流后点「下载选中」，文件会进浏览器下载目录的 ZeroZen/视频") + "</li>" +
         "</ol>" +
-        '<div class="zz-tool-row" style="margin-top:10px"><input type="text" id="manualUrl" placeholder="或手动粘贴 m3u8 地址" style="flex:1;min-width:280px" /><button class="zz-btn zz-btn-sm" id="btnAddUrl">添加</button></div>' +
+        '<div class="zz-tool-row" style="margin-top:10px"><input type="text" id="manualUrl" placeholder="' +
+        T("或手动粘贴 m3u8 地址") +
+        '" style="flex:1;min-width:280px" /><button class="zz-btn zz-btn-sm" id="btnAddUrl">' +
+        T("添加") +
+        "</button></div>" +
         "</div>";
       const addEmpty = box.querySelector("#btnAddUrl");
       if (addEmpty) {
@@ -160,7 +165,11 @@
         );
       })
       .join("") +
-      '<div class="zz-tool-row"><input type="text" id="manualUrl" placeholder="手动粘贴 m3u8 地址" style="flex:1;min-width:280px" /><button class="zz-btn zz-btn-sm" id="btnAddUrl">添加</button></div>';
+      '<div class="zz-tool-row"><input type="text" id="manualUrl" placeholder="' +
+        T("手动粘贴 m3u8 地址") +
+        '" style="flex:1;min-width:280px" /><button class="zz-btn zz-btn-sm" id="btnAddUrl">' +
+        T("添加") +
+        "</button></div>";
     box.querySelectorAll("input[data-stream]").forEach((cb) =>
       cb.addEventListener("change", () => {
         const s = state.streams[Number(cb.getAttribute("data-stream"))];
@@ -187,7 +196,7 @@
       proxy("zz:toolbox:streams"),
     ]);
     const map = new Map();
-    for (const s of (sniff && sniff.streams) || []) map.set(s.url, { url: s.url, kind: s.kind, note: "网络请求", hits: s.hits || 1 });
+    for (const s of (sniff && sniff.streams) || []) map.set(s.url, { url: s.url, kind: s.kind, note: T("网络请求"), hits: s.hits || 1 });
     for (const s of (dom && dom.streams) || []) if (!map.has(s.url)) map.set(s.url, s);
     const score = (s) => {
       let n = s.hits || 0;
@@ -199,7 +208,7 @@
     state.streams = Array.from(map.values()).sort((a, b) => score(b) - score(a));
     if (!state.selected.size && state.streams.length) state.selected.add(state.streams[0].url);
     renderStreams();
-    log("videoLog", "共 " + state.streams.length + " 个流");
+    log("videoLog", T("共 $1 个流", state.streams.length));
   }
 
   $("#btnStreams").addEventListener("click", refreshStreams);
@@ -209,7 +218,7 @@
       type: "zz:toolbox:fetch",
       payload: { url, as: as || "text", referrer: state.url || "" },
     });
-    if (!res || !res.ok) throw new Error((res && res.error) || "后台抓取失败");
+    if (!res || !res.ok) throw new Error((res && res.error) || T("后台抓取失败"));
     return res;
   }
 
@@ -309,7 +318,7 @@
     let mediaUrl = url;
     if (/#EXT-X-STREAM-INF/.test(text)) {
       const variants = parseMaster(text, url);
-      if (!variants.length) throw new Error("主播放列表为空");
+      if (!variants.length) throw new Error(T("主播放列表为空"));
       let pick = variants[0];
       for (const v of variants.slice(0, 3)) {
         try {
@@ -321,15 +330,15 @@
           }
         } catch (e) {}
       }
-      onProgress("选择清晰度：" + (pick.resolution || pick.bandwidth + "bps"));
+      onProgress(T("选择清晰度：$1", pick.resolution || pick.bandwidth + "bps"));
       mediaUrl = pick.url;
       text = await fetchText(mediaUrl);
     }
     const media = parseMedia(text, mediaUrl);
-    if (!media.segments.length) throw new Error("没有解析到分片");
+    if (!media.segments.length) throw new Error(T("没有解析到分片"));
     const parts = [];
     if (media.map) {
-      onProgress("下载初始化分片…");
+      onProgress(T("下载初始化分片…"));
       parts.push(await fetchBuf(media.map));
     }
     let done = 0;
@@ -337,7 +346,7 @@
     const queue = media.segments.map((s, i) => ({ ...s, i }));
     const workers = Array.from({ length: Math.max(1, Math.min(8, concurrency)) }, async () => {
       while (queue.length) {
-        if (isCancelled()) throw new Error("已取消");
+        if (isCancelled()) throw new Error(T("已取消"));
         const seg = queue.shift();
         let buf = await fetchBuf(seg.url);
         if (seg.key && seg.key.uri) {
@@ -347,7 +356,7 @@
         }
         parts[seg.i + (media.map ? 1 : 0)] = buf;
         done++;
-        if (done % 5 === 0 || done === total) onProgress("分片 " + done + "/" + total);
+        if (done % 5 === 0 || done === total) onProgress(T("分片 $1/$2", done, total));
       }
     });
     await Promise.all(workers);
@@ -366,15 +375,15 @@
   $("#btnM3u8").addEventListener("click", async () => {
     const urls = Array.from(state.selected);
     if (!urls.length) {
-      setLog("videoLog", "请先勾选一个流");
+      setLog("videoLog", T("请先勾选一个流"));
       return;
     }
     const title = sanitize($("#videoTitle").value || state.title || "video");
-    const dir = ($("#videoDir").value || "ZeroZen/视频").replace(/\/+$/, "");
+    const dir = ($("#videoDir").value || T("ZeroZen/视频")).replace(/\/+$/, "");
     const tsAsMp4 = $("#tsAsMp4").checked;
     state.cancel = false;
     $("#btnM3u8").disabled = true;
-    setLog("videoLog", "开始下载：" + urls.length + " 个流");
+    setLog("videoLog", T("开始下载：$1 个流", urls.length));
     try {
       for (let i = 0; i < urls.length; i++) {
         const url = urls[i];
@@ -389,16 +398,20 @@
         const blobUrl = URL.createObjectURL(blob);
         await download(blobUrl, dir + "/" + name);
         setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-        log("videoLog", "已保存 " + dir + "/" + name + "（" + Math.round(blob.size / 1048576 * 10) / 10 + " MB）");
+        log("videoLog", T("已保存 $1（$2 MB）", dir + "/" + name, Math.round((blob.size / 1048576) * 10) / 10));
       }
     } catch (e) {
-      log("videoLog", "× 失败：" + ((e && e.message) || e));
+      log("videoLog", "× " + T("失败：$1", (e && e.message) || e));
     } finally {
       $("#btnM3u8").disabled = false;
     }
   });
 
   // ---------- images ----------
+  function updateImgInfo() {
+    $("#imgInfo").textContent = T("共发现 $1 张，已选 $2 张", state.images.length, state.imageSelected.size);
+  }
+
   function renderImages() {
     const grid = $("#imageGrid");
     const formats = new Set(state.images.map((i) => i.format));
@@ -418,7 +431,7 @@
       );
     if (!state.formats.size) formats.forEach((f) => state.formats.add(f));
     renderImageGrid();
-    $("#imgInfo").textContent = "共发现 " + state.images.length + " 张，已选 " + state.imageSelected.size + " 张";
+    updateImgInfo();
   }
 
   function visibleImages() {
@@ -450,16 +463,16 @@
         const idx = Number(cb.getAttribute("data-img"));
         if (cb.checked) state.imageSelected.add(idx);
         else state.imageSelected.delete(idx);
-        $("#imgInfo").textContent = "共发现 " + state.images.length + " 张，已选 " + state.imageSelected.size + " 张";
+        updateImgInfo();
       })
     );
-    $("#imgInfo").textContent = "共发现 " + state.images.length + " 张，已选 " + state.imageSelected.size + " 张";
+    updateImgInfo();
   }
 
   $("#btnImages").addEventListener("click", async () => {
     const res = await proxy("zz:toolbox:images");
     if (!res || !res.ok) {
-      setLog("imageLog", "扫描失败：" + ((res && res.error) || "无法连接页面"));
+      setLog("imageLog", T("扫描失败：$1", (res && res.error) || T("无法连接页面")));
       return;
     }
     state.images = res.images || [];
@@ -467,7 +480,7 @@
     state.formats.clear();
     if (res.title && !$("#videoTitle").value) $("#videoTitle").value = res.title;
     renderImages();
-    setLog("imageLog", "扫描到 " + state.images.length + " 张图片");
+    setLog("imageLog", T("扫描到 $1 张图片", state.images.length));
   });
 
   $("#btnImgAll").addEventListener("click", () => {
@@ -481,13 +494,13 @@
   $("#imgMin").addEventListener("change", renderImageGrid);
 
   $("#btnImgDownload").addEventListener("click", async () => {
-    const dir = ($("#imageDir").value || "ZeroZen/图片").replace(/\/+$/, "");
+    const dir = ($("#imageDir").value || T("ZeroZen/图片")).replace(/\/+$/, "");
     const list = Array.from(state.imageSelected).map((i) => state.images[i]).filter(Boolean);
     if (!list.length) {
-      setLog("imageLog", "请先勾选图片");
+      setLog("imageLog", T("请先勾选图片"));
       return;
     }
-    setLog("imageLog", "开始下载 " + list.length + " 张…");
+    setLog("imageLog", T("开始下载 $1 张…", list.length));
     let ok = 0;
     for (const img of list) {
       const base = (img.url.split(/[?#]/)[0].split("/").pop() || "image").slice(0, 60);
@@ -495,19 +508,19 @@
       try {
         await download(img.url, dir + "/" + name);
         ok++;
-        if (ok % 10 === 0) log("imageLog", "已下载 " + ok + "/" + list.length);
+        if (ok % 10 === 0) log("imageLog", T("已下载 $1/$2", ok, list.length));
       } catch (e) {
         log("imageLog", "× " + name + "：" + ((e && e.message) || e));
       }
     }
-    log("imageLog", "完成：成功 " + ok + " / " + list.length);
+    log("imageLog", T("完成：成功 $1 / $2", ok, list.length));
   });
 
   // ---------- netdisk ----------
   function renderNetdisk() {
     const box = $("#netdiskList");
     if (!state.netdisk.length) {
-      box.innerHTML = '<div class="zz-small zz-muted">没有发现网盘链接。</div>';
+      box.innerHTML = '<div class="zz-small zz-muted">' + T("没有发现网盘链接。") + "</div>";
       return;
     }
     box.innerHTML = state.netdisk
@@ -515,18 +528,18 @@
         (l, i) =>
           '<div class="zz-tool-item"><span class="zz-tag">' + l.providerName + "</span>" +
           '<span class="url">' + l.url.slice(0, 110) + "</span>" +
-          (l.code ? '<span class="code">提取码 ' + l.code + "</span>" : "") +
-          '<button class="zz-btn zz-btn-sm" data-copy="' + i + '">复制</button>' +
-          '<button class="zz-btn zz-btn-sm" data-open="' + i + '">打开</button></div>'
+          (l.code ? '<span class="code">' + T("提取码 $1", l.code) + "</span>" : "") +
+          '<button class="zz-btn zz-btn-sm" data-copy="' + i + '">' + T("复制") + "</button>" +
+          '<button class="zz-btn zz-btn-sm" data-open="' + i + '">' + T("打开") + "</button></div>"
       )
       .join("");
     box.querySelectorAll("button[data-copy]").forEach((btn) =>
       btn.addEventListener("click", async () => {
         const l = state.netdisk[Number(btn.getAttribute("data-copy"))];
-        const text = l.url + (l.code ? " 提取码：" + l.code : "");
+        const text = l.url + (l.code ? T(" 提取码：$1", l.code) : "");
         await navigator.clipboard.writeText(text).catch(() => {});
-        btn.textContent = "已复制";
-        setTimeout(() => (btn.textContent = "复制"), 1500);
+        btn.textContent = T("已复制");
+        setTimeout(() => (btn.textContent = T("复制")), 1500);
       })
     );
     box.querySelectorAll("button[data-open]").forEach((btn) =>
@@ -540,32 +553,41 @@
   $("#btnNetdisk").addEventListener("click", async () => {
     const res = await proxy("zz:toolbox:netdisk");
     if (!res || !res.ok) {
-      setLog("netdiskLog", "扫描失败：" + ((res && res.error) || "无法连接页面"));
+      setLog("netdiskLog", T("扫描失败：$1", (res && res.error) || T("无法连接页面")));
       return;
     }
     state.netdisk = res.links || [];
     renderNetdisk();
-    setLog("netdiskLog", "发现 " + state.netdisk.length + " 条资源" + (state.netdisk.length ? "，含提取码 " + state.netdisk.filter((l) => l.code).length + " 条" : ""));
+    setLog(
+      "netdiskLog",
+      T("发现 $1 条资源", state.netdisk.length) +
+        (state.netdisk.length ? T("，含提取码 $1 条", state.netdisk.filter((l) => l.code).length) : "")
+    );
   });
 
   $("#btnCopyAll").addEventListener("click", async () => {
-    const text = state.netdisk.map((l) => l.providerName + " " + l.url + (l.code ? " 提取码：" + l.code : "")).join("\n");
+    const text = state.netdisk
+      .map((l) => l.providerName + " " + l.url + (l.code ? T(" 提取码：$1", l.code) : ""))
+      .join("\n");
     if (!text) return;
     await navigator.clipboard.writeText(text).catch(() => {});
-    log("netdiskLog", "已复制全部 " + state.netdisk.length + " 条");
+    log("netdiskLog", T("已复制全部 $1 条", state.netdisk.length));
   });
 
   $("#btnExport").addEventListener("click", async () => {
     if (!state.netdisk.length) return;
-    const dir = ((state.settings && state.settings.toolbox && state.settings.toolbox.articleDir) || "ZeroZen/阅读").replace(/\/+$/, "");
-    const lines = state.netdisk.map((l) => "- " + l.providerName + "：" + l.url + (l.code ? "（提取码：" + l.code + "）" : ""));
-    const md = "# 网盘资源（" + (state.title || "") + "）\n\n来源：" + state.url + "\n\n" + lines.join("\n") + "\n";
+    const dir = ((state.settings && state.settings.toolbox && state.settings.toolbox.articleDir) || T("ZeroZen/阅读")).replace(/\/+$/, "");
+    const lines = state.netdisk.map(
+      (l) => "- " + l.providerName + "：" + l.url + (l.code ? T("（提取码：$1）", l.code) : "")
+    );
+    const md =
+      "# " + T("网盘资源（$1）", state.title || "") + "\n\n" + T("来源：$1", state.url) + "\n\n" + lines.join("\n") + "\n";
     const dataUrl = "data:text/markdown;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(md)));
     try {
-      await download(dataUrl, dir + "/" + sanitize(state.title || "网盘资源") + "-网盘资源.md");
-      log("netdiskLog", "已导出到 " + dir);
+      await download(dataUrl, dir + "/" + sanitize(state.title || T("网盘资源")) + "-" + T("网盘资源") + ".md");
+      log("netdiskLog", T("已导出到 $1", dir));
     } catch (e) {
-      log("netdiskLog", "× 导出失败：" + ((e && e.message) || e));
+      log("netdiskLog", "× " + T("导出失败：$1", (e && e.message) || e));
     }
   });
 
@@ -603,10 +625,15 @@
   }
 
   function stateInfo(it) {
-    if (it.state === "complete") return { label: "已完成", cls: "ok" };
-    if (it.state === "interrupted") return { label: it.error === "USER_CANCELED" ? "已取消" : "失败：" + (it.error || "中断"), cls: "err" };
-    if (it.paused) return { label: "已暂停", cls: "" };
-    return { label: "下载中", cls: "" };
+    if (it.state === "complete") return { label: T("已完成"), cls: "ok" };
+    if (it.state === "interrupted") {
+      return {
+        label: it.error === "USER_CANCELED" ? T("已取消") : T("失败：$1", it.error || T("中断")),
+        cls: "err",
+      };
+    }
+    if (it.paused) return { label: T("已暂停"), cls: "" };
+    return { label: T("下载中"), cls: "" };
   }
 
   function dlSearch() {
@@ -641,7 +668,7 @@
       return true;
     });
     if (!items.length) {
-      box.innerHTML = '<div class="zz-small zz-muted">没有下载任务。粘贴一个 http/https 直链开始下载。</div>';
+      box.innerHTML = '<div class="zz-small zz-muted">' + T("没有下载任务。粘贴一个 http/https 直链开始下载。") + "</div>";
       return;
     }
     box.innerHTML = items
@@ -656,18 +683,18 @@
           st.label,
         ];
         if (it.state === "in_progress" && speed.speed) meta.push(bytes(speed.speed) + "/s");
-        if (it.state === "in_progress" && it.estimatedEndTime) meta.push("剩余 " + it.estimatedEndTime.slice(11, 16));
+        if (it.state === "in_progress" && it.estimatedEndTime) meta.push(T("剩余 $1", it.estimatedEndTime.slice(11, 16)));
         const buttons = [];
-        if (it.state === "in_progress" && !it.paused) buttons.push('<button class="zz-btn zz-btn-sm" data-act="pause">暂停</button>');
-        if (it.state === "in_progress" && it.paused) buttons.push('<button class="zz-btn zz-btn-sm" data-act="resume">继续</button>');
-        if (it.state === "in_progress") buttons.push('<button class="zz-btn zz-btn-sm" data-act="cancel">取消</button>');
+        if (it.state === "in_progress" && !it.paused) buttons.push('<button class="zz-btn zz-btn-sm" data-act="pause">' + T("暂停") + "</button>");
+        if (it.state === "in_progress" && it.paused) buttons.push('<button class="zz-btn zz-btn-sm" data-act="resume">' + T("继续") + "</button>");
+        if (it.state === "in_progress") buttons.push('<button class="zz-btn zz-btn-sm" data-act="cancel">' + T("取消") + "</button>");
         if (it.state === "complete") {
-          buttons.push('<button class="zz-btn zz-btn-sm" data-act="open">打开</button>');
-          buttons.push('<button class="zz-btn zz-btn-sm" data-act="folder">文件夹</button>');
+          buttons.push('<button class="zz-btn zz-btn-sm" data-act="open">' + T("打开") + "</button>");
+          buttons.push('<button class="zz-btn zz-btn-sm" data-act="folder">' + T("文件夹") + "</button>");
         }
-        if (it.state === "interrupted") buttons.push('<button class="zz-btn zz-btn-sm" data-act="retry">重试</button>');
-        buttons.push('<button class="zz-btn zz-btn-sm" data-act="copy">链接</button>');
-        buttons.push('<button class="zz-btn zz-btn-sm zz-btn-danger" data-act="remove">删除记录</button>');
+        if (it.state === "interrupted") buttons.push('<button class="zz-btn zz-btn-sm" data-act="retry">' + T("重试") + "</button>");
+        buttons.push('<button class="zz-btn zz-btn-sm" data-act="copy">' + T("链接") + "</button>");
+        buttons.push('<button class="zz-btn zz-btn-sm zz-btn-danger" data-act="remove">' + T("删除记录") + "</button>");
         return (
           '<div class="zz-tool-item" data-id="' + it.id + '">' +
           '<div style="flex:1;min-width:0">' +
@@ -704,13 +731,13 @@
         await download(item.url, dir + "/" + basename(item.filename || "download"));
       } else if (act === "copy" && item) {
         await navigator.clipboard.writeText(item.url).catch(() => {});
-        btn.textContent = "已复制";
-        setTimeout(() => (btn.textContent = "链接"), 1200);
+        btn.textContent = T("已复制");
+        setTimeout(() => (btn.textContent = T("链接")), 1200);
       } else if (act === "remove") {
         await api.downloads.erase({ id });
       }
     } catch (e) {
-      log("dlLog", "× 操作失败：" + ((e && e.message) || e));
+      log("dlLog", "× " + T("操作失败：$1", (e && e.message) || e));
     }
     setTimeout(refreshDownloader, 300);
   });
@@ -726,16 +753,16 @@
   $("#btnDlClear").addEventListener("click", async () => {
     await api.downloads.erase({ state: "complete" });
     await refreshDownloader();
-    log("dlLog", "已清除完成记录（文件保留）");
+    log("dlLog", T("已清除完成记录（文件保留）"));
   });
 
   async function multiThreadDownload(url, name, dir, threads, onProgress) {
     const head = await fetch(url, { method: "HEAD", credentials: "include" });
     const len = Number(head.headers.get("content-length") || 0);
     const accept = head.headers.get("accept-ranges") || "";
-    if (!len) throw new Error("服务器未返回文件大小");
-    if (!/bytes/i.test(accept) && !(head.status === 206)) throw new Error("服务器不支持分段下载");
-    if (len > 800 * 1024 * 1024) throw new Error("文件超过 800MB，请使用默认模式");
+    if (!len) throw new Error(T("服务器未返回文件大小"));
+    if (!/bytes/i.test(accept) && !(head.status === 206)) throw new Error(T("服务器不支持分段下载"));
+    if (len > 800 * 1024 * 1024) throw new Error(T("文件超过 800MB，请使用默认模式"));
     const total = len;
     const chunk = Math.ceil(total / threads);
     const parts = new Array(threads);
@@ -746,7 +773,7 @@
       const end = Math.min(total - 1, start + chunk - 1);
       if (start > end) return;
       const res = await fetch(url, { headers: { Range: "bytes=" + start + "-" + end }, credentials: "include" });
-      if (!res.ok && res.status !== 206) throw new Error("分片 HTTP " + res.status);
+      if (!res.ok && res.status !== 206) throw new Error(T("分片 HTTP $1", res.status));
       const buf = new Uint8Array(await res.arrayBuffer());
       parts[i] = buf;
       received += buf.length;
@@ -791,17 +818,17 @@
       const text = await navigator.clipboard.readText();
       if (text) $("#dlUrl").value = text.trim();
     } catch (e) {
-      log("dlLog", "无法读取剪贴板，请手动粘贴（Ctrl/Cmd+V）");
+      log("dlLog", T("无法读取剪贴板，请手动粘贴（Ctrl/Cmd+V）"));
     }
   });
 
   $("#btnDlStart").addEventListener("click", async () => {
     const url = $("#dlUrl").value.trim();
     if (!/^https?:/i.test(url)) {
-      log("dlLog", "请输入 http/https 下载地址");
+      log("dlLog", T("请输入 http/https 下载地址"));
       return;
     }
-    const dir = ($("#dlDir").value || "ZeroZen/下载").replace(/\/+$/, "");
+    const dir = ($("#dlDir").value || T("ZeroZen/下载")).replace(/\/+$/, "");
     let name = $("#dlName").value.trim();
     if (!name) {
       try {
@@ -815,17 +842,17 @@
     try {
       if ($("#dlMulti").checked) {
         if (/\.m3u8/i.test(url)) {
-          log("dlLog", "m3u8 请在「视频（m3u8）」标签里下载（支持自动选清晰度与解密）");
+          log("dlLog", T("m3u8 请在「视频（m3u8）」标签里下载（支持自动选清晰度与解密）"));
           return;
         }
-        setLog("dlLog", "多线程下载中…");
+        setLog("dlLog", T("多线程下载中…"));
         await multiThreadDownload(url, name, dir, Math.max(2, Math.min(8, Number($("#dlThreads").value) || 4)), (got, total) => {
-          setLog("dlLog", "多线程 " + bytes(got) + " / " + bytes(total) + "（" + Math.round((got / total) * 100) + "%）");
+          setLog("dlLog", T("多线程 $1 / $2（$3%）", bytes(got), bytes(total), Math.round((got / total) * 100)));
         });
-        log("dlLog", "多线程完成，已保存 " + dir + "/" + name);
+        log("dlLog", T("多线程完成，已保存 $1", dir + "/" + name));
       } else {
         await download(url, dir + "/" + name);
-        log("dlLog", "已加入下载：" + dir + "/" + name);
+        log("dlLog", T("已加入下载：$1", dir + "/" + name));
       }
       $("#dlName").value = "";
     } catch (e) {
@@ -833,9 +860,9 @@
       if ($("#dlMulti").checked) {
         try {
           await download(url, dir + "/" + name);
-          log("dlLog", "已改用默认模式加入下载");
+          log("dlLog", T("已改用默认模式加入下载"));
         } catch (e2) {
-          log("dlLog", "× 默认模式也失败：" + ((e2 && e2.message) || e2));
+          log("dlLog", "× " + T("默认模式也失败：$1", (e2 && e2.message) || e2));
         }
       }
     } finally {
@@ -845,11 +872,11 @@
   });
 
   $("#dlDir").addEventListener("change", async () => {
-    await UI.send({ type: "zz:settings:set", payload: { settings: { toolbox: { downloadDir: $("#dlDir").value.trim() || "ZeroZen/下载" } }, rebuild: false } });
+    await UI.send({ type: "zz:settings:set", payload: { settings: { toolbox: { downloadDir: $("#dlDir").value.trim() || T("ZeroZen/下载") } }, rebuild: false } });
   });
 
   function bindDownloadEvents() {
-    if (dl.changedBound || !api.downloads.onChanged) return;
+    if (dl.changedBound || !api.downloads || !api.downloads.onChanged) return;
     dl.changedBound = true;
     api.downloads.onChanged.addListener(() => {
       clearTimeout(dl.timer);
@@ -858,11 +885,13 @@
     if (api.downloads.onCreated) api.downloads.onCreated.addListener(() => setTimeout(refreshDownloader, 600));
   }
 
-  loadContext().then(() => {
-    refreshStreams();
-    $("#dlDir").value = (state.settings && state.settings.toolbox && state.settings.toolbox.downloadDir) || "ZeroZen/下载";
-    bindDownloadEvents();
-    refreshDownloader();
-    setInterval(refreshDownloader, 2000);
-  });
+  UI.initLocale()
+    .then(() => loadContext())
+    .then(() => {
+      refreshStreams();
+      $("#dlDir").value = (state.settings && state.settings.toolbox && state.settings.toolbox.downloadDir) || T("ZeroZen/下载");
+      bindDownloadEvents();
+      refreshDownloader();
+      setInterval(refreshDownloader, 2000);
+    });
 })();

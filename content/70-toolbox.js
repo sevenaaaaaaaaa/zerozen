@@ -244,7 +244,7 @@
         }
       }
     }
-    if (!best) return { ok: false, error: "未找到正文内容" };
+    if (!best) return { ok: false, error: ZZ.T("未找到正文内容") };
     const clone = cleanNode(best.cloneNode(true));
     const text = (clone.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
     return {
@@ -318,13 +318,13 @@
     bar.className = "bar";
     const pay = document.createElement("span");
     pay.className = "pay";
-    pay.innerHTML = "阅读模式采用<b>诚实付费</b>：觉得好用请支持作者";
+    pay.innerHTML = ZZ.T("阅读模式采用<b>诚实付费</b>：觉得好用请支持作者");
     bar.appendChild(pay);
     const saveBtn = document.createElement("button");
     saveBtn.className = "primary";
-    saveBtn.textContent = "保存到本地";
+    saveBtn.textContent = ZZ.T("保存到本地");
     const exitBtn = document.createElement("button");
-    exitBtn.textContent = "退出阅读模式";
+    exitBtn.textContent = ZZ.T("退出阅读模式");
     bar.appendChild(saveBtn);
     bar.appendChild(exitBtn);
     root.appendChild(bar);
@@ -334,7 +334,7 @@
     h1.textContent = article.title || document.title;
     const meta = document.createElement("div");
     meta.className = "meta";
-    meta.textContent = location.hostname + " · 已提取 " + article.length + " 字";
+    meta.textContent = location.hostname + " · " + ZZ.T("已提取 $1 字", article.length);
     const body = document.createElement("div");
     body.innerHTML = article.html;
     wrap.appendChild(h1);
@@ -348,15 +348,18 @@
     exitBtn.addEventListener("click", exitReader);
     saveBtn.addEventListener("click", async () => {
       saveBtn.disabled = true;
-      saveBtn.textContent = "保存中…";
-      const md = "# " + (article.title || document.title) + "\n\n> 来源：" + location.href + "\n\n" + htmlToMarkdown(article.html);
+      saveBtn.textContent = ZZ.T("保存中…");
+      const md =
+        "# " + (article.title || document.title) + "\n\n> " + ZZ.T("来源：$1", location.href) + "\n\n" + htmlToMarkdown(article.html);
       const res = await ZZ.send({
         type: "zz:toolbox:save-article",
         payload: { title: article.title || document.title, markdown: md, url: location.href },
       });
       saveBtn.disabled = false;
-      saveBtn.textContent = "保存到本地";
-      ZZ.notice(res && res.ok ? "已保存：" + (res.filename || "") : "保存失败：" + ((res && res.error) || "未知错误"));
+      saveBtn.textContent = ZZ.T("保存到本地");
+      ZZ.notice(
+        res && res.ok ? ZZ.T("已保存：$1", res.filename || "") : ZZ.T("保存失败：$1", (res && res.error) || ZZ.T("未知错误"))
+      );
     });
     return { ok: true, length: article.length };
   }
@@ -370,7 +373,7 @@
       if (!out.has(abs)) out.set(abs, { url: abs, note: note || "", kind: /m3u8|\/hls\//i.test(abs) ? "m3u8" : /mpd/i.test(abs) ? "mpd" : "media" });
     }
     for (const v of Array.from(document.querySelectorAll("video, audio"))) {
-      push(v.currentSrc || v.src, "媒体元素");
+      push(v.currentSrc || v.src, ZZ.T("媒体元素"));
       if (v.dataset) {
         push(v.dataset.src || "", "data-src");
         push(v.dataset.hls || v.dataset.m3u8 || "", "data-hls");
@@ -379,7 +382,7 @@
     }
     try {
       for (const e of performance.getEntriesByType("resource") || []) {
-        if (/\.m3u8|m3u8|\/hls\//i.test(e.name)) push(e.name, "网络请求");
+        if (/\.m3u8|m3u8|\/hls\//i.test(e.name)) push(e.name, ZZ.T("网络请求"));
       }
     } catch (e) {}
     const re = /https?:\/\/[^"'\\\s<>]+?(?:\.m3u8|\/hls\/)[^"'\\\s<>]*/gi;
@@ -389,14 +392,14 @@
         if (!text || text.length > 400000) continue;
         let m;
         const local = new RegExp(re);
-        while ((m = local.exec(text))) push(m[0].replace(/[),.;]+$/, ""), "页面脚本");
+        while ((m = local.exec(text))) push(m[0].replace(/[),.;]+$/, ""), ZZ.T("页面脚本"));
       }
     } catch (e) {}
     try {
       const html = document.documentElement ? document.documentElement.innerHTML.slice(0, 250000) : "";
       let m;
       const local = new RegExp(re);
-      while ((m = local.exec(html))) push(m[0].replace(/[),.;]+$/, ""), "页面源码");
+      while ((m = local.exec(html))) push(m[0].replace(/[),.;]+$/, ""), ZZ.T("页面源码"));
     } catch (e) {}
     return Array.from(out.values());
   }

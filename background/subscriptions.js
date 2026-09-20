@@ -210,7 +210,7 @@
 
   function parseText(text, subId, max) {
     const trimmed = String(text || "").trim();
-    if (!trimmed) return { error: "列表内容为空" };
+    if (!trimmed) return { error: ZZ.T("列表内容为空") };
     let network = [];
     let cosmetic = [];
     let skipped = 0;
@@ -229,7 +229,7 @@
       skipped = (parsed.skipped || []).length;
     }
     const total = network.length + cosmetic.length;
-    if (!total) return { error: "没有解析出任何可用规则" };
+    if (!total) return { error: ZZ.T("没有解析出任何可用规则") };
     const limit = clampMaxRules(max);
     const picked = capRules(network, cosmetic, limit);
     const seen = new Set();
@@ -281,16 +281,16 @@
       });
     } catch (e) {
       if (timer) clearTimeout(timer);
-      const msg = e && e.name === "AbortError" ? "请求超时" : (e && e.message) || "网络错误";
+      const msg = e && e.name === "AbortError" ? ZZ.T("请求超时") : (e && e.message) || ZZ.T("网络错误");
       throw new Error(msg);
     }
     if (timer) clearTimeout(timer);
     if (res.status === 304) return { notModified: true };
     if (!res.ok) throw new Error("HTTP " + res.status);
     const declared = Number(res.headers.get("content-length") || 0);
-    if (declared && declared > MAX_BYTES) throw new Error("列表过大（>8MB）");
+    if (declared && declared > MAX_BYTES) throw new Error(ZZ.T("列表过大（>8MB）"));
     const text = await res.text();
-    if (text.length > MAX_BYTES) throw new Error("列表过大（>8MB）");
+    if (text.length > MAX_BYTES) throw new Error(ZZ.T("列表过大（>8MB）"));
     return {
       text,
       etag: res.headers.get("etag") || "",
@@ -312,12 +312,17 @@
         lastError = e;
       }
     }
-    throw lastError || new Error("下载失败");
+    throw lastError || new Error(ZZ.T("下载失败"));
   }
 
   const Subscriptions = {
     PRESETS,
     ALARM,
+
+    // 预设的说明与许可证按当前语言返回
+    presets() {
+      return PRESETS.map((p) => Object.assign({}, p, { desc: ZZ.T(p.desc), license: ZZ.T(p.license) }));
+    },
 
     config() {
       const c = cfg();
@@ -368,10 +373,10 @@
     async add(input) {
       const p = input || {};
       const url = normalizeUrl(p.url);
-      if (!url) return { ok: false, error: "订阅地址必须是 http(s) 链接" };
+      if (!url) return { ok: false, error: ZZ.T("订阅地址必须是 http(s) 链接") };
       const c = cfg();
-      if (c.items.length >= 30) return { ok: false, error: "订阅数量已达上限（30）" };
-      if (c.items.some((it) => it.url === url)) return { ok: false, error: "该订阅已存在" };
+      if (c.items.length >= 30) return { ok: false, error: ZZ.T("订阅数量已达上限（30）") };
+      if (c.items.some((it) => it.url === url)) return { ok: false, error: ZZ.T("该订阅已存在") };
       const preset = PRESETS.find((x) => x.url === url || x.id === p.presetId) || null;
       const item = {
         id: ZZ.uid("sub"),
@@ -395,7 +400,7 @@
 
     async remove(id) {
       const c = cfg();
-      if (!findItem(c.items, id)) return { ok: false, error: "订阅不存在" };
+      if (!findItem(c.items, id)) return { ok: false, error: ZZ.T("订阅不存在") };
       await saveItems(c.items.filter((it) => it.id !== id));
       await ZZ.Store.dropSubRules(id);
       await ZZ.Main.rebuild({ dnr: true, refresh: true });
@@ -405,7 +410,7 @@
     async setEnabled(id, enabled) {
       const c = cfg();
       const items = c.items.map((it) => (it.id === id ? Object.assign({}, it, { enabled: enabled !== false }) : it));
-      if (!findItem(items, id)) return { ok: false, error: "订阅不存在" };
+      if (!findItem(items, id)) return { ok: false, error: ZZ.T("订阅不存在") };
       await saveItems(items);
       await ZZ.Main.rebuild({ dnr: true, refresh: true });
       return { ok: true, enabled: enabled !== false };
@@ -415,7 +420,7 @@
       const o = opts || {};
       const c = cfg();
       const item = findItem(c.items, id);
-      if (!item) return { ok: false, error: "订阅不存在" };
+      if (!item) return { ok: false, error: ZZ.T("订阅不存在") };
       let patch;
       let out;
       try {
@@ -456,7 +461,7 @@
           };
         }
       } catch (e) {
-        patch = { lastStatus: "error", lastCheckedAt: Date.now(), error: (e && e.message) || "更新失败" };
+        patch = { lastStatus: "error", lastCheckedAt: Date.now(), error: (e && e.message) || ZZ.T("更新失败") };
         out = { ok: false, error: patch.error };
       }
       const items = cfg().items.map((it) => (it.id === id ? Object.assign({}, it, patch) : it));
@@ -469,7 +474,7 @@
 
     async updateAll(opts) {
       const o = opts || {};
-      if (updating) return { ok: false, error: "正在更新中" };
+      if (updating) return { ok: false, error: ZZ.T("正在更新中") };
       updating = true;
       const summary = { ok: true, updated: 0, notModified: 0, failed: 0, details: [] };
       try {

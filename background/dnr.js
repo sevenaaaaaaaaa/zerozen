@@ -24,7 +24,14 @@
 
     async sync() {
       if (!Dnr.supported()) {
-        Dnr.lastResult = { applied: 0, dropped: 0, total: 0, at: Date.now(), error: "declarativeNetRequest 不可用", supported: false };
+        Dnr.lastResult = {
+          applied: 0,
+          dropped: 0,
+          total: 0,
+          at: Date.now(),
+          error: ZZ.T("declarativeNetRequest 不可用"),
+          supported: false,
+        };
         return Dnr.lastResult;
       }
       const settings = ZZ.Store.settings();
@@ -53,10 +60,8 @@
           applied = candidate.length;
           if (i > 0) {
             error =
-              "已降级应用 " +
-              applied +
-              " 条规则" +
-              (i === 1 ? "（部分浏览器不支持正则规则）" : "（规则过多，已截断）");
+              ZZ.T("已降级应用 $1 条规则", applied) +
+              (i === 1 ? ZZ.T("（部分浏览器不支持正则规则）") : ZZ.T("（规则过多，已截断）"));
           }
           break;
         } catch (e) {

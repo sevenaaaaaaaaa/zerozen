@@ -4,22 +4,34 @@
   const LIST = [
     {
       id: "compat",
-      name: "兼容",
-      desc: "仅通用拦截与视频规则，最大化站点兼容性",
+      get name() {
+        return ZZ.T("兼容");
+      },
+      get desc() {
+        return ZZ.T("仅通用拦截与视频规则，最大化站点兼容性");
+      },
       packs: ["core", "adnetworks", "adult", "youtube", "video-cn", "live"],
       flags: { textRules: false, unlockScroll: false, aggressive: false },
     },
     {
       id: "standard",
-      name: "标准",
-      desc: "推荐：全部内置规则，平衡拦截与兼容",
+      get name() {
+        return ZZ.T("标准");
+      },
+      get desc() {
+        return ZZ.T("推荐：全部内置规则，平衡拦截与兼容");
+      },
       packs: null,
       flags: { textRules: true, unlockScroll: "auto", aggressive: false },
     },
     {
       id: "strict",
-      name: "严格",
-      desc: "全部规则 + 移除式处理与强制解锁滚动，可能影响站点功能",
+      get name() {
+        return ZZ.T("严格");
+      },
+      get desc() {
+        return ZZ.T("全部规则 + 移除式处理与强制解锁滚动，可能影响站点功能");
+      },
       packs: null,
       flags: { textRules: true, unlockScroll: true, aggressive: true },
     },

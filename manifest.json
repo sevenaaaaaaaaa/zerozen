@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "ZeroZen 广告净化器",
-  "version": "0.6.0",
-  "description": "跨浏览器广告与弹窗屏蔽：规则引擎 + AI 识别 + 收藏夹批量扫描，支持自定义规则导入导出。",
+  "name": "__MSG_appName__",
+  "default_locale": "en",
+  "version": "0.7.0",
+  "description": "__MSG_appDesc__",
   "minimum_chrome_version": "105",
   "permissions": [
     "storage",
@@ -26,6 +27,8 @@
     "service_worker": "background/index.js",
     "scripts": [
       "background/lib-compat.js",
+      "i18n/i18n.js",
+      "i18n/dict-en.js",
       "background/ai-prompt.js",
       "background/rule-format.js",
       "background/store.js",
@@ -50,6 +53,8 @@
     {
       "matches": ["http://*/*", "https://*/*"],
       "js": [
+        "i18n/i18n.js",
+        "i18n/dict-en-content.js",
         "content/00-lib.js",
         "content/10-css.js",
         "content/20-detector.js",
@@ -74,7 +79,7 @@
   ],
   "action": {
     "default_popup": "ui/popup.html",
-    "default_title": "ZeroZen 广告净化器",
+    "default_title": "__MSG_appName__",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -89,11 +94,11 @@
   "commands": {
     "zz-pick": {
       "suggested_key": { "default": "Alt+Z" },
-      "description": "选取元素并屏蔽"
+      "description": "__MSG_cmdPick__"
     },
     "zz-ai-page": {
       "suggested_key": { "default": "Alt+A" },
-      "description": "AI 识别本页烦人广告"
+      "description": "__MSG_cmdAiPage__"
     }
   },
   "icons": {

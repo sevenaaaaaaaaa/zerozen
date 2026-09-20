@@ -7,7 +7,7 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const DIST = join(ROOT, "dist");
 const manifest = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
 const version = manifest.version;
-const SHARED = ["background", "content", "ui", "rules", "icons", "README.md", "docs"];
+const SHARED = ["background", "content", "ui", "i18n", "_locales", "rules", "icons", "README.md", "docs"];
 
 // 递归复制：不用 fs.cpSync，它在部分挂载文件系统上会因为同步元数据失败（EACCES）
 function copyTree(src, dest) {
@@ -31,6 +31,21 @@ function writeTarget(name, mutate) {
   const out = JSON.parse(JSON.stringify(manifest));
   mutate(out);
   writeFileSync(join(dir, "manifest.json"), JSON.stringify(out, null, 2) + "\n");
+  // 清单里引用的文件必须真的被复制进来，否则装上去才发现少文件
+  const refs = [];
+  refs.push(...(out.background?.scripts || []));
+  if (out.background?.service_worker) refs.push(out.background.service_worker);
+  for (const cs of out.content_scripts || []) refs.push(...(cs.js || []), ...(cs.css || []));
+  for (const war of out.web_accessible_resources || []) refs.push(...(war.resources || []));
+  if (out.action?.default_popup) refs.push(out.action.default_popup);
+  if (out.options_ui?.page) refs.push(out.options_ui.page);
+  if (out.default_locale) refs.push(`_locales/${out.default_locale}/messages.json`);
+  for (const ref of refs.filter(Boolean)) {
+    if (!existsSync(join(dir, ref))) {
+      console.error(`  FAIL ${name}: manifest references ${ref} but it was not packaged`);
+      process.exitCode = 1;
+    }
+  }
   console.log(`  ${name.padEnd(8)} -> dist/${name}`);
   return dir;
 }

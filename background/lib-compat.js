@@ -31,6 +31,15 @@
       (api.runtime && api.runtime.getManifest && api.runtime.getManifest().version) || "0.0.0",
   };
 
+  // i18n/i18n.js 会覆盖它；这里留一个回落，保证没加载词典时也能取到中文原文
+  ZZ.T = function (text, ...subs) {
+    const out = String(text == null ? "" : text);
+    return out.replace(/\$(\d+)/g, (m, i) => {
+      const v = subs[Number(i) - 1];
+      return v === undefined || v === null ? "" : String(v);
+    });
+  };
+
   ZZ.log = function (...args) {
     if (ZZ.logEnabled) console.log("[ZeroZen]", ...args);
   };

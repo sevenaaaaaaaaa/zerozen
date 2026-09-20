@@ -303,7 +303,7 @@
     const kw = tokenScore(hay);
     if (kw) {
       score += kw;
-      signals.push("class/id 广告特征");
+      signals.push(ZZ.T("class/id 广告特征"));
     }
 
     const isAdTag = tag === "IFRAME" || tag === "INS" || tag === "EMBED" || tag === "OBJECT";
@@ -321,7 +321,7 @@
           const ls = labelScore(value);
           if (ls) {
             score += ls;
-            signals.push("标签：" + String(value).slice(0, 20));
+            signals.push(ZZ.T("标签：$1", String(value).slice(0, 20)));
           }
           continue;
         }
@@ -331,10 +331,10 @@
           const valueLabel = labelScore(value);
           if (hasAdToken) {
             score += 38;
-            signals.push("data 广告属性：" + lname);
+            signals.push(ZZ.T("data 广告属性：$1", lname));
           } else if (valueLabel && /tools|label|type|name|pos/i.test(lname)) {
             score += 28;
-            signals.push("data 标签：" + String(value).slice(0, 20));
+            signals.push(ZZ.T("data 标签：$1", String(value).slice(0, 20)));
           }
         }
       }
@@ -353,15 +353,15 @@
         if (selfHostAd) {
           score += 65;
           adHost = host;
-          signals.push("广告联盟 iframe：" + host);
+          signals.push(ZZ.T("广告联盟 iframe：$1", host));
         } else if (host !== env.host && score > 0) {
           score += 12;
-          signals.push("站外 iframe：" + host);
+          signals.push(ZZ.T("站外 iframe：$1", host));
         }
       }
       if (src === "about:blank" && score > 0) {
         score += 10;
-        signals.push("空白 iframe");
+        signals.push(ZZ.T("空白 iframe"));
       }
     }
 
@@ -376,12 +376,12 @@
         const ls = labelScore(text);
         if (ls) {
           score += ls;
-          signals.push("文本标签：" + text.slice(0, 16));
+          signals.push(ZZ.T("文本标签：$1", text.slice(0, 16)));
         } else {
           const ds = downloadScore(text);
           if (ds) {
             score += ds;
-            signals.push("诱导文案：" + text.slice(0, 16));
+            signals.push(ZZ.T("诱导文案：$1", text.slice(0, 16)));
             const link = el.tagName === "A" ? el : el.querySelector("a[href]");
             if (link) {
               let lhost = "";
@@ -392,7 +392,7 @@
               }
               if (lhost && lhost !== env.host) {
                 score += 14;
-                signals.push("站外下载链接：" + lhost);
+                signals.push(ZZ.T("站外下载链接：$1", lhost));
               }
             }
           }
@@ -412,15 +412,15 @@
           const ratio = env.vw && env.vh ? (rect.w * rect.h) / (env.vw * env.vh) : 0;
           if (ratio >= 0.5) {
             score += 42;
-            signals.push("全屏浮层");
+            signals.push(ZZ.T("全屏浮层"));
           } else if (ratio >= 0.06) {
             score += 24;
-            signals.push("悬浮层");
+            signals.push(ZZ.T("悬浮层"));
           }
         }
         if (fixed && /none/.test(style.pointerEvents || "") && env.z >= 2000) {
           score += 10;
-          signals.push("高层遮罩");
+          signals.push(ZZ.T("高层遮罩"));
         }
       }
     }
@@ -473,7 +473,7 @@
       try {
         nodes = doc.getElementsByTagName("*");
       } catch (e) {
-        return { ok: false, error: "无法遍历文档" };
+        return { ok: false, error: ZZ.T("无法遍历文档") };
       }
       const total = nodes.length;
       env.strict = total > 50000;
@@ -577,7 +577,7 @@
     highlight(selectors, opts) {
       Detector.clearHighlight();
       const list = (selectors || []).filter((s) => u.isValidSelector(s)).slice(0, 40);
-      if (!list.length) return { ok: false, error: "没有可高亮的元素" };
+      if (!list.length) return { ok: false, error: ZZ.T("没有可高亮的元素") };
       const boxes = [];
       const scrollX = window.scrollX || 0;
       const scrollY = window.scrollY || 0;
@@ -600,19 +600,19 @@
           boxes.push(box);
         }
       }
-      if (!boxes.length) return { ok: false, error: "元素不可见或已移除" };
+      if (!boxes.length) return { ok: false, error: ZZ.T("元素不可见或已移除") };
       const bar = document.createElement("div");
       bar.className = "zz-hotbar";
       bar.setAttribute("data-zz-ui", "1");
       const label = document.createElement("span");
       label.className = "zz-hotbar-text";
-      label.textContent = "ZeroZen 发现 " + list.length + " 处疑似广告";
+      label.textContent = ZZ.T("ZeroZen 发现 $1 处疑似广告", list.length);
       const applyBtn = document.createElement("button");
       applyBtn.className = "zz-hotbar-btn zz-hotbar-primary";
-      applyBtn.textContent = "全部屏蔽";
+      applyBtn.textContent = ZZ.T("全部屏蔽");
       const reviewBtn = document.createElement("button");
       reviewBtn.className = "zz-hotbar-btn";
-      reviewBtn.textContent = "去确认";
+      reviewBtn.textContent = ZZ.T("去确认");
       const closeBtn = document.createElement("button");
       closeBtn.className = "zz-hotbar-btn zz-hotbar-close";
       closeBtn.textContent = "×";
@@ -630,7 +630,7 @@
       });
       applyBtn.addEventListener("click", async () => {
         applyBtn.disabled = true;
-        applyBtn.textContent = "已屏蔽";
+        applyBtn.textContent = ZZ.T("已屏蔽");
         const items = opts && opts.items ? opts.items : list.map((sel) => ({ selector: sel }));
         await ZZ.send({
           type: "zz:findings:apply-by-selector",

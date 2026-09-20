@@ -322,7 +322,7 @@
   F.toAdblockText = function (rules, opts) {
     const lines = [
       "! ZeroZen export - " + new Date().toISOString(),
-      "! 格式：Adblock 语法（子集）。网络规则 + 外观规则。",
+      ZZ.T("! 格式：Adblock 语法（子集）。网络规则 + 外观规则。"),
     ];
     for (const r of rules || []) {
       if (!r || r.enabled === false) continue;
@@ -352,11 +352,11 @@
       try {
         data = JSON.parse(input);
       } catch (e) {
-        return { rules: [], error: "JSON 解析失败: " + e.message };
+        return { rules: [], error: ZZ.T("JSON 解析失败：$1", e.message) };
       }
     }
     const list = Array.isArray(data) ? data : data && Array.isArray(data.rules) ? data.rules : null;
-    if (!list) return { rules: [], error: "未找到 rules 数组" };
+    if (!list) return { rules: [], error: ZZ.T("未找到 rules 数组") };
     const rules = [];
     const skipped = [];
     list.forEach((raw, i) => {

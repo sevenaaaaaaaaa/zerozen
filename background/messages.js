@@ -59,6 +59,7 @@
     if (!settings.enabled || eff.profile === "off") {
       return {
         ok: true,
+        lang: ZZ.I18n.lang(),
         enabled: false,
         profile: "off",
         profileSource: eff.source,
@@ -74,6 +75,7 @@
     const payload = ZZ.RuleIndex.payload(host, { profile: eff.profile });
     const out = {
       ok: true,
+      lang: ZZ.I18n.lang(),
       enabled: true,
       profile: eff.profile,
       profileSource: eff.source,
@@ -140,7 +142,7 @@
               selector,
               domains: scope === "global" ? [] : [p.host || host],
               source: "user",
-              note: p.note || "手动选取",
+              note: p.note || ZZ.T("手动选取"),
             },
             "user"
           );
@@ -161,7 +163,7 @@
               selector: p.selector,
               domains: p.scope === "global" ? [] : [p.host || host],
               source: "user",
-              note: "手动放行",
+              note: ZZ.T("手动放行"),
             },
             "user"
           );
@@ -233,6 +235,8 @@
           const p = msg.payload || {};
           if (p.settings && p.settings.ai && p.settings.ai.apiKey === "***") delete p.settings.ai.apiKey;
           const patch = p.settings || {};
+          if (patch.lang !== undefined) ZZ.I18n.setLang(patch.lang);
+          if (patch.lang !== undefined && ZZ.Menus) ZZ.Menus.install().catch(() => {});
           const needsDnr =
             p.dnr === true ||
             patch.enabled !== undefined ||
@@ -257,7 +261,7 @@
         case "zz:site:set": {
           const p = msg.payload || {};
           const target = p.host || host;
-          if (!target) return { ok: false, error: "缺少 host" };
+          if (!target) return { ok: false, error: ZZ.T("缺少 host") };
           await ZZ.Store.updateSite(target, {
             enabled: p.enabled,
             profile: p.profile,
@@ -283,7 +287,7 @@
         case "zz:site:temp": {
           const p = msg.payload || {};
           const target = p.host || host;
-          if (!target) return { ok: false, error: "缺少 host" };
+          if (!target) return { ok: false, error: ZZ.T("缺少 host") };
           const minutes = p.minutes === undefined ? ZZ.Store.settings().tempMinutes || 30 : Number(p.minutes);
           const until = minutes > 0 ? Date.now() + Math.min(minutes, 24 * 60) * 60000 : 0;
           await ZZ.Store.updateSite(target, { until: until || undefined, clearAuto: p.clearAuto !== false });
@@ -415,12 +419,16 @@
             ok: true,
             packs: ZZ.RuleIndex.PACKS.map((p) => ({
               id: p.id,
-              name: p.name,
-              desc: p.desc,
+              name: ZZ.T(p.name),
+              desc: ZZ.T(p.desc),
               group: p.group,
               enabled: ZZ.Store.packEnabled(p.id),
             })),
-            groups: ZZ.RuleIndex.GROUPS,
+            groups: ZZ.RuleIndex.GROUPS.map((g) => ({
+              id: g.id,
+              name: ZZ.T(g.name),
+              desc: ZZ.T(g.desc),
+            })),
             index: idx,
             dnr: ZZ.Dnr.lastResult,
           };
@@ -451,7 +459,7 @@
           return {
             ok: true,
             items: ZZ.Subscriptions.list(),
-            presets: ZZ.Subscriptions.PRESETS,
+            presets: ZZ.Subscriptions.presets(),
             config: ZZ.Subscriptions.config(),
             stats: ZZ.Subscriptions.stats(),
             dnrBudget: ZZ.Store.settings().dnrBudget,
@@ -544,7 +552,7 @@
 
         case "zz:ai:recognize-tab": {
           const tab = await getTab(msg.payload && msg.payload.tabId, sender);
-          if (!tab) return { ok: false, error: "找不到标签页" };
+          if (!tab) return { ok: false, error: ZZ.T("找不到标签页") };
           return Messages.runAiOnTab(tab, { source: "popup" });
         }
 
@@ -595,7 +603,7 @@
         case "zz:learn:apply": {
           const selector = (msg.payload && msg.payload.selector) || "";
           const F2 = ZZ.RuleFormat;
-          if (F2.validateSelector(selector)) return { ok: false, error: "选择器无效" };
+          if (F2.validateSelector(selector)) return { ok: false, error: ZZ.T("选择器无效") };
           const rule = F2.normalize(
             {
               kind: "cosmetic",
@@ -603,7 +611,7 @@
               selector,
               domains: [],
               source: "learn",
-              note: "自动学习（手动确认）",
+              note: ZZ.T("自动学习（手动确认）"),
             },
             "learn"
           );
@@ -640,24 +648,24 @@
         case "zz:reader:toggle": {
           const p = msg.payload || {};
           const target = typeof p.tabId === "number" ? p.tabId : tabId;
-          if (!target) return { ok: false, error: "找不到标签页" };
+          if (!target) return { ok: false, error: ZZ.T("找不到标签页") };
           const res = await ZZ.sendToTab(target, { type: "zz:reader:toggle" });
-          return res || { ok: false, error: "内容脚本无响应，请刷新页面" };
+          return res || { ok: false, error: ZZ.T("内容脚本无响应，请刷新页面") };
         }
 
         case "zz:clean:set": {
           const p = msg.payload || {};
           const target = typeof p.tabId === "number" ? p.tabId : tabId;
-          if (!target) return { ok: false, error: "找不到标签页" };
+          if (!target) return { ok: false, error: ZZ.T("找不到标签页") };
           const res = await ZZ.sendToTab(target, { type: "zz:clean:toggle", payload: { active: p.active } });
-          return res || { ok: false, error: "内容脚本无响应，请刷新页面" };
+          return res || { ok: false, error: ZZ.T("内容脚本无响应，请刷新页面") };
         }
 
         case "zz:toolbox:proxy": {
           const p = msg.payload || {};
-          if (typeof p.tabId !== "number" || !p.type) return { ok: false, error: "缺少 tabId/type" };
+          if (typeof p.tabId !== "number" || !p.type) return { ok: false, error: ZZ.T("缺少 tabId/type") };
           const res = await ZZ.sendToTab(p.tabId, { type: p.type, payload: p.payload || {} });
-          return res || { ok: false, error: "内容脚本无响应，请刷新页面后重试" };
+          return res || { ok: false, error: ZZ.T("内容脚本无响应，请刷新页面后重试") };
         }
 
         case "zz:toolbox:context": {          const p = msg.payload || {};
@@ -671,14 +679,14 @@
           } catch (e) {}
           const http = tabs.filter((t) => ZZ.isHttpUrl(t.url || ""));
           const pick = http[http.length - 1] || tabs[tabs.length - 1];
-          if (!pick) return { ok: false, error: "找不到可用标签页" };
+          if (!pick) return { ok: false, error: ZZ.T("找不到可用标签页") };
           return { ok: true, tabId: pick.id, title: pick.title || "", url: pick.url || "" };
         }
 
         case "zz:toolbox:fetch": {
           const p = msg.payload || {};
           const url = String(p.url || "");
-          if (!/^https?:/i.test(url) || url.length > 4000) return { ok: false, error: "无效地址" };
+          if (!/^https?:/i.test(url) || url.length > 4000) return { ok: false, error: ZZ.T("无效地址") };
           try {
             const headers = {};
             if (p.referrer && /^https?:/i.test(p.referrer)) {
@@ -689,7 +697,7 @@
             }
             const res = await fetch(url, { headers, redirect: "follow" });
             const buf = await res.arrayBuffer();
-            if (buf.byteLength > 12 * 1024 * 1024) return { ok: false, error: "分片超过 12MB" };
+            if (buf.byteLength > 12 * 1024 * 1024) return { ok: false, error: ZZ.T("分片超过 12MB") };
             if (p.as === "text") {
               return { ok: true, status: res.status, text: new TextDecoder().decode(buf) };
             }
@@ -701,24 +709,24 @@
             }
             return { ok: true, status: res.status, base64: btoa(bin) };
           } catch (e) {
-            return { ok: false, error: (e && e.message) || "后台抓取失败" };
+            return { ok: false, error: (e && e.message) || ZZ.T("后台抓取失败") };
           }
         }
 
         case "zz:toolbox:save-article": {
           const p = msg.payload || {};
           const settings = ZZ.Store.settings();
-          const dir = (settings.toolbox && settings.toolbox.articleDir) || "ZeroZen/阅读";
+          const dir = (settings.toolbox && settings.toolbox.articleDir) || ZZ.T("ZeroZen/阅读");
           const safe = String(p.title || "article")
             .replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_")
             .replace(/\s+/g, " ")
             .trim()
             .slice(0, 100);
           const filename = dir.replace(/\/+$/, "") + "/" + (safe || "article") + ".md";
-          const text = "# " + (p.title || "") + "\n\n> 来源：" + (p.url || "") + "\n\n" + String(p.markdown || "");
+          const text = "# " + (p.title || "") + "\n\n> " + ZZ.T("来源：$1", p.url || "") + "\n\n" + String(p.markdown || "");
           const dataUrl = "data:text/markdown;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(text)));
           if (!api.downloads || !api.downloads.download) {
-            return { ok: false, error: "需要先授予「下载」权限：打开净化控制台 → 统计与诊断 → 可选权限" };
+            return { ok: false, error: ZZ.T("需要先授予「下载」权限：打开净化控制台 → 统计与诊断 → 可选权限") };
           }
           try {
             const id = await new Promise((resolve, reject) => {
@@ -730,7 +738,7 @@
             });
             return { ok: true, filename, downloadId: id };
           } catch (e) {
-            return { ok: false, error: (e && e.message) || "保存失败" };
+            return { ok: false, error: (e && e.message) || ZZ.T("保存失败") };
           }
         }
 
@@ -798,13 +806,13 @@
                   selector,
                   domains: p.scope === "global" ? [] : [targetHost],
                   source: "ai",
-                  note: (item && item.reason) || "AI 识别并确认",
+                  note: (item && item.reason) || ZZ.T("AI 识别并确认"),
                 },
                 "ai"
               )
             );
           }
-          if (!rules.length) return { ok: false, error: "没有有效选择器" };
+          if (!rules.length) return { ok: false, error: ZZ.T("没有有效选择器") };
           await ZZ.Store.addRules(F.dedupe(rules));
           if (ZZ.Learn) {
             for (const item of items) {
@@ -899,7 +907,7 @@
 
         case "zz:picker:start": {
           const tab = await getTab(msg.payload && msg.payload.tabId, sender);
-          if (!tab) return { ok: false, error: "找不到标签页" };
+          if (!tab) return { ok: false, error: ZZ.T("找不到标签页") };
           await ZZ.sendToTab(tab.id, { type: "zz:picker:start" });
           return { ok: true };
         }
@@ -945,17 +953,17 @@
 
     async runAiOnTab(tab, opts) {
       const host = ZZ.hostOf(tab.url || "");
-      if (!host) return { ok: false, error: "无法识别站点" };
-      if (!ZZ.Ai.configured()) return { ok: false, error: "请先在控制台配置 AI 接口" };
+      if (!host) return { ok: false, error: ZZ.T("无法识别站点") };
+      if (!ZZ.Ai.configured()) return { ok: false, error: ZZ.T("请先在控制台配置 AI 接口") };
       const collected = await ZZ.sendToTab(tab.id, {
         type: "zz:scan:collect",
         payload: { deep: true },
       });
       if (!collected || !collected.ok) {
-        return { ok: false, error: (collected && collected.error) || "内容脚本无响应，刷新页面后重试" };
+        return { ok: false, error: (collected && collected.error) || ZZ.T("内容脚本无响应，刷新页面后重试") };
       }
       const candidates = (collected.candidates || []).slice(0, ZZ.Store.settings().ai.maxCandidates || 30);
-      if (!candidates.length) return { ok: true, findings: [], applied: 0, message: "未发现可疑广告元素" };
+      if (!candidates.length) return { ok: true, findings: [], applied: 0, message: ZZ.T("未发现可疑广告元素") };
       const res = await ZZ.Ai.classify({
         host,
         url: collected.url || tab.url,

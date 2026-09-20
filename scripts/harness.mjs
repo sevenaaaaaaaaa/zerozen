@@ -55,7 +55,15 @@ export function load(sandbox, ...relPaths) {
 }
 
 export function loadRuleEngine(sandbox) {
-  return load(sandbox, "background/lib-compat.js", "background/rule-format.js", "background/profiles.js", "background/rule-index.js");
+  return load(
+    sandbox,
+    "background/lib-compat.js",
+    "i18n/i18n.js",
+    "i18n/dict-en.js",
+    "background/rule-format.js",
+    "background/profiles.js",
+    "background/rule-index.js"
+  );
 }
 
 export function assert(cond, label) {

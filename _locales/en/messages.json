@@ -1,0 +1,12 @@
+{
+  "appName": {
+    "message": "ZeroZen Ad Cleaner",
+    "description": "Extension name shown in the browser and in the store"
+  },
+  "appDesc": {
+    "message": "Cross-browser ad and popup blocking: rule engine + AI detection + bulk bookmark scanning, with custom rule import/export.",
+    "description": "Extension description"
+  },
+  "cmdPick": { "message": "Pick an element to block" },
+  "cmdAiPage": { "message": "Run AI detection on this page" }
+}

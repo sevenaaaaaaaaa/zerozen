@@ -29,7 +29,7 @@
       function walk(list, path) {
         for (const node of list || []) {
           if (node.url) continue;
-          const label = node.title || (node.id === "0" ? "全部书签" : "(未命名)");
+          const label = node.title || (node.id === "0" ? ZZ.T("全部书签") : ZZ.T("(未命名)"));
           const full = path ? path + " / " + label : label;
           folders.push({ id: node.id, title: label, path: full, count: countUrls(node) });
           if (node.children) walk(node.children, full);

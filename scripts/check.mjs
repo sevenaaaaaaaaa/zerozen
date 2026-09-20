@@ -2,9 +2,10 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, extname, relative } from "node:path";
 import vm from "node:vm";
+import { report as i18nReport } from "./i18n-scan.mjs";
 
 const root = new URL("..", import.meta.url).pathname;
-const dirs = ["background", "content", "ui"];
+const dirs = ["background", "content", "ui", "i18n"];
 const extraFiles = [];
 let errors = 0;
 let checked = 0;
@@ -62,7 +63,8 @@ for (const f of jsonRoot) {
   }
 }
 
-const manifest = JSON.parse(readFileSync(join(root, "manifest.json"), "utf8"));
+const manifestRaw = readFileSync(join(root, "manifest.json"), "utf8");
+const manifest = JSON.parse(manifestRaw);
 const referenced = [];
 referenced.push(...(manifest.background?.scripts || []));
 referenced.push(manifest.background?.service_worker);
@@ -89,7 +91,9 @@ for (const rel of referenced.filter(Boolean)) {
 }
 
 const indexJs = readFileSync(join(root, "background/index.js"), "utf8");
-const imports = [...indexJs.matchAll(/"([^"]+\.js)"/g)].map((m) => "background/" + m[1]);
+const imports = [...indexJs.matchAll(/"([^"]+\.js)"/g)].map((m) =>
+  m[1].startsWith("../") ? m[1].slice(3) : "background/" + m[1]
+);
 const listed = manifest.background?.scripts || [];
 if (imports.length !== listed.length || imports.some((p, i) => p !== listed[i])) {
   errors++;
@@ -170,6 +174,34 @@ if (unhandled.length) {
 } else {
   checked++;
 }
+
+const localeEn = JSON.parse(readFileSync(join(root, "_locales/en/messages.json"), "utf8"));
+const localeZh = JSON.parse(readFileSync(join(root, "_locales/zh_CN/messages.json"), "utf8"));
+const enKeys = Object.keys(localeEn).sort();
+const zhKeys = Object.keys(localeZh).sort();
+if (enKeys.join(",") !== zhKeys.join(",")) {
+  errors++;
+  console.error("FAIL  _locales/en and _locales/zh_CN have different message keys");
+} else {
+  checked++;
+}
+for (const m of manifestRaw.matchAll(/__MSG_([A-Za-z0-9_]+)__/g)) {
+  if (!localeEn[m[1]]) {
+    errors++;
+    console.error(`FAIL  manifest uses __MSG_${m[1]}__ but _locales/en has no such message`);
+  } else {
+    checked++;
+  }
+}
+
+const i18n = i18nReport();
+if (i18n.problems.length) {
+  errors += i18n.problems.length;
+  for (const p of i18n.problems) console.error("FAIL  i18n " + p);
+} else {
+  checked++;
+}
+console.log(`i18n: ${i18n.uiKeys} UI keys + ${i18n.contentKeys} content keys translated`);
 
 console.log(`\ncheck: ${checked} checks OK, ${errors} failures`);
 process.exit(errors ? 1 : 0);

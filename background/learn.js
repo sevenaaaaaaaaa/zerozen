@@ -140,7 +140,7 @@
           selector: gen,
           domains: [],
           source: "learn",
-          note: "自动学习：已在 " + sites + " 个站点出现",
+          note: ZZ.T("自动学习：已在 $1 个站点出现", sites),
         },
         "learn"
       );
