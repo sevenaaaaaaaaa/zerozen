@@ -24,30 +24,7 @@
   ],
   "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
-    "service_worker": "background/index.js",
-    "scripts": [
-      "background/lib-compat.js",
-      "i18n/i18n.js",
-      "i18n/dict-en.js",
-      "background/ai-prompt.js",
-      "background/rule-format.js",
-      "background/store.js",
-      "background/profiles.js",
-      "background/rule-index.js",
-      "background/permissions.js",
-      "background/dnr.js",
-      "background/subscriptions.js",
-      "background/ai.js",
-      "background/bookmarks.js",
-      "background/learn.js",
-      "background/counts.js",
-      "background/sniffer.js",
-      "background/scanner.js",
-      "background/autopilot.js",
-      "background/menus.js",
-      "background/messages.js",
-      "background/main.js"
-    ]
+    "service_worker": "background/index.js"
   },
   "content_scripts": [
     {

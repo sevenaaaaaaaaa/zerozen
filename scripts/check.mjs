@@ -94,13 +94,24 @@ const indexJs = readFileSync(join(root, "background/index.js"), "utf8");
 const imports = [...indexJs.matchAll(/"([^"]+\.js)"/g)].map((m) =>
   m[1].startsWith("../") ? m[1].slice(3) : "background/" + m[1]
 );
-const listed = manifest.background?.scripts || [];
-if (imports.length !== listed.length || imports.some((p, i) => p !== listed[i])) {
+let backgroundOk = true;
+for (const rel of imports) {
+  try {
+    statSync(join(root, rel));
+    checked++;
+  } catch (e) {
+    backgroundOk = false;
+    errors++;
+    console.error("FAIL  background/index.js imports missing file: " + rel);
+  }
+}
+if (!imports.length) {
   errors++;
-  console.error("FAIL  background/index.js importScripts order does not match manifest background.scripts");
-  console.error("      index.js: " + imports.join(", "));
-  console.error("      manifest: " + listed.join(", "));
-} else {
+  console.error("FAIL  background/index.js has no importScripts entries");
+} else if (!manifest.background?.service_worker) {
+  errors++;
+  console.error("FAIL  manifest.background.service_worker is missing");
+} else if (backgroundOk) {
   checked++;
 }
 

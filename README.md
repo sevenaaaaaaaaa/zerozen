@@ -41,7 +41,7 @@
 ### Chrome / Edge / Brave / Arc
 
 1. 打开 `chrome://extensions`，右上角开启「开发者模式」
-2. 「加载已解压的扩展程序」→ 选择本目录（或 `dist/chrome`）
+2. 「加载已解压的扩展程序」→ 选择本目录（源码目录，Chrome 可直接加载）或 `dist/chrome`
 3. 点击工具栏图标 → 「打开净化控制台」
 
 要求 Chrome 105+（`declarativeNetRequest` 动态规则、`scripting`）。
@@ -49,8 +49,8 @@
 ### Firefox
 
 1. 打开 `about:debugging#/runtime/this-firefox`
-2. 「临时载入附加组件」→ 选择 `manifest.json`（或 `dist/firefox/manifest.json`）
-3. 长期使用建议用 `dist/zerozen-firefox-0.1.0.xpi` 走 `about:addons` 安装
+2. 「临时载入附加组件」→ 选择 `dist/firefox/manifest.json`（根目录清单是 Chrome MV3 专用，Firefox 请用 dist 产物）
+3. 长期使用建议用 `dist/zerozen-firefox-0.7.0.xpi` 走 `about:addons` 安装
 
 要求 Firefox 128+。
 

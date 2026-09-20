@@ -9,6 +9,13 @@ const manifest = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
 const version = manifest.version;
 const SHARED = ["background", "content", "ui", "i18n", "_locales", "rules", "icons", "README.md", "docs"];
 
+// Firefox 构建需要 background.scripts（Firefox 不支持 MV3 service_worker）。
+// 以 background/index.js 的 importScripts 顺序为唯一来源，避免与清单重复维护。
+const indexSrc = readFileSync(join(ROOT, "background", "index.js"), "utf8");
+const BACKGROUND_SCRIPTS = [...indexSrc.matchAll(/"([^"]+\.js)"/g)].map((m) =>
+  m[1].startsWith("../") ? m[1].slice(3) : "background/" + m[1]
+);
+
 // 递归复制：不用 fs.cpSync，它在部分挂载文件系统上会因为同步元数据失败（EACCES）
 function copyTree(src, dest) {
   const st = statSync(src);
@@ -60,9 +67,8 @@ const chromeDir = writeTarget("chrome", (m) => {
 
 const firefoxDir = writeTarget("firefox", (m) => {
   delete m.background.service_worker;
+  m.background.scripts = BACKGROUND_SCRIPTS;
   delete m.minimum_chrome_version;
-  m.background.type = undefined;
-  delete m.background.type;
   m.name = m.name + " (Firefox)";
   m.browser_specific_settings = {
     gecko: {
