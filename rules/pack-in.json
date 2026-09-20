@@ -1,0 +1,178 @@
+{
+  "id": "in",
+  "name": "印度站点",
+  "desc": "Times of India / NDTV / News18 等门户与广告联盟",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_free_wrapper_homepage",
+      "note": "TOI 广告包裹",
+      "domains": [
+        "indiatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".wdt-taboola",
+      "note": "TOI Taboola 位",
+      "domains": [
+        "indiatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "indiatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "indiatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".nw18-dfp-ad",
+      "note": "News18 DFP 广告",
+      "domains": [
+        "news18.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mc-ad",
+      "note": "News18 广告位",
+      "domains": [
+        "news18.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-adcode]",
+      "note": "News18 广告容器",
+      "domains": [
+        "news18.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ndtv.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ndtv.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "hindustantimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "hindustantimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "indiatoday.in"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "indiatoday.in"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "firstpost.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "firstpost.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "economictimes.indiatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "economictimes.indiatimes.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adgebra.co.in^",
+      "note": "Adgebra 印度广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||vserv.com^",
+      "note": "Vserv 印度广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tyroo.com^",
+      "note": "Tyroo 印度广告平台"
+    }
+  ]
+}

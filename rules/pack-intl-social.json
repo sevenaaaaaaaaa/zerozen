@@ -1,0 +1,363 @@
+{
+  "id": "intl-social",
+  "name": "海外社交",
+  "desc": "X (Twitter) / Facebook / Instagram / TikTok / Pinterest / Quora / Medium 的推广内容",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='placementTracking']",
+      "note": "X 推广帖",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[data-testid='cellInnerDiv']:has([data-testid='placementTracking'])",
+      "note": "X 推广帖整卡",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label*='Promoted' i]",
+      "note": "X 推广标签",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='sidebarColumn'] [data-testid='placementTracking']",
+      "note": "X 侧栏推广",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-pagelet*='FeedUnit']:has([aria-label*='Sponsored' i])",
+      "note": "Facebook 推广帖",
+      "domains": [
+        "facebook.com",
+        "fb.com",
+        "m.facebook.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label*='Sponsored' i]",
+      "note": "Facebook 推广标签",
+      "domains": [
+        "facebook.com",
+        "fb.com",
+        "m.facebook.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-pagelet*='RightRail']:has([data-pagelet*='Ad'])",
+      "note": "Facebook 右栏广告",
+      "domains": [
+        "facebook.com",
+        "fb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsored_ad']",
+      "note": "Facebook 广告容器",
+      "domains": [
+        "facebook.com",
+        "fb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[role='article']:has(a[href*='/ads/'])",
+      "note": "Facebook 广告帖",
+      "domains": [
+        "facebook.com",
+        "fb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "article:has([aria-label*='Sponsored' i])",
+      "note": "Instagram 推广帖",
+      "domains": [
+        "instagram.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label*='Sponsored' i]",
+      "note": "Instagram 推广标签",
+      "domains": [
+        "instagram.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='AdTag']",
+      "note": "Instagram 广告角标",
+      "domains": [
+        "instagram.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-e2e='ad-label']",
+      "note": "TikTok 广告标签",
+      "domains": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-e2e='video-card-ad-label']",
+      "note": "TikTok 视频广告标签",
+      "domains": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-tag']",
+      "note": "TikTok 广告角标",
+      "domains": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-tag']",
+      "note": "TikTok 广告角标",
+      "domains": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='AdTagContainer']",
+      "note": "TikTok 广告容器",
+      "domains": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promotion-tag']",
+      "note": "TikTok 推广标签",
+      "domains": [
+        "tiktok.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-test-id='ad-badge']",
+      "note": "Pinterest 广告角标",
+      "domains": [
+        "pinterest.com",
+        "pinterest.co.uk",
+        "pinterest.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[data-test-id='pin']:has([aria-label*='Sponsored' i])",
+      "note": "Pinterest 推广 Pin",
+      "domains": [
+        "pinterest.com",
+        "pinterest.co.uk",
+        "pinterest.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label*='Sponsored' i]",
+      "note": "Pinterest 推广标签",
+      "domains": [
+        "pinterest.com",
+        "pinterest.co.uk",
+        "pinterest.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='AdWrapper']",
+      "note": "Quora 广告容器",
+      "domains": [
+        "quora.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper']",
+      "note": "Quora 广告容器",
+      "domains": [
+        "quora.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-wrapper']",
+      "note": "Quora 广告容器",
+      "domains": [
+        "quora.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsored']",
+      "note": "Quora 赞助内容",
+      "domains": [
+        "quora.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='js-postPromo']",
+      "note": "Medium 推广块",
+      "domains": [
+        "medium.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promoBanner']",
+      "note": "Medium 推广横幅",
+      "domains": [
+        "medium.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='BottomBar']",
+      "note": "X 底部登录提示条",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='loginModal']",
+      "note": "X 登录弹窗",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='sheetDialog']:has([data-testid='loginButton'])",
+      "note": "X 登录引导弹层",
+      "domains": [
+        "twitter.com",
+        "x.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='LoginModal']",
+      "note": "Instagram 登录弹窗",
+      "domains": [
+        "instagram.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[role='dialog']:has([name='username'])",
+      "note": "Instagram 登录弹窗",
+      "domains": [
+        "instagram.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ads-twitter.com^",
+      "note": "X 广告像素"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ads.twitter.com^",
+      "note": "X 广告服务"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||an.facebook.com^",
+      "note": "Facebook 广告投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||graph.facebook.com/pixel",
+      "note": "Facebook 像素"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ads.tiktok.com^",
+      "note": "TikTok 广告服务"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||analytics.tiktok.com^",
+      "note": "TikTok 转化追踪"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ads.pinterest.com^",
+      "note": "Pinterest 广告服务"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ct.pinterest.com^",
+      "note": "Pinterest 转化追踪"
+    }
+  ]
+}

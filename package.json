@@ -1,0 +1,19 @@
+{
+  "name": "zerozen",
+  "version": "0.5.0",
+  "private": true,
+  "description": "ZeroZen - 跨浏览器广告与弹窗净化扩展（规则引擎 + AI 识别 + 收藏夹批量扫描）",
+  "scripts": {
+    "icons": "node scripts/gen-icons.mjs",
+    "check": "node scripts/check.mjs",
+    "validate": "node scripts/validate-rules.mjs",
+    "selftest": "node scripts/selftest.mjs",
+    "import:lists": "node scripts/import-lists.mjs",
+    "test": "node scripts/check.mjs && node scripts/validate-rules.mjs && node scripts/selftest.mjs",
+    "build": "node scripts/gen-icons.mjs && node scripts/build.mjs",
+    "build:safari": "bash scripts/build-safari.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,450 @@
+{
+  "id": "shopping",
+  "name": "电商平台",
+  "desc": "淘宝天猫 / 京东 / Amazon / eBay / AliExpress 的推广位与登录弹窗",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".J_Ad",
+      "note": "淘宝广告位",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".tb-ad",
+      "note": "淘宝广告位",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='tb-ad']",
+      "note": "淘宝广告容器",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "淘宝广告横幅",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "淘宝广告横幅",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "淘宝广告容器",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "淘宝广告容器",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-tip']",
+      "note": "淘宝登录提示浮层",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".login-box",
+      "note": "淘宝登录弹窗",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-panel']",
+      "note": "淘宝登录面板",
+      "domains": [
+        "taobao.com",
+        "tmall.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='coupon-float']",
+      "note": "优惠券浮层",
+      "domains": [
+        "taobao.com",
+        "tmall.com",
+        "jd.com",
+        "pinduoduo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='coupon-popup']",
+      "note": "优惠券弹窗",
+      "domains": [
+        "taobao.com",
+        "tmall.com",
+        "jd.com",
+        "pinduoduo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".J_ad",
+      "note": "京东广告位",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='J_ad']",
+      "note": "京东广告位",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-floor",
+      "note": "京东广告楼层",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "京东广告横幅",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "京东广告横幅",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "京东广告容器",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "京东广告容器",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".login-box",
+      "note": "京东登录弹窗",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-dialog']",
+      "note": "京东登录弹窗",
+      "domains": [
+        "jd.com",
+        "jd.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-component-type='sp-sponsored-result']",
+      "note": "Amazon 赞助商品",
+      "domains": [
+        "amazon.com",
+        "amazon.cn",
+        "amazon.co.jp",
+        "amazon.de",
+        "amazon.co.uk",
+        "amazon.fr",
+        "amazon.ca",
+        "amazon.in",
+        "amazon.es",
+        "amazon.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[cel_widget_id*='sp-sponsored']",
+      "note": "Amazon 赞助位",
+      "domains": [
+        "amazon.com",
+        "amazon.cn",
+        "amazon.co.jp",
+        "amazon.de",
+        "amazon.co.uk",
+        "amazon.fr",
+        "amazon.ca",
+        "amazon.in",
+        "amazon.es",
+        "amazon.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#sponsoredProducts",
+      "note": "Amazon 赞助商品区",
+      "domains": [
+        "amazon.com",
+        "amazon.cn",
+        "amazon.co.jp",
+        "amazon.de",
+        "amazon.co.uk",
+        "amazon.fr",
+        "amazon.ca",
+        "amazon.in",
+        "amazon.es",
+        "amazon.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='sp_detail']",
+      "note": "Amazon 赞助商品位",
+      "domains": [
+        "amazon.com",
+        "amazon.cn",
+        "amazon.co.jp",
+        "amazon.de",
+        "amazon.co.uk",
+        "amazon.fr",
+        "amazon.ca",
+        "amazon.in",
+        "amazon.es",
+        "amazon.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-cel-widget*='sponsored']",
+      "note": "Amazon 赞助卡片",
+      "domains": [
+        "amazon.com",
+        "amazon.cn",
+        "amazon.co.jp",
+        "amazon.de",
+        "amazon.co.uk",
+        "amazon.fr",
+        "amazon.ca",
+        "amazon.in",
+        "amazon.es",
+        "amazon.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".srp-river-answer--AD",
+      "note": "eBay 广告结果",
+      "domains": [
+        "ebay.com",
+        "ebay.co.uk",
+        "ebay.de",
+        "ebay.com.au"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slot']",
+      "note": "eBay 广告位",
+      "domains": [
+        "ebay.com",
+        "ebay.co.uk",
+        "ebay.de",
+        "ebay.com.au"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-slot']",
+      "note": "eBay 广告位",
+      "domains": [
+        "ebay.com",
+        "ebay.co.uk",
+        "ebay.de",
+        "ebay.com.au"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='banner-ad']",
+      "note": "eBay 横幅广告",
+      "domains": [
+        "ebay.com",
+        "ebay.co.uk",
+        "ebay.de",
+        "ebay.com.au"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' banner-ad']",
+      "note": "eBay 横幅广告",
+      "domains": [
+        "ebay.com",
+        "ebay.co.uk",
+        "ebay.de",
+        "ebay.com.au"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsored']",
+      "note": "AliExpress 赞助商品",
+      "domains": [
+        "aliexpress.com",
+        "aliexpress.ru",
+        "alibaba.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "AliExpress 广告横幅",
+      "domains": [
+        "aliexpress.com",
+        "aliexpress.ru",
+        "alibaba.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "AliExpress 广告横幅",
+      "domains": [
+        "aliexpress.com",
+        "aliexpress.ru",
+        "alibaba.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "AliExpress 广告容器",
+      "domains": [
+        "aliexpress.com",
+        "aliexpress.ru",
+        "alibaba.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "AliExpress 广告容器",
+      "domains": [
+        "aliexpress.com",
+        "aliexpress.ru",
+        "alibaba.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adx.taobao.com^",
+      "note": "淘宝广告交易"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cps.taobao.com^",
+      "note": "淘宝推广接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cupid.jd.com^",
+      "note": "京东广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||advertising.amazon.com^",
+      "note": "Amazon 广告接口"
+    }
+  ]
+}

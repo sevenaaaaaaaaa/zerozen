@@ -1,0 +1,29 @@
+{
+  "id": "reddit",
+  "name": "Reddit",
+  "desc": "推广帖、信息流广告、侧栏与嵌入广告",
+  "rules": [
+    { "kind": "cosmetic", "action": "hide", "selector": "shreddit-ad-post", "note": "推广帖（新版）" },
+    { "kind": "cosmetic", "action": "hide", "selector": "shreddit-comments-page-ad", "note": "评论区广告" },
+    { "kind": "cosmetic", "action": "hide", "selector": "shreddit-comments-dl-ad", "note": "评论区推广" },
+    { "kind": "cosmetic", "action": "hide", "selector": "shreddit-sidebar-ad", "note": "侧栏广告" },
+    { "kind": "cosmetic", "action": "hide", "selector": "shreddit-dynamic-ad-link", "note": "动态广告" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-testid='promoted-post']", "note": "推广帖" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-testid='ad-post-unit']", "note": "广告单元" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".promoted", "note": "推广内容" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".promotedlink", "note": "推广链接" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".PromotedLink", "note": "推广链接" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".ads-wrapper", "note": "广告容器" },
+    { "kind": "cosmetic", "action": "hide", "selector": "#ad-frame", "note": "广告 iframe" },
+    { "kind": "cosmetic", "action": "hide", "selector": "iframe[src*='reddit.com/ads']", "note": "广告 iframe" },
+    { "kind": "cosmetic", "action": "hide", "selector": "faceplate-tracker[source='ad']", "note": "广告埋点容器" },
+    { "kind": "cosmetic", "action": "hide", "selector": "div[data-bui-base]:has(> [data-testid='promoted-post'])", "note": "推广帖外层" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".side .sponsored", "note": "侧栏推广" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-click-id='background']:has([data-testid='promoted-post'])", "note": "推广帖背景层" },
+
+    { "kind": "network", "action": "block", "filter": "||ads.reddit.com^", "note": "Reddit 广告服务" },
+    { "kind": "network", "action": "block", "filter": "||reddit.com/svc/shreddit/ads", "note": "广告接口" },
+    { "kind": "network", "action": "block", "filter": "||redditstatic.com/ads/", "note": "广告素材" },
+    { "kind": "network", "action": "block", "filter": "||alb.reddit.com^", "note": "广告转化追踪" }
+  ]
+}

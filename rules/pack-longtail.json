@@ -1,0 +1,427 @@
+{
+  "id": "longtail",
+  "name": "长尾站点通用",
+  "desc": "小说/漫画/小型资源站的模板化广告位与广告弹层（源自油猴脚本常见写法）",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad_']",
+      "note": "经典模板广告位 id"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad-']",
+      "note": "经典模板广告位 id"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_']",
+      "note": "经典模板广告位 class"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-']",
+      "note": "经典模板广告位 class"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='_ad_']",
+      "note": "内嵌广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ads-']",
+      "note": "广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ads-']",
+      "note": "广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ads_']",
+      "note": "广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ads_']",
+      "note": "广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='advert']",
+      "note": "广告容器（advert*）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adslot']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='banner_ad']",
+      "note": "横幅广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' banner_ad']",
+      "note": "横幅广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='bannerAd']",
+      "note": "横幅广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_content']",
+      "note": "广告内容区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_content']",
+      "note": "广告内容区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-content']",
+      "note": "广告内容区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-content']",
+      "note": "广告内容区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_img']",
+      "note": "广告图片位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_img']",
+      "note": "广告图片位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_pic']",
+      "note": "广告图片位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_pic']",
+      "note": "广告图片位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_text']",
+      "note": "文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_text']",
+      "note": "文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='text_ad']",
+      "note": "文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' text_ad']",
+      "note": "文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='read_ad']",
+      "note": "阅读页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' read_ad']",
+      "note": "阅读页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='book_ad']",
+      "note": "小说页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='chapter_ad']",
+      "note": "章节页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='chapterad']",
+      "note": "章节页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='novel-ad']",
+      "note": "小说站广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='content_ad']",
+      "note": "正文内广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='content-ad']",
+      "note": "正文内广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='footer_ad']",
+      "note": "底部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='header_ad']",
+      "note": "顶部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad]",
+      "note": "广告标记元素"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='baidu_ad']",
+      "note": "百度联盟广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='baidu_ad']",
+      "note": "百度联盟广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='gg_show']",
+      "note": "广告展示位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='guang_gao']",
+      "note": "广告位（拼音）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='tuiguang']",
+      "note": "推广位（拼音）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='pop_ad']",
+      "note": "弹窗广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='popup_ad']",
+      "note": "弹窗广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='mask-ad']",
+      "note": "遮罩广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' mask-ad']",
+      "note": "遮罩广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-mask']",
+      "note": "遮罩广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-mask']",
+      "note": "遮罩广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_float']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_float']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-float']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-float']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slide']",
+      "note": "轮播广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-slide']",
+      "note": "轮播广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adslide']",
+      "note": "轮播广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='fixed-ad']",
+      "note": "吸底广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' fixed-ad']",
+      "note": "吸底广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_bottom']",
+      "note": "底部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_bottom']",
+      "note": "底部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_right']",
+      "note": "右栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_right']",
+      "note": "右栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_left']",
+      "note": "左栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_left']",
+      "note": "左栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_middle']",
+      "note": "中部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_middle']",
+      "note": "中部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='page-ad']",
+      "note": "分页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='pager-ad']",
+      "note": "分页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-ad']",
+      "note": "下载区广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-ad']",
+      "note": "App 推广广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='qrcode-ad']",
+      "note": "二维码广告"
+    }
+  ]
+}

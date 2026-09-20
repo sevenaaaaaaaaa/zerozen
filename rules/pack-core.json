@@ -1,0 +1,781 @@
+{
+  "id": "core",
+  "name": "核心拦截",
+  "desc": "通用广告位元素与主流广告投放域名，所有站点生效",
+  "rules": [
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||doubleclick.net^",
+      "note": "Google 广告投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||googlesyndication.com^",
+      "note": "AdSense / AdX"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||googleadservices.com^",
+      "note": "Google Ads 转化"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adservice.google.com^",
+      "note": "Google 广告服务"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||2mdn.net^",
+      "note": "Google 广告素材 CDN"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adsafeprotected.com^",
+      "note": "广告可见性验证"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||moatads.com^",
+      "note": "广告验证"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adnxs.com^",
+      "note": "Xandr / AppNexus"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||advertising.com^",
+      "note": "AOL 广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||serving-sys.com^",
+      "note": "Sizmek"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||flashtalking.com^",
+      "note": "Flashtalking"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||taboola.com^",
+      "note": "Taboola 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||outbrain.com^",
+      "note": "Outbrain 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||criteo.com^",
+      "note": "Criteo 重定向广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||criteo.net^",
+      "note": "Criteo CDN"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mgid.com^",
+      "note": "MGID 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||revcontent.com^",
+      "note": "Revcontent 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||amazon-adsystem.com^",
+      "note": "Amazon 广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adsrvr.org^",
+      "note": "The Trade Desk"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||casalemedia.com^",
+      "note": "Index Exchange"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||360yield.com^",
+      "note": "Improve Digital"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||bidswitch.net^",
+      "note": "BidSwitch"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pubmatic.com^",
+      "note": "PubMatic"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||rubiconproject.com^",
+      "note": "Magnite"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||openx.net^",
+      "note": "OpenX"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adform.net^",
+      "note": "Adform"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||smartadserver.com^",
+      "note": "Smart AdServer"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||teads.tv^",
+      "note": "Teads 视频广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sovrn.com^",
+      "note": "Sovrn"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||lijit.com^",
+      "note": "Sovrn/Lijit"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||gumgum.com^",
+      "note": "GumGum"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||33across.com^",
+      "note": "33Across"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||yieldmo.com^",
+      "note": "Yieldmo"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sharethrough.com^",
+      "note": "Sharethrough"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adroll.com^",
+      "note": "AdRoll"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||gemini.yahoo.com^",
+      "note": "Yahoo Gemini"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.yieldmanager.com^",
+      "note": "Yahoo 广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||yieldoptimizer.com^",
+      "note": "Yahoo 广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mathtag.com^",
+      "note": "MediaMath"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||1rx.io^",
+      "note": "RhythmOne"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||agkn.com^",
+      "note": "Neustar"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||everesttech.net^",
+      "note": "Adobe Advertising Cloud"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tribalfusion.com^",
+      "note": "Tribal Fusion"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||yieldlab.net^",
+      "note": "Yieldlab"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sonobi.com^",
+      "note": "Sonobi"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||seedtag.com^",
+      "note": "Seedtag 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||districtm.io^",
+      "note": "District M"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||freewheel.tv^",
+      "note": "FreeWheel 视频广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||imrworldwide.com^",
+      "note": "Nielsen 测量"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "ins.adsbygoogle",
+      "note": "Google AdSense"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".adsbygoogle",
+      "note": "Google AdSense"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[id^='google_ads_iframe']",
+      "note": "Google 广告 iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[id^='aswift']",
+      "note": "Google 广告 iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='googlesyndication.com']",
+      "note": "Google 广告 iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='doubleclick.net']",
+      "note": "DoubleClick iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[id^='div-gpt-ad']",
+      "note": "GPT 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[id^='google_ads_']",
+      "note": "Google 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-slot]",
+      "note": "广告位标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-client]",
+      "note": "AdSense 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-google-query-id]",
+      "note": "GPT 广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-unit]",
+      "note": "广告位标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-format]",
+      "note": "广告位标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-slot",
+      "note": "通用广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-container",
+      "note": "通用广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads-container",
+      "note": "通用广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-wrapper",
+      "note": "通用广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-placeholder",
+      "note": "广告占位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".advertising-container",
+      "note": "通用广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-ad",
+      "note": "Banner 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-banner",
+      "note": "Banner 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".google-ad",
+      "note": "Google 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-unit",
+      "note": "广告单元"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-zone",
+      "note": "广告区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".adzone",
+      "note": "广告区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='advertisement']",
+      "note": "通用广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='advertorial']",
+      "note": "软文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label='Advertisement' i]",
+      "note": "无障碍广告标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label='Sponsored' i]",
+      "note": "无障碍广告标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[role='complementary'] ins.adsbygoogle",
+      "note": "侧栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrap']",
+      "note": "广告包裹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-wrap']",
+      "note": "广告包裹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ads-wrap']",
+      "note": "广告包裹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ads-wrap']",
+      "note": "广告包裹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_box']",
+      "note": "广告盒"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_box']",
+      "note": "广告盒"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adbox']",
+      "note": "广告盒"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adsbox']",
+      "note": "广告盒（含检测用）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-sense']",
+      "note": "AdSense 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-sense']",
+      "note": "AdSense 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adsense']",
+      "note": "AdSense 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".top-ad",
+      "note": "顶部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".bottom-ad",
+      "note": "底部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".sidebar-ad",
+      "note": "侧栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".sticky-ad",
+      "note": "吸底广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sticky-ad']",
+      "note": "吸底广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='floating-ad']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='float-ad']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='popup-ad']",
+      "note": "弹窗广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='popunder']",
+      "note": "弹底广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-overlay",
+      "note": "广告遮罩"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='interstitial']",
+      "note": "插屏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".video-ads",
+      "note": "视频广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-placement']",
+      "note": "广告投放位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-placement']",
+      "note": "广告投放位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsored-content']",
+      "note": "赞助内容"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsor-content']",
+      "note": "赞助内容"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='taboola-']",
+      "note": "Taboola 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='taboola']",
+      "note": "Taboola 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' taboola']",
+      "note": "Taboola 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".trc_related_container",
+      "note": "Taboola 推荐容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".trc_rbox",
+      "note": "Taboola 推荐框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='outbrain']",
+      "note": "Outbrain 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='outbrain']",
+      "note": "Outbrain 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' outbrain']",
+      "note": "Outbrain 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".OUTBRAIN",
+      "note": "Outbrain 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ob-widget",
+      "note": "Outbrain 组件"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='mgid']",
+      "note": "MGID 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' mgid']",
+      "note": "MGID 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='mgl-']",
+      "note": "MGID 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='dable']",
+      "note": "Dable 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='dable']",
+      "note": "Dable 内容广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".connatix-placeholder",
+      "note": "Connatix 视频广告占位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='connatix']",
+      "note": "Connatix 视频广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='connatix']",
+      "note": "Connatix 视频广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='primis']",
+      "note": "Primis 视频广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".primis-container",
+      "note": "Primis 视频广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "amp-ad",
+      "note": "AMP 广告组件"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "amp-embed",
+      "note": "AMP 嵌入广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "amp-sticky-ad",
+      "note": "AMP 吸底广告"
+    }
+  ]
+}

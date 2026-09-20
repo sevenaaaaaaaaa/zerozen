@@ -1,0 +1,172 @@
+{
+  "id": "gaming",
+  "name": "游戏 / 电竞",
+  "desc": "IGN / GameSpot / 游民星空 / 3DM / 游侠 / 17173 / Fandom / NexusMods",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".side-ad-trail",
+      "note": "IGN 侧栏广告",
+      "domains": [
+        "ign.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper']",
+      "note": "IGN 广告包裹",
+      "domains": [
+        "ign.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".sidebar-mobile-overlay",
+      "note": "IGN 移动侧栏遮罩",
+      "domains": [
+        "ign.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ign.com",
+        "gamespot.com",
+        "polygon.com",
+        "kotaku.com",
+        "eurogamer.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ign.com",
+        "gamespot.com",
+        "polygon.com",
+        "kotaku.com",
+        "eurogamer.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".advert",
+      "note": "游民星空广告位",
+      "domains": [
+        "gamersky.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='adscontainer_']",
+      "note": "游民星空广告容器",
+      "domains": [
+        "gamersky.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "gamersky.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "gamersky.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".tg-banner",
+      "note": "17173 横幅广告",
+      "domains": [
+        "17173.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ico-ad",
+      "note": "17173 广告入口",
+      "domains": [
+        "17173.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "17173.com",
+        "3dmgame.com",
+        "ali213.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "17173.com",
+        "3dmgame.com",
+        "ali213.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='fandom-ad']",
+      "note": "Fandom 广告位",
+      "domains": [
+        "fandom.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slot']",
+      "note": "Fandom 广告位",
+      "domains": [
+        "fandom.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "nexusmods.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "nexusmods.com"
+      ]
+    }
+  ]
+}

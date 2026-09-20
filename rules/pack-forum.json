@@ -1,0 +1,237 @@
+{
+  "id": "forum",
+  "name": "论坛 / BBS",
+  "desc": "Discuz / phpwind 通用广告位，以及虎扑 / NGA 等社区",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#ad_headerbanner",
+      "note": "Discuz 顶部横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#ad_footerbanner",
+      "note": "Discuz 底部横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#ad_threadlist",
+      "note": "Discuz 帖子列表广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_headerbanner",
+      "note": "Discuz 顶部横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_footerbanner",
+      "note": "Discuz 底部横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".adshow",
+      "note": "Discuz 通用广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_content",
+      "note": "Discuz 广告内容"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad_thread']",
+      "note": "Discuz 帖子广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".pw_ad",
+      "note": "phpwind 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='pw_ad']",
+      "note": "phpwind 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='forum_ad']",
+      "note": "论坛广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_thread']",
+      "note": "论坛帖子广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_thread']",
+      "note": "论坛帖子广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_post']",
+      "note": "论坛楼层广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_post']",
+      "note": "论坛楼层广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='signature-ad']",
+      "note": "论坛签名广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".hupu-ad",
+      "note": "虎扑广告",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "虎扑横幅广告",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "虎扑横幅广告",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "虎扑广告容器",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "虎扑广告容器",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper']",
+      "note": "虎扑广告容器",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-wrapper']",
+      "note": "虎扑广告容器",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-guide']",
+      "note": "虎扑 App 引导",
+      "domains": [
+        "hupu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_container",
+      "note": "NGA 广告容器",
+      "domains": [
+        "nga.cn",
+        "ngabbs.com",
+        "bbs.nga.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#t_ad",
+      "note": "NGA 广告位",
+      "domains": [
+        "nga.cn",
+        "ngabbs.com",
+        "bbs.nga.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrap']",
+      "note": "NGA 广告容器",
+      "domains": [
+        "nga.cn",
+        "ngabbs.com",
+        "bbs.nga.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-wrap']",
+      "note": "NGA 广告容器",
+      "domains": [
+        "nga.cn",
+        "ngabbs.com",
+        "bbs.nga.cn"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||union.discuz.com^",
+      "note": "Discuz 联盟广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.discuz.com^",
+      "note": "Discuz 广告服务"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||phpwind.com/ads",
+      "note": "phpwind 广告接口"
+    }
+  ]
+}

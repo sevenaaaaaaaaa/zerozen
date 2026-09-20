@@ -1,0 +1,162 @@
+{
+  "id": "music",
+  "name": "音乐 / 音频",
+  "desc": "Spotify / SoundCloud / 网易云 / QQ音乐 / 酷狗 / 酷我等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='advertisement']",
+      "note": "Spotify 广告位",
+      "domains": [
+        "open.spotify.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid^='ad-']",
+      "note": "Spotify 广告组件",
+      "domains": [
+        "open.spotify.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".listenAd",
+      "note": "SoundCloud 音频广告",
+      "domains": [
+        "soundcloud.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='listenAd']",
+      "note": "SoundCloud 音频广告",
+      "domains": [
+        "soundcloud.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-']",
+      "note": "SoundCloud 广告位",
+      "domains": [
+        "soundcloud.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad",
+      "note": "Last.fm 广告位",
+      "domains": [
+        "last.fm"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-']",
+      "note": "Last.fm 广告位",
+      "domains": [
+        "last.fm"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "kuwo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "kuwo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "kugou.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "kugou.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "music.163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "music.163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "y.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "y.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "deezer.com",
+        "music.amazon.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "deezer.com",
+        "music.amazon.com"
+      ]
+    }
+  ]
+}

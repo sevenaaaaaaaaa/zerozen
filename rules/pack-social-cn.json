@@ -1,0 +1,512 @@
+{
+  "id": "social-cn",
+  "name": "国内社交资讯",
+  "desc": "微博 / 小红书 / 豆瓣 / 贴吧 / 今日头条 / 门户新闻 的广告与登录/App 弹窗",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='WB_ad']",
+      "note": "微博信息流广告",
+      "domains": [
+        "weibo.com",
+        "weibo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='WB_ad']",
+      "note": "微博信息流广告",
+      "domains": [
+        "weibo.com",
+        "weibo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='wb_ad']",
+      "note": "微博广告容器",
+      "domains": [
+        "weibo.com",
+        "weibo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='feed-ad']",
+      "note": "微博信息流广告",
+      "domains": [
+        "weibo.com",
+        "weibo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='WB_feed_ad']",
+      "note": "微博广告卡",
+      "domains": [
+        "weibo.com",
+        "weibo.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".login-layer",
+      "note": "微博登录浮层",
+      "domains": [
+        "weibo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".login-wrap",
+      "note": "微博登录浮层",
+      "domains": [
+        "weibo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='woo-dialog']",
+      "note": "微博弹窗（含未登录提示）",
+      "domains": [
+        "weibo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-note",
+      "note": "小红书推广笔记",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-note']",
+      "note": "小红书推广笔记",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-note']",
+      "note": "小红书推广笔记",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsor-note']",
+      "note": "小红书赞助笔记",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-badge']",
+      "note": "小红书广告角标",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-badge']",
+      "note": "小红书广告角标",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-modal']",
+      "note": "小红书登录弹窗",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-container']",
+      "note": "小红书登录弹窗",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-download']",
+      "note": "小红书 App 下载引导",
+      "domains": [
+        "xiaohongshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#dale_douban",
+      "note": "豆瓣广告位",
+      "domains": [
+        "douban.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".dale_douban",
+      "note": "豆瓣广告位",
+      "domains": [
+        "douban.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".douban-ad",
+      "note": "豆瓣广告容器",
+      "domains": [
+        "douban.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".douban_ad",
+      "note": "豆瓣广告容器",
+      "domains": [
+        "douban.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".login-modal",
+      "note": "豆瓣登录弹窗",
+      "domains": [
+        "douban.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".login-wrap",
+      "note": "豆瓣登录弹窗",
+      "domains": [
+        "douban.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".j_ad",
+      "note": "贴吧广告",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_banner",
+      "note": "贴吧横幅广告",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_banner_exp",
+      "note": "贴吧横幅广告",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_content",
+      "note": "贴吧广告内容",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".post_head_ad",
+      "note": "贴吧楼内广告",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".j_mf_ad",
+      "note": "贴吧浮层广告",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_banner']",
+      "note": "贴吧广告容器",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_banner']",
+      "note": "贴吧广告容器",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".passport-login-container",
+      "note": "贴吧登录弹窗",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-dialog']",
+      "note": "贴吧登录弹窗",
+      "domains": [
+        "tieba.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-item",
+      "note": "头条信息流广告",
+      "domains": [
+        "toutiao.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-card']",
+      "note": "头条广告卡",
+      "domains": [
+        "toutiao.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-card']",
+      "note": "头条广告卡",
+      "domains": [
+        "toutiao.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='weitoutiao-ad']",
+      "note": "头条微头条广告",
+      "domains": [
+        "toutiao.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-bar']",
+      "note": "头条 App 下载条",
+      "domains": [
+        "toutiao.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-download']",
+      "note": "头条 App 下载引导",
+      "domains": [
+        "toutiao.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_card",
+      "note": "网易新闻广告卡",
+      "domains": [
+        "163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".news_ad",
+      "note": "网易新闻广告位",
+      "domains": [
+        "163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_float']",
+      "note": "网易新闻浮动广告",
+      "domains": [
+        "163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_float']",
+      "note": "网易新闻浮动广告",
+      "domains": [
+        "163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-card']",
+      "note": "门户新闻广告卡",
+      "domains": [
+        "sina.com.cn",
+        "sina.cn",
+        "qq.com",
+        "ifeng.com",
+        "sohu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-card']",
+      "note": "门户新闻广告卡",
+      "domains": [
+        "sina.com.cn",
+        "sina.cn",
+        "qq.com",
+        "ifeng.com",
+        "sohu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "门户新闻广告横幅",
+      "domains": [
+        "sina.com.cn",
+        "sina.cn",
+        "qq.com",
+        "ifeng.com",
+        "sohu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "门户新闻广告横幅",
+      "domains": [
+        "sina.com.cn",
+        "sina.cn",
+        "qq.com",
+        "ifeng.com",
+        "sohu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='news-ad']",
+      "note": "门户新闻广告位",
+      "domains": [
+        "sina.com.cn",
+        "sina.cn",
+        "qq.com",
+        "ifeng.com",
+        "sohu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='qrcode-popup']",
+      "note": "扫码关注弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='follow-popup']",
+      "note": "关注引导弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='wx-popup']",
+      "note": "微信引导弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='wx-guide']",
+      "note": "微信扫码引导"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.weibo.com^",
+      "note": "微博广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||wbapp.mobile.sina.cn^",
+      "note": "微博广告投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sax.sina.com.cn^",
+      "note": "新浪广告服务"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.toutiao.com^",
+      "note": "头条广告接口"
+    }
+  ]
+}

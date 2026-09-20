@@ -1,0 +1,271 @@
+{
+  "id": "hktw",
+  "name": "港澳台站点",
+  "desc": "PIXNET / udn / ETtoday / 巴哈姆特 / HK01 / 讨论区等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='pixnet-ad-']",
+      "note": "痞客邦广告位",
+      "domains": [
+        "pixnet.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "pixnet.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "pixnet.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".udn-ads",
+      "note": "聯合報 广告位",
+      "domains": [
+        "udn.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='udn-ads']",
+      "note": "聯合報 广告位",
+      "domains": [
+        "udn.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ads-mixed-mobile-']",
+      "note": "聯合報 移动广告",
+      "domains": [
+        "udn.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".secondary-content__ads",
+      "note": "聯合報 次要广告",
+      "domains": [
+        "udn.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "udn.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "udn.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_300']",
+      "note": "ETtoday 尺寸广告",
+      "domains": [
+        "ettoday.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".carousel-ad",
+      "note": "ETtoday 轮播广告",
+      "domains": [
+        "ettoday.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".newsend-ad",
+      "note": "ETtoday 文末广告",
+      "domains": [
+        "ettoday.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ettoday.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ettoday.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".BH-banner",
+      "note": "巴哈姆特横幅",
+      "domains": [
+        "gamer.com.tw"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad__wrapper",
+      "note": "巴哈姆特广告包裹",
+      "domains": [
+        "gamer.com.tw"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".js-ad-slot",
+      "note": "HK01 广告位",
+      "domains": [
+        "hk01.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#debug-0-ad-outer-container",
+      "note": "HK01 广告容器",
+      "domains": [
+        "hk01.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ads-anchor]",
+      "note": "HK01 广告锚点",
+      "domains": [
+        "hk01.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='home-slider-promotion']",
+      "note": "HK01 首页推广",
+      "domains": [
+        "hk01.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ltn.com.tw"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ltn.com.tw"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "chinatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "chinatimes.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "mobile01.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "mobile01.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "discuss.com.hk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "discuss.com.hk"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clickforce.com.tw^",
+      "note": "ClickForce 台湾广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tenmax.io^",
+      "note": "TenMax 台湾广告平台"
+    }
+  ]
+}

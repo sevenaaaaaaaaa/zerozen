@@ -1,0 +1,193 @@
+{
+  "id": "latam",
+  "name": "拉美站点",
+  "desc": "巴西 / 阿根廷 / 墨西哥等门户与新闻站",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".headerSection__ad",
+      "note": "UOL 头部广告",
+      "domains": [
+        "uol.com.br"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='banner-']",
+      "note": "UOL 横幅广告位",
+      "domains": [
+        "uol.com.br"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "uol.com.br"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "uol.com.br"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-header-size",
+      "note": "R7 头部广告",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-skeleton",
+      "note": "R7 广告占位",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-spacing",
+      "note": "R7 广告间距位",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#ad-shell",
+      "note": "R7 广告容器",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='b-ultimas__taboola']",
+      "note": "R7 Taboola 推荐",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "r7.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner",
+      "note": "Clarín 横幅广告",
+      "domains": [
+        "clarin.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='div-gpt-ad']",
+      "note": "Clarín GPT 广告位",
+      "domains": [
+        "clarin.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper']",
+      "note": "Infobae 广告包裹",
+      "domains": [
+        "infobae.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-component-container']",
+      "note": "Infobae 广告组件",
+      "domains": [
+        "infobae.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slot-node']",
+      "note": "Infobae 广告位",
+      "domains": [
+        "infobae.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-shell-label']",
+      "note": "Infobae 广告标记",
+      "domains": [
+        "infobae.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-container]",
+      "note": "El Universal 广告容器",
+      "domains": [
+        "eluniversal.com.mx"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "globo.com",
+        "folha.uol.com.br",
+        "estadao.com.br",
+        "terra.com.br"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "globo.com",
+        "folha.uol.com.br",
+        "estadao.com.br",
+        "terra.com.br"
+      ]
+    }
+  ]
+}

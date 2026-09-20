@@ -1,0 +1,358 @@
+{
+  "id": "tech-cn",
+  "name": "技术社区",
+  "desc": "CSDN / 掘金 / 博客园 / 简书 的广告位、登录与关注弹窗",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".csdn-ad",
+      "note": "CSDN 广告位",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".blog_ad",
+      "note": "CSDN 博客广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#blog_ad",
+      "note": "CSDN 博客广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_top",
+      "note": "CSDN 顶部广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".toolbar-ad",
+      "note": "CSDN 工具栏广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".recommend-ad",
+      "note": "CSDN 推荐广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adsense']",
+      "note": "CSDN 联盟广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".passport-login-container",
+      "note": "CSDN 登录弹窗",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-mask']",
+      "note": "CSDN 登录遮罩",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-box']",
+      "note": "CSDN 登录弹窗",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='toolbar-ad']",
+      "note": "CSDN 侧栏广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='recommend-box'] [class^='ad-'], [class*='recommend-box'] [class*=' ad-']",
+      "note": "CSDN 推荐区广告",
+      "domains": [
+        "csdn.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".advertisement",
+      "note": "掘金广告位",
+      "domains": [
+        "juejin.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='juejin-ad']",
+      "note": "掘金广告容器",
+      "domains": [
+        "juejin.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-card']",
+      "note": "掘金广告卡",
+      "domains": [
+        "juejin.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-card']",
+      "note": "掘金广告卡",
+      "domains": [
+        "juejin.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sidebar-ad']",
+      "note": "掘金侧栏广告",
+      "domains": [
+        "juejin.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-modal']",
+      "note": "掘金登录弹窗",
+      "domains": [
+        "juejin.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#cnblogs_c1",
+      "note": "博客园广告位 C1",
+      "domains": [
+        "cnblogs.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#cnblogs_c2",
+      "note": "博客园广告位 C2",
+      "domains": [
+        "cnblogs.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".c_ad",
+      "note": "博客园广告",
+      "domains": [
+        "cnblogs.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_bottom",
+      "note": "博客园底部广告",
+      "domains": [
+        "cnblogs.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_banner']",
+      "note": "博客园横幅广告",
+      "domains": [
+        "cnblogs.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_banner']",
+      "note": "博客园横幅广告",
+      "domains": [
+        "cnblogs.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "简书广告横幅",
+      "domains": [
+        "jianshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "简书广告横幅",
+      "domains": [
+        "jianshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "简书广告容器",
+      "domains": [
+        "jianshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "简书广告容器",
+      "domains": [
+        "jianshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-app']",
+      "note": "简书 App 下载引导",
+      "domains": [
+        "jianshu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "技术社区广告横幅",
+      "domains": [
+        "segmentfault.com",
+        "51cto.com",
+        "oschina.net",
+        "iteye.com",
+        "infoq.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "技术社区广告横幅",
+      "domains": [
+        "segmentfault.com",
+        "51cto.com",
+        "oschina.net",
+        "iteye.com",
+        "infoq.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "技术社区广告容器",
+      "domains": [
+        "segmentfault.com",
+        "51cto.com",
+        "oschina.net",
+        "iteye.com",
+        "infoq.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "技术社区广告容器",
+      "domains": [
+        "segmentfault.com",
+        "51cto.com",
+        "oschina.net",
+        "iteye.com",
+        "infoq.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper']",
+      "note": "技术社区广告容器",
+      "domains": [
+        "segmentfault.com",
+        "51cto.com",
+        "oschina.net",
+        "iteye.com",
+        "infoq.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-wrapper']",
+      "note": "技术社区广告容器",
+      "domains": [
+        "segmentfault.com",
+        "51cto.com",
+        "oschina.net",
+        "iteye.com",
+        "infoq.cn"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||csdnimg.cn/release/blogv2/dist/pc/js/ads",
+      "note": "CSDN 广告脚本"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.csdn.net^",
+      "note": "CSDN 广告接口"
+    }
+  ]
+}

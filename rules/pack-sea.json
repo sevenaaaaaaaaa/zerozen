@@ -1,0 +1,307 @@
+{
+  "id": "sea",
+  "name": "东南亚站点",
+  "desc": "越南 / 泰国 / 印尼 / 马来西亚等门户与社区",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-ads",
+      "note": "VnExpress 横幅广告",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".section-ads-top",
+      "note": "VnExpress 顶部广告",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-top-home",
+      "note": "VnExpress 首页横幅",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads-item",
+      "note": "VnExpress 广告条目",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#_ads_bg_top",
+      "note": "VnExpress 背景广告",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#_footer_ads",
+      "note": "VnExpress 底部广告",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "vnexpress.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads-masthead",
+      "note": "Dân trí 头部广告",
+      "domains": [
+        "dantri.com.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".cms-banner",
+      "note": "Dân trí 横幅位",
+      "domains": [
+        "dantri.com.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "dantri.com.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "dantri.com.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads-left-sidebar",
+      "note": "Kenh14 左侧广告",
+      "domains": [
+        "kenh14.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".kta-ad-col",
+      "note": "Kenh14 广告列",
+      "domains": [
+        "kenh14.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#k14_home_trend_ad",
+      "note": "Kenh14 首页广告",
+      "domains": [
+        "kenh14.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ads]",
+      "note": "Kenh14 广告容器",
+      "domains": [
+        "kenh14.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-frame]",
+      "note": "Kenh14 广告 iframe",
+      "domains": [
+        "kenh14.vn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".box--sponsored",
+      "note": "Kompas 赞助内容",
+      "domains": [
+        "kompas.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads",
+      "note": "Kompas 广告容器",
+      "domains": [
+        "kompas.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".popup-kcmplus",
+      "note": "Kompas 弹窗推广",
+      "domains": [
+        "kompas.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='popup-kcmplus']",
+      "note": "Kompas 弹窗推广",
+      "domains": [
+        "kompas.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".box-ads",
+      "note": "Detik 广告盒",
+      "domains": [
+        "detik.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='mr1-scrollpage-banner']",
+      "note": "Detik 滚动横幅",
+      "domains": [
+        "detik.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='mr2-scrollpage-banner']",
+      "note": "Detik 滚动横幅",
+      "domains": [
+        "detik.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "pantip.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "pantip.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "kaskus.co.id"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "kaskus.co.id"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "sanook.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "sanook.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adflex.vn^",
+      "note": "AdFlex 越南广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ambientdigitalgroup.com^",
+      "note": "Ambient Digital 东南亚广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||innity.net^",
+      "note": "Innity 东南亚广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adtima.vn^",
+      "note": "Adtima 越南广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adsota.com^",
+      "note": "Adsota 越南广告平台"
+    }
+  ]
+}

@@ -1,0 +1,482 @@
+{
+  "id": "video-cn",
+  "name": "国内视频",
+  "desc": "B站 / 爱奇艺 / 腾讯视频 / 优酷 / 芒果TV / 抖音 / 快手 的广告位与弹层",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".bili-video-card__info--ad",
+      "note": "B站首页卡片广告标签"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".bili-video-card__info--creative-ad",
+      "note": "B站创意广告标签"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".video-card-ad-small",
+      "note": "B站小卡广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-report",
+      "note": "B站广告举报层（广告卡同层）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".video-page-special-card-small",
+      "note": "B站播放页广告卡"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".slide-ad-exp",
+      "note": "B站轮播广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-floor-exp",
+      "note": "B站广告楼层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".bpx-player-adv-danmaku",
+      "note": "B站播放器广告弹幕"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".adblock-tips",
+      "note": "B站反广告拦截提示"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".bili-mini-mask",
+      "note": "B站登录遮罩"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".launch-app-btn",
+      "note": "B站打开App浮层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-floor']",
+      "note": "B站广告楼层",
+      "domains": [
+        "bilibili.com",
+        "b23.tv"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-floor']",
+      "note": "B站广告楼层",
+      "domains": [
+        "bilibili.com",
+        "b23.tv"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='link-ad']",
+      "note": "B站直播外链广告",
+      "domains": [
+        "live.bilibili.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".cupid-public-ad",
+      "note": "爱奇艺广告位",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".qy-player-ads",
+      "note": "爱奇艺播放器广告",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".qy-top-ad",
+      "note": "爱奇艺顶部广告",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".iqp-ad",
+      "note": "爱奇艺广告组件",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cupid-public-ad']",
+      "note": "爱奇艺广告容器",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='pause-ad']",
+      "note": "爱奇艺暂停广告",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='vip-guide']",
+      "note": "爱奇艺会员引导弹窗",
+      "domains": [
+        "iqiyi.com",
+        "qiyi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#txp_ad",
+      "note": "腾讯视频广告位",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".txp_ad",
+      "note": "腾讯视频广告位",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".txp-ad",
+      "note": "腾讯视频广告位",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".txp_ad_wrap",
+      "note": "腾讯视频广告容器",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".txp_ad_cover",
+      "note": "腾讯视频广告遮盖",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".txp_ad_pause",
+      "note": "腾讯视频暂停广告",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".player-ad",
+      "note": "腾讯视频播放器广告",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='vip_guide']",
+      "note": "腾讯视频会员引导",
+      "domains": [
+        "v.qq.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#ykad",
+      "note": "优酷广告位",
+      "domains": [
+        "youku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".youku-ad",
+      "note": "优酷广告位",
+      "domains": [
+        "youku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".yk-ad",
+      "note": "优酷广告位",
+      "domains": [
+        "youku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".youku-ad-hc",
+      "note": "优酷广告容器",
+      "domains": [
+        "youku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".h5-ext-layer",
+      "note": "优酷浮层广告",
+      "domains": [
+        "youku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mg-ad",
+      "note": "芒果TV广告位",
+      "domains": [
+        "mgtv.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#mg-ad",
+      "note": "芒果TV广告位",
+      "domains": [
+        "mgtv.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='mgtv-ad']",
+      "note": "芒果TV广告容器",
+      "domains": [
+        "mgtv.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-badge']",
+      "note": "短视频广告角标",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-badge']",
+      "note": "短视频广告角标",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-tag']",
+      "note": "短视频广告标签",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-tag']",
+      "note": "短视频广告标签",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promotion-tag']",
+      "note": "短视频推广标签",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-card']",
+      "note": "短视频信息流广告卡",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-card']",
+      "note": "短视频信息流广告卡",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com",
+        "huoshan.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-mask']",
+      "note": "登录遮罩",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-download-bar']",
+      "note": "App 下载条",
+      "domains": [
+        "douyin.com",
+        "ixigua.com",
+        "kuaishou.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cm.bilibili.com^",
+      "note": "B站广告投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.video.qq.com^",
+      "note": "腾讯视频广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adslvfile.qq.com^",
+      "note": "腾讯视频广告素材"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||atm.youku.com^",
+      "note": "优酷广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cupid.iqiyi.com^",
+      "note": "爱奇艺广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||afp.iqiyi.com^",
+      "note": "爱奇艺广告推送"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mgtv.com/ad",
+      "note": "芒果TV广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pangolin-sdk-toutiao.com^",
+      "note": "抖音穿山甲广告 SDK"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.toutiao.com^",
+      "note": "头条广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.kuaishou.com^",
+      "note": "快手广告接口"
+    }
+  ]
+}

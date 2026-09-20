@@ -1,0 +1,374 @@
+{
+  "id": "eu",
+  "name": "欧洲站点",
+  "desc": "英德法意西波荷等新闻门户的广告位与联盟",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".fig-ad-content",
+      "note": "Le Figaro 广告位",
+      "domains": [
+        "lefigaro.fr"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='fig-ad-content']",
+      "note": "Le Figaro 广告位",
+      "domains": [
+        "lefigaro.fr"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".fh-rubrics__item--sponsored",
+      "note": "Le Figaro 赞助内容",
+      "domains": [
+        "lefigaro.fr"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-wrapper",
+      "note": "Bild 广告包裹",
+      "domains": [
+        "bild.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper']",
+      "note": "Bild 广告包裹",
+      "domains": [
+        "bild.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".partner-ad",
+      "note": "Bild 合作伙伴广告",
+      "domains": [
+        "bild.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-mark]",
+      "note": "Bild 广告标记",
+      "domains": [
+        "bild.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mtl--ad-mark",
+      "note": "Bild 广告标记",
+      "domains": [
+        "bild.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='nav_btn--type-ad']",
+      "note": "Bild 导航广告",
+      "domains": [
+        "bild.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-advertisement]",
+      "note": "Spiegel 广告位",
+      "domains": [
+        "spiegel.de"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".b-t_ad",
+      "note": "El País 广告位",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-mpu",
+      "note": "El País MPU 广告",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-giga",
+      "note": "El País 大横幅",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-adtype]",
+      "note": "El País 广告容器",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad-ntsd']",
+      "note": "El País 广告位",
+      "domains": [
+        "elpais.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".card--adv",
+      "note": "Corriere 广告卡",
+      "domains": [
+        "corriere.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='adv-native-strip']",
+      "note": "Corriere 原生广告条",
+      "domains": [
+        "corriere.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".sponsor-strip",
+      "note": "Corriere 赞助条",
+      "domains": [
+        "corriere.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-adv]",
+      "note": "Corriere 广告容器",
+      "domains": [
+        "corriere.it"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mol-ads-label",
+      "note": "Daily Mail 广告标记",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mol-ads-label-container",
+      "note": "Daily Mail 广告标记",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='dmg-ads']",
+      "note": "Daily Mail 广告容器",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".connatix-placeholder",
+      "note": "Daily Mail Connatix 广告",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#outbrain_container",
+      "note": "Daily Mail Outbrain 广告",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#outbrain_placeholder",
+      "note": "Daily Mail Outbrain 占位",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-marker-group]",
+      "note": "Daily Mail 广告标记组",
+      "domains": [
+        "dailymail.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-gu-name='advertisement']",
+      "note": "Guardian 广告位",
+      "domains": [
+        "theguardian.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-component='ad-slot']",
+      "note": "Guardian 广告组件",
+      "domains": [
+        "theguardian.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".dfp-ad",
+      "note": "Le Monde 广告位",
+      "domains": [
+        "lemonde.fr"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='dfp-ad']",
+      "note": "Le Monde 广告位",
+      "domains": [
+        "lemonde.fr"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".advert",
+      "note": "英国小报广告位",
+      "domains": [
+        "mirror.co.uk",
+        "thesun.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='advert']",
+      "note": "英国小报广告位",
+      "domains": [
+        "mirror.co.uk",
+        "thesun.co.uk"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='wp-teaser-sponsored']",
+      "note": "WP 赞助内容",
+      "domains": [
+        "wp.pl"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "20minutes.fr",
+        "20minutos.es"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "20minutes.fr",
+        "20minutos.es"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||improvedigital.com^",
+      "note": "Improve Digital 欧洲广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||1plusx.com^",
+      "note": "1plusX 欧洲数据/广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||permutive.com^",
+      "note": "Permutive 受众数据平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||id5-sync.com^",
+      "note": "ID5 身份同步"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||liveintent.com^",
+      "note": "LiveIntent 邮件广告"
+    }
+  ]
+}

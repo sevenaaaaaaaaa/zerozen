@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>ZeroZen 下载工具箱</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 18px 22px 60px;
+        max-width: 1080px;
+        margin-inline: auto;
+      }
+      .zz-tool-tabs {
+        display: flex;
+        gap: 6px;
+        margin: 12px 0 16px;
+      }
+      .zz-tool-tab {
+        font: inherit;
+        font-size: 13px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(127, 127, 127, 0.35);
+        background: transparent;
+        cursor: pointer;
+      }
+      .zz-tool-tab.active {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #fff;
+      }
+      .zz-tool-panel {
+        display: none;
+      }
+      .zz-tool-panel.active {
+        display: block;
+      }
+      .zz-tool-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 8px 0;
+      }
+      .zz-tool-log {
+        font-family: ui-monospace, monospace;
+        font-size: 12px;
+        background: rgba(127, 127, 127, 0.08);
+        border-radius: 8px;
+        padding: 10px 12px;
+        max-height: 200px;
+        overflow: auto;
+        white-space: pre-wrap;
+      }
+      .zz-media-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .zz-media-card {
+        border: 1px solid rgba(127, 127, 127, 0.25);
+        border-radius: 8px;
+        overflow: hidden;
+        background: rgba(127, 127, 127, 0.04);
+      }
+      .zz-media-card img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        display: block;
+        background: rgba(127, 127, 127, 0.1);
+      }
+      .zz-media-meta {
+        padding: 6px 8px;
+        font-size: 11px;
+        line-height: 1.4;
+        word-break: break-all;
+      }
+      .zz-pay {
+        font-size: 12px;
+        color: #8b949e;
+        margin-top: 14px;
+      }
+      .zz-pay a {
+        color: #3b82f6;
+      }
+      .zz-tool-list {
+        display: grid;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .zz-tool-item {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        border: 1px solid rgba(127, 127, 127, 0.25);
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+      .zz-tool-item .url {
+        flex: 1;
+        word-break: break-all;
+      }
+      .zz-tool-item .code {
+        font-family: ui-monospace, monospace;
+        color: #d97706;
+      }
+      .zz-chipbar {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .zz-chipbar label {
+        font-size: 12px;
+        border: 1px solid rgba(127, 127, 127, 0.35);
+        border-radius: 999px;
+        padding: 3px 9px;
+        cursor: pointer;
+      }
+      .zz-chipbar label:has(input:checked) {
+        border-color: #3b82f6;
+        color: #3b82f6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="zz-header" style="padding: 0">
+      <div class="zz-brand">
+        <img src="../icons/icon48.png" alt="" />
+        <span>ZeroZen<b class="zz-brand-sub"> 下载工具箱</b></span>
+      </div>
+      <span class="zz-tag" id="ctxLabel">读取页面…</span>
+    </div>
+
+    <div class="zz-tool-tabs">
+      <button class="zz-tool-tab active" data-view="video">视频（m3u8）</button>
+      <button class="zz-tool-tab" data-view="image">图片发现</button>
+      <button class="zz-tool-tab" data-view="netdisk">网盘资源</button>
+      <button class="zz-tool-tab" data-view="downloader">下载器</button>
+    </div>
+
+    <div class="zz-tool-panel active" id="view-video">
+      <div class="zz-tool-row">
+        <label class="zz-small">标题 <input type="text" id="videoTitle" style="width: 360px" /></label>
+        <label class="zz-small">保存目录 <input type="text" id="videoDir" style="width: 180px" /></label>
+        <button class="zz-btn zz-btn-sm" id="btnStreams">刷新嗅探</button>
+        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnM3u8">下载选中</button>
+      </div>
+      <div class="zz-tool-list" id="streamList"></div>
+      <div class="zz-tool-row">
+        <label class="zz-check"><input type="checkbox" id="tsAsMp4" /> TS 流直接命名为 .mp4（不做转码）</label>
+        <span class="zz-small zz-muted">fMP4 流会自动保存为 .mp4；TS 流默认 .ts，可用 ffmpeg 转封装。</span>
+      </div>
+      <div class="zz-tool-log" id="videoLog" style="margin-top: 10px">等待选择视频流…</div>
+    </div>
+
+    <div class="zz-tool-panel" id="view-image">
+      <div class="zz-tool-row">
+        <button class="zz-btn zz-btn-sm" id="btnImages">扫描本页图片</button>
+        <span class="zz-small">最小尺寸 <input type="number" id="imgMin" value="0" min="0" step="16" style="width: 70px" /> px</span>
+        <button class="zz-btn zz-btn-sm" id="btnImgAll">全选</button>
+        <button class="zz-btn zz-btn-sm" id="btnImgNone">全不选</button>
+        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnImgDownload">下载选中</button>
+        <label class="zz-small">目录 <input type="text" id="imageDir" style="width: 160px" /></label>
+      </div>
+      <div class="zz-chipbar" id="imgFormats"></div>
+      <div class="zz-small zz-muted" id="imgInfo" style="margin-top: 6px"></div>
+      <div class="zz-media-grid" id="imageGrid"></div>
+      <div class="zz-tool-log" id="imageLog" style="margin-top: 10px"></div>
+    </div>
+
+    <div class="zz-tool-panel" id="view-netdisk">
+      <div class="zz-tool-row">
+        <button class="zz-btn zz-btn-sm" id="btnNetdisk">扫描本页资源</button>
+        <button class="zz-btn zz-btn-sm" id="btnCopyAll">复制全部</button>
+        <button class="zz-btn zz-btn-sm" id="btnExport">导出 TXT</button>
+        <span class="zz-small zz-muted">自动提取网盘链接与提取码，仅收集不代替你下载/转存。</span>
+      </div>
+      <div class="zz-tool-list" id="netdiskList"></div>
+      <div class="zz-tool-log" id="netdiskLog" style="margin-top: 10px"></div>
+    </div>
+
+    <div class="zz-tool-panel" id="view-downloader">
+      <div class="zz-card" style="margin-bottom: 12px">
+        <div class="zz-tool-row">
+          <input type="text" id="dlUrl" placeholder="粘贴下载地址（http/https，直链或视频文件）" style="flex: 1; min-width: 300px" />
+          <button class="zz-btn zz-btn-sm" id="btnDlPaste">粘贴</button>
+        </div>
+        <div class="zz-tool-row">
+          <label class="zz-small">文件名 <input type="text" id="dlName" placeholder="留空自动识别" style="width: 260px" /></label>
+          <label class="zz-small">目录 <input type="text" id="dlDir" style="width: 180px" /></label>
+          <label class="zz-check"><input type="checkbox" id="dlMulti" /> 多线程分段</label>
+          <label class="zz-small">线程 <input type="number" id="dlThreads" min="2" max="8" value="4" style="width: 56px" /></label>
+          <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnDlStart">开始下载</button>
+        </div>
+        <div class="zz-small zz-muted">多线程分段需要服务器支持 Range；大文件会占用较多内存，任务需保持本页面打开，失败可改回默认模式。</div>
+      </div>
+
+      <div class="zz-tool-row">
+        <input type="text" id="dlQuery" placeholder="搜索文件名 / 地址" style="max-width: 220px" />
+        <button class="zz-btn zz-btn-sm" data-dlfilter="all">全部</button>
+        <button class="zz-btn zz-btn-sm" data-dlfilter="progressing">进行中</button>
+        <button class="zz-btn zz-btn-sm" data-dlfilter="complete">已完成</button>
+        <button class="zz-btn zz-btn-sm" data-dlfilter="failed">失败</button>
+        <span style="flex:1"></span>
+        <button class="zz-btn zz-btn-sm" id="btnDlRefresh">刷新</button>
+        <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnDlClear">清除已完成记录</button>
+      </div>
+      <div class="zz-tool-list" id="dlList"></div>
+      <div class="zz-tool-log" id="dlLog" style="margin-top: 10px">就绪</div>
+    </div>
+
+    <div class="zz-pay" id="payLine"></div>
+
+    <script src="../background/lib-compat.js"></script>
+    <script src="ui-lib.js"></script>
+    <script src="toolbox.js"></script>
+  </body>
+</html>

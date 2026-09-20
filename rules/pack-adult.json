@@ -1,0 +1,558 @@
+{
+  "id": "adult",
+  "name": "成人站点",
+  "desc": "信息流广告、弹窗/弹底、跳转劫持入口与常见成人联盟",
+  "rules": [
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||exoclick.com^",
+      "note": "ExoClick"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||exosrv.com^",
+      "note": "ExoClick 素材"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||realsrv.com^",
+      "note": "ExoClick 素材"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||exdynsrv.com^",
+      "note": "ExoClick 素材"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||juicyads.com^",
+      "note": "JuicyAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||trafficjunky.net^",
+      "note": "TrafficJunky"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||trafficjunky.com^",
+      "note": "TrafficJunky"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adspyglass.com^",
+      "note": "Adspyglass"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ero-advertising.com^",
+      "note": "EroAdvertising"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||popads.net^",
+      "note": "PopAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||popcash.net^",
+      "note": "PopCash"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||propellerads.com^",
+      "note": "PropellerAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||propellerpops.com^",
+      "note": "PropellerAds 弹窗"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||onclasrv.com^",
+      "note": "OnClickAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clickadu.com^",
+      "note": "Clickadu"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adcash.com^",
+      "note": "Adcash"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adsterra.com^",
+      "note": "Adsterra"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adskeeper.com^",
+      "note": "AdsKeeper"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||hilltopads.net^",
+      "note": "HilltopAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tsyndicate.com^",
+      "note": "TrafficStars"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||traffichunt.com^",
+      "note": "TrafficHunt"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||zeropark.com^",
+      "note": "ZeroPark"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||popmyads.com^",
+      "note": "PopMyAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||fuckyouadblock.com^",
+      "note": "反广告拦截脚本"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adultmoda.com^",
+      "note": "AdultModa"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||plugrush.com^",
+      "note": "PlugRush"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||exo.io^",
+      "note": "ExoClick 短链"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||revenuehits.com^",
+      "note": "RevenueHits"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clickcertain.com^",
+      "note": "ClickCertain"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||crakrevenue.com^",
+      "note": "CrakRevenue"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='exoclick']",
+      "note": "ExoClick iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='juicyads']",
+      "note": "JuicyAds iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='trafficjunky']",
+      "note": "TrafficJunky iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='adspyglass']",
+      "note": "Adspyglass iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='popads']",
+      "note": "PopAds iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='propellerads']",
+      "note": "PropellerAds iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='exo-']",
+      "note": "ExoClick 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='exo-']",
+      "note": "ExoClick 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='exoclick']",
+      "note": "ExoClick 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='exoclick']",
+      "note": "ExoClick 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='juicyads']",
+      "note": "JuicyAds 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='juicyads']",
+      "note": "JuicyAds 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='trafficjunky']",
+      "note": "TrafficJunky 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='trafficjunky']",
+      "note": "TrafficJunky 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='adspyglass']",
+      "note": "Adspyglass 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adspyglass']",
+      "note": "Adspyglass 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='plugrush']",
+      "note": "PlugRush 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='popunder']",
+      "note": "弹底广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='popunder']",
+      "note": "弹底广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sticky-ad']",
+      "note": "吸底广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='floating-ad']",
+      "note": "浮动广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='overlay-ad']",
+      "note": "遮罩广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='interstitial']",
+      "note": "插屏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".advertising",
+      "note": "广告区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads-zone",
+      "note": "广告区"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-placement']",
+      "note": "广告投放位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-placement']",
+      "note": "广告投放位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='banner-spot']",
+      "note": "横幅广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' banner-spot']",
+      "note": "横幅广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='thumb-ad']",
+      "note": "缩略图广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='spot-ad']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='video-ad']",
+      "note": "视频广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='preroll']",
+      "note": "前贴片广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='vast-ad']",
+      "note": "VAST 广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ads-mobile']",
+      "note": "移动广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ads-mobile']",
+      "note": "移动广告位"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||magsrv.com^",
+      "note": "ExoClick 新域名"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pemsrv.com^",
+      "note": "ExoClick 新域名"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||wpadmngr.com^",
+      "note": "ExoClick 管理脚本"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||syndication.exoclick.com^",
+      "note": "ExoClick 投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||twinrdsrv.com^",
+      "note": "ExoClick 弹窗"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||twinrdengine.com^",
+      "note": "ExoClick 引擎"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||trafficstars.com^",
+      "note": "TrafficStars"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||juicycdn.com^",
+      "note": "JuicyAds CDN"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||trafficfactory.biz^",
+      "note": "TrafficFactory"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||galaksion.com^",
+      "note": "Galaksion"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clickaine.com^",
+      "note": "Clickaine"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad-maven.com^",
+      "note": "AdMaven"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='magsrv']",
+      "note": "ExoClick iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='pemsrv']",
+      "note": "ExoClick iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='tsyndicate']",
+      "note": "TrafficStars iframe"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='wpadmngr']",
+      "note": "广告脚本框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='tsad']",
+      "note": "TrafficStars 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ts_ad']",
+      "note": "TrafficStars 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='exo-native']",
+      "note": "ExoClick 原生广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' exo-native']",
+      "note": "ExoClick 原生广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".text-center:has(> iframe)",
+      "domains": ["jable.tv", "jable.com", "missav.com", "missav.ws", "njav.tv", "netflav.com", "supjav.com"],
+      "note": "站点横幅广告框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".my-3:has(> iframe)",
+      "domains": ["jable.tv", "jable.com", "missav.com", "missav.ws"],
+      "note": "间距广告框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mb-3:has(> iframe)",
+      "domains": ["jable.tv", "jable.com", "missav.com", "missav.ws"],
+      "note": "间距广告框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "aside iframe",
+      "domains": ["jable.tv", "jable.com", "missav.com", "missav.ws", "njav.tv"],
+      "note": "侧栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "remove",
+      "selector": "[id^='tsad']",
+      "domains": ["jable.tv", "jable.com", "missav.com", "missav.ws", "njav.tv", "netflav.com"],
+      "note": "移除 TrafficStars 原生位"
+    }
+  ]
+}

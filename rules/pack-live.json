@@ -1,0 +1,190 @@
+{
+  "id": "live",
+  "name": "直播平台",
+  "desc": "斗鱼 / 虎牙 / B站直播 / Twitch 的广告位、弹层与推广浮窗",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#js-ad",
+      "note": "斗鱼广告位",
+      "domains": [
+        "douyu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-container",
+      "note": "斗鱼广告容器",
+      "domains": [
+        "douyu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='room-ad']",
+      "note": "斗鱼直播间广告",
+      "domains": [
+        "douyu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "斗鱼横幅广告",
+      "domains": [
+        "douyu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "斗鱼横幅广告",
+      "domains": [
+        "douyu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-dialog']",
+      "note": "斗鱼登录弹窗",
+      "domains": [
+        "douyu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-wrap",
+      "note": "虎牙广告容器",
+      "domains": [
+        "huya.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='room-ad']",
+      "note": "虎牙直播间广告",
+      "domains": [
+        "huya.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-banner']",
+      "note": "虎牙横幅广告",
+      "domains": [
+        "huya.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-banner']",
+      "note": "虎牙横幅广告",
+      "domains": [
+        "huya.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-container']",
+      "note": "虎牙广告容器",
+      "domains": [
+        "huya.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-container']",
+      "note": "虎牙广告容器",
+      "domains": [
+        "huya.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-floor']",
+      "note": "B站直播广告楼层",
+      "domains": [
+        "live.bilibili.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-floor']",
+      "note": "B站直播广告楼层",
+      "domains": [
+        "live.bilibili.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='link-ad']",
+      "note": "B站直播外链广告",
+      "domains": [
+        "live.bilibili.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-a-target='video-ad-label']",
+      "note": "Twitch 广告标识"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-a-target='video-ad-countdown']",
+      "note": "Twitch 广告倒计时"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-test-selector='ad-banner']",
+      "note": "Twitch 广告横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".stream-display-ad",
+      "note": "Twitch 展示广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-a-target='ad-banner']",
+      "note": "Twitch 广告容器"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.douyu.com^",
+      "note": "斗鱼广告接口"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adslvfile.huya.com^",
+      "note": "虎牙广告素材"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.huya.com^",
+      "note": "虎牙广告接口"
+    }
+  ]
+}

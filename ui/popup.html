@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>ZeroZen</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      body {
+        width: 340px;
+      }
+      .zz-popup-footer {
+        padding: 10px 14px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        color: var(--zz-muted);
+        font-size: 11px;
+      }
+      #findings {
+        display: grid;
+        gap: 6px;
+        max-height: 150px;
+        overflow: auto;
+      }
+      #findings .zz-code {
+        margin-top: 4px;
+        max-height: 44px;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="zz-header">
+      <div class="zz-brand">
+        <img src="../icons/icon48.png" alt="" />
+        <span>ZeroZen<b class="zz-brand-sub"> 广告净化器</b></span>
+      </div>
+      <label class="zz-switch" title="总开关">
+        <input type="checkbox" id="globalEnabled" />
+        <span></span>
+      </label>
+    </div>
+
+    <div class="zz-section">
+      <div class="zz-row">
+        <div>
+          <div class="zz-host" id="host">—</div>
+          <div class="zz-small zz-muted" id="siteHint">正在读取站点状态…</div>
+        </div>
+        <label class="zz-switch" title="在此站点启用">
+          <input type="checkbox" id="siteEnabled" />
+          <span></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="zz-stats">
+      <div class="zz-stat"><b id="statHidden">0</b><span>隐藏广告</span></div>
+      <div class="zz-stat"><b id="statNetwork">0</b><span>拦截请求</span></div>
+      <div class="zz-stat"><b id="statPopups">0</b><span>拦截弹窗</span></div>
+    </div>
+
+    <div class="zz-section">
+      <div class="zz-row">
+        <b class="zz-small">保护档位</b>
+        <span class="zz-small zz-muted" id="profileHint"></span>
+      </div>
+      <div class="zz-seg" id="profileSeg">
+        <button class="zz-seg-btn" data-profile="compat" title="仅通用拦截与视频规则，最大化站点兼容性">兼容</button>
+        <button class="zz-seg-btn" data-profile="standard" title="推荐：全部内置规则">标准</button>
+        <button class="zz-seg-btn" data-profile="strict" title="移除式处理 + 强制解锁滚动，可能影响站点功能">严格</button>
+      </div>
+      <div class="zz-small" id="autoCompatHint" hidden>
+        <span class="zz-tag zz-tag-ai">自动回落</span>
+        <span class="zz-muted" id="autoCompatText"></span>
+        <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnResetAuto">恢复本站设置</button>
+      </div>
+      <div class="zz-actions" style="margin-top: 8px">
+        <button class="zz-btn" id="btnTemp">临时解除 30 分钟</button>
+      </div>
+      <div class="zz-row" style="margin-top: 10px">
+        <b class="zz-small">屏蔽类型</b>
+        <span class="zz-small zz-muted">全局生效</span>
+      </div>
+      <div class="zz-chips">
+        <label class="zz-chip"><input type="checkbox" data-type="network" /><span>网络拦截</span></label>
+        <label class="zz-chip"><input type="checkbox" data-type="cosmetic" /><span>外观隐藏</span></label>
+        <label class="zz-chip"><input type="checkbox" data-type="popup" /><span>弹窗守护</span></label>
+        <label class="zz-chip"><input type="checkbox" data-type="annoyances" /><span>烦扰元素</span></label>
+      </div>
+    </div>
+
+    <div class="zz-section">
+      <div class="zz-row">
+        <b class="zz-small">纯净浏览 / 下载</b>
+        <button type="button" class="zz-btn zz-btn-sm zz-btn-primary" id="btnToolbox">下载本页视频 <span id="sniffCount"></span></button>
+      </div>
+      <div class="zz-actions" style="margin-top: 8px; grid-template-columns: 1fr 1fr">
+        <button type="button" class="zz-btn zz-btn-sm" id="btnClean">纯净浏览</button>
+        <button type="button" class="zz-btn zz-btn-sm" id="btnReader">阅读模式</button>
+      </div>
+      <div class="zz-small zz-muted" id="toolHint">先在网页里点播放，再点「下载本页视频」。工具箱会列出嗅探到的 m3u8，勾选后下载到 ZeroZen/视频。</div>
+    </div>
+
+    <div class="zz-actions">
+      <button class="zz-btn zz-btn-primary" id="btnAi">AI 识别本页烦人广告</button>
+      <button class="zz-btn" id="btnPick">选取元素屏蔽（或按 Alt+Z）</button>
+      <button class="zz-btn" id="btnOptions">打开净化控制台</button>
+    </div>
+
+    <div class="zz-toast-inline" id="msg" hidden></div>
+
+    <div class="zz-section" id="findingsSection" hidden>
+      <div class="zz-row">
+        <b class="zz-small">AI 待确认（本页）</b>
+        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplyAll">全部屏蔽</button>
+      </div>
+      <div id="findings" style="margin-top: 8px"></div>
+    </div>
+
+    <div class="zz-popup-footer">
+      <span id="engineInfo">规则加载中…</span>
+      <a href="#" id="linkReview">待审 <b id="pendingCount">0</b></a>
+    </div>
+
+    <script src="../background/lib-compat.js"></script>
+    <script src="ui-lib.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

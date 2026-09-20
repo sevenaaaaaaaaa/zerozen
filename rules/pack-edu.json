@@ -1,0 +1,177 @@
+{
+  "id": "edu",
+  "name": "教育 / 学术 / 文档",
+  "desc": "知网 / 道客巴巴 / 豆丁 / 百度文库 / 文档站与在线课程",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".track-banner",
+      "note": "知网横幅广告",
+      "domains": [
+        "cnki.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".book-banner",
+      "note": "知网图书推广",
+      "domains": [
+        "cnki.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".trends-banner",
+      "note": "知网趋势推广",
+      "domains": [
+        "cnki.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "cnki.net",
+        "kns.cnki.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "cnki.net",
+        "kns.cnki.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-ad",
+      "note": "道客巴巴广告横幅",
+      "domains": [
+        "doc88.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-row",
+      "note": "道客巴巴广告行",
+      "domains": [
+        "doc88.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-radio",
+      "note": "道客巴巴广告位",
+      "domains": [
+        "doc88.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#docindex_ad",
+      "note": "豆丁首页广告",
+      "domains": [
+        "docin.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#searchType_banner",
+      "note": "豆丁搜索横幅",
+      "domains": [
+        "docin.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_longpic",
+      "note": "豆丁长图广告",
+      "domains": [
+        "docin.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "doc88.com",
+        "docin.com",
+        "wenku.baidu.com",
+        "book118.com",
+        "mayiwenku.com",
+        "renrendoc.com",
+        "taodocs.com",
+        "360doc.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "doc88.com",
+        "docin.com",
+        "wenku.baidu.com",
+        "book118.com",
+        "mayiwenku.com",
+        "renrendoc.com",
+        "taodocs.com",
+        "360doc.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='doc_ad']",
+      "note": "百度文库广告位",
+      "domains": [
+        "wenku.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "coursera.org",
+        "udemy.com",
+        "edx.org",
+        "khanacademy.org",
+        "researchgate.net",
+        "academia.edu"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "coursera.org",
+        "udemy.com",
+        "edx.org",
+        "khanacademy.org",
+        "researchgate.net",
+        "academia.edu"
+      ]
+    }
+  ]
+}

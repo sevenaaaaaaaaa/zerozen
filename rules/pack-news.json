@@ -1,0 +1,295 @@
+{
+  "id": "news",
+  "name": "资讯原生广告",
+  "desc": "门户/资讯/博客的信息流原生广告、软文推广与内文广告",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='native-ad']",
+      "note": "原生广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='nativeAd']",
+      "note": "原生广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='native-ad']",
+      "note": "原生广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='feed-ad']",
+      "note": "信息流广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='feedAd']",
+      "note": "信息流广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='recommend-ad']",
+      "note": "推荐广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='recommendAd']",
+      "note": "推荐广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='tuiguang']",
+      "note": "推广位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='guanggao']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-article']",
+      "note": "文章广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-article']",
+      "note": "文章广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='article-ad']",
+      "note": "文章广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='content-ad']",
+      "note": "内容广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='in-text-ad']",
+      "note": "内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='intext']",
+      "note": "内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='intertextual']",
+      "note": "内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-intext']",
+      "note": "内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-intext']",
+      "note": "内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='bottom-ad']",
+      "note": "底部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='right-ad']",
+      "note": "右栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='left-ad']",
+      "note": "左栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='mid-ad']",
+      "note": "中部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-list']",
+      "note": "广告列表"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-list']",
+      "note": "广告列表"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-item']",
+      "note": "广告条目"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-item']",
+      "note": "广告条目"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-list-item']",
+      "note": "广告条目"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-list-item']",
+      "note": "广告条目"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-insert",
+      "note": "插入广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad-insert']",
+      "note": "插入广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id$='ad-insert']",
+      "note": "插入广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='-ad-insert']",
+      "note": "插入广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='_ad-insert']",
+      "note": "插入广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-type]",
+      "note": "广告标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-id]",
+      "note": "广告标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='partner-content']",
+      "note": "合作内容（广告）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='brand-story']",
+      "note": "品牌故事（广告）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promotion-box']",
+      "note": "推广盒"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promo-box']",
+      "note": "推广盒"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='hot-sale']",
+      "note": "促销位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='seo-ad']",
+      "note": "SEO 广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "article:has(> [class^='ad-label']), article:has(> [class*=' ad-label'])",
+      "note": "带广告标签的文章"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "li:has(> a[rel='sponsored'])",
+      "note": "赞助链接条目"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div:has(> a[rel='sponsored'])",
+      "note": "赞助链接容器"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "赞助内容",
+      "note": "赞助内容标签"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "Sponsored",
+      "note": "赞助链接"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "Promoted",
+      "note": "推广链接"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "Advertisements",
+      "note": "广告标签"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "id": "finance",
+  "name": "财经 / 股票",
+  "desc": "新浪财经 / 东方财富 / 同花顺 / 雪球 / Yahoo Finance / MarketWatch 等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".fin_bd_ad",
+      "note": "新浪财经广告框",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='m-p-ad']",
+      "note": "新浪财经广告位",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='m-top-ads']",
+      "note": "新浪财经顶部广告",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='m-p1-lb1-ad']",
+      "note": "新浪财经列表广告",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-pdps]",
+      "note": "新浪财经广告容器",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='fin_ad']",
+      "note": "新浪财经广告位",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".aside-hq-popup",
+      "note": "新浪财经行情弹窗",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".aside-app-popup",
+      "note": "新浪财经 App 弹窗",
+      "domains": [
+        "finance.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "finance.sina.com.cn",
+        "eastmoney.com",
+        "10jqka.com.cn",
+        "xueqiu.com",
+        "hexun.com",
+        "jrj.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "finance.sina.com.cn",
+        "eastmoney.com",
+        "10jqka.com.cn",
+        "xueqiu.com",
+        "hexun.com",
+        "jrj.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "finance.yahoo.com",
+        "marketwatch.com",
+        "cnbc.com",
+        "investing.com",
+        "seekingalpha.com",
+        "bloomberg.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "finance.yahoo.com",
+        "marketwatch.com",
+        "cnbc.com",
+        "investing.com",
+        "seekingalpha.com",
+        "bloomberg.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid^='ad-']",
+      "note": "Yahoo Finance 广告组件",
+      "domains": [
+        "finance.yahoo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slot']",
+      "note": "广告位容器",
+      "domains": [
+        "investing.com",
+        "seekingalpha.com"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "id": "travel",
+  "name": "旅游 / 出行",
+  "desc": "携程 / 去哪儿 / 马蜂窝 / Booking / Agoda / Trip.com 等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='marketAdvert']",
+      "note": "携程推广位",
+      "domains": [
+        "ctrip.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ctrip.com",
+        "qunar.com",
+        "ly.com",
+        "elong.com",
+        "trip.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ctrip.com",
+        "qunar.com",
+        "ly.com",
+        "elong.com",
+        "trip.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "mafengwo.cn",
+        "lvmama.com",
+        "tuniu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "mafengwo.cn",
+        "lvmama.com",
+        "tuniu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "booking.com",
+        "agoda.com",
+        "airbnb.com",
+        "expedia.com",
+        "hotels.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "booking.com",
+        "agoda.com",
+        "airbnb.com",
+        "expedia.com",
+        "hotels.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "tripadvisor.com",
+        "kayak.com",
+        "skyscanner.net",
+        "momondo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "tripadvisor.com",
+        "kayak.com",
+        "skyscanner.net",
+        "momondo.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid^='ad-']",
+      "note": "OTA 广告组件",
+      "domains": [
+        "booking.com",
+        "agoda.com",
+        "expedia.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slot']",
+      "note": "OTA 广告位",
+      "domains": [
+        "booking.com",
+        "agoda.com",
+        "tripadvisor.com"
+      ]
+    }
+  ]
+}

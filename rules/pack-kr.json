@@ -1,0 +1,241 @@
+{
+  "id": "kr",
+  "name": "韩国站点",
+  "desc": "Naver / Daum / DCInside / Clien / Ruliweb / Tistory 等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "naver.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "naver.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_area",
+      "note": "Naver 广告区",
+      "domains": [
+        "naver.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad_']",
+      "note": "Naver 广告位",
+      "domains": [
+        "naver.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".view_ad",
+      "note": "Naver 正文广告",
+      "domains": [
+        "naver.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "daum.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "daum.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_area",
+      "note": "Daum 广告区",
+      "domains": [
+        "daum.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad_']",
+      "note": "Daum 广告位",
+      "domains": [
+        "daum.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "dcinside.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "dcinside.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".adbox",
+      "note": "DCInside 广告盒",
+      "domains": [
+        "dcinside.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_b",
+      "note": "DCInside 横幅广告",
+      "domains": [
+        "dcinside.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_banner",
+      "note": "Clien 横幅广告",
+      "domains": [
+        "clien.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".footer_ad",
+      "note": "Clien 底部广告",
+      "domains": [
+        "clien.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".menu-promo",
+      "note": "Clien 推广位",
+      "domains": [
+        "clien.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad-container_']",
+      "note": "Ruliweb 广告容器",
+      "domains": [
+        "ruliweb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_300_']",
+      "note": "Ruliweb 尺寸广告位",
+      "domains": [
+        "ruliweb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_8']",
+      "note": "Ruliweb 横幅广告",
+      "domains": [
+        "ruliweb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_back_wrapper2",
+      "note": "Ruliweb 背景广告",
+      "domains": [
+        "ruliweb.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "tistory.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "tistory.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.naver.com^",
+      "note": "Naver 广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.daum.net^",
+      "note": "Daum 广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.kakao.com^",
+      "note": "Kakao 广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adpopcorn.com^",
+      "note": "AdPopcorn 韩国广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cauly.net^",
+      "note": "Cauly 韩国广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adiscope.com^",
+      "note": "Adiscope 韩国广告联盟"
+    }
+  ]
+}

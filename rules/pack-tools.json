@@ -1,0 +1,222 @@
+{
+  "id": "tools",
+  "name": "工具 / 网盘 / 天气",
+  "desc": "网盘下载站、天气、快递、查询类高广告密度站点",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".tl_ad",
+      "note": "中国天气网顶部广告",
+      "domains": [
+        "weather.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".l_ad",
+      "note": "中国天气网左侧广告",
+      "domains": [
+        "weather.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "weather.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "weather.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "weather.com",
+        "accuweather.com",
+        "wunderground.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "weather.com",
+        "accuweather.com",
+        "wunderground.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#banner",
+      "note": "快递100 横幅",
+      "domains": [
+        "kuaidi100.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner",
+      "note": "快递100 横幅",
+      "domains": [
+        "kuaidi100.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "kuaidi100.com",
+        "ip138.com",
+        "chinaz.com",
+        "alexa.cn",
+        "site.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "kuaidi100.com",
+        "ip138.com",
+        "chinaz.com",
+        "alexa.cn",
+        "site.baidu.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='media-banner']",
+      "note": "站长之家广告位",
+      "domains": [
+        "chinaz.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".icon-ad",
+      "note": "站长之家广告图标",
+      "domains": [
+        "chinaz.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".more-popup",
+      "note": "站长之家推广弹窗",
+      "domains": [
+        "chinaz.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='modal_window_popup']",
+      "note": "MediaFire 弹窗",
+      "domains": [
+        "mediafire.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='uploader_window_popup']",
+      "note": "MediaFire 上传弹窗",
+      "domains": [
+        "mediafire.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".popup",
+      "note": "MediaFire 弹窗",
+      "domains": [
+        "mediafire.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".popup-text",
+      "note": "4shared 弹窗",
+      "domains": [
+        "4shared.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "mediafire.com",
+        "4shared.com",
+        "sendspace.com",
+        "uploaded.net",
+        "filefactory.com",
+        "115.com",
+        "aliyundrive.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "mediafire.com",
+        "4shared.com",
+        "sendspace.com",
+        "uploaded.net",
+        "filefactory.com",
+        "115.com",
+        "aliyundrive.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-']",
+      "note": "MEGA 广告位",
+      "domains": [
+        "mega.nz"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-']",
+      "note": "蓝奏云广告位",
+      "domains": [
+        "lanzou.com",
+        "lanzoui.com",
+        "lanzoux.com"
+      ]
+    }
+  ]
+}

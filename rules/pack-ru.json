@@ -1,0 +1,265 @@
+{
+  "id": "ru",
+  "name": "俄罗斯 / 独联体",
+  "desc": "Yandex / Mail.ru / Rambler / RIA / Lenta / Habr / VK 等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".js-banner",
+      "note": "Lenta 横幅广告",
+      "domains": [
+        "lenta.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".custom-banner",
+      "note": "Lenta 自定义横幅",
+      "domains": [
+        "lenta.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".banner-card",
+      "note": "Lenta 广告卡",
+      "domains": [
+        "lenta.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='banner--']",
+      "note": "Lenta 原生广告",
+      "domains": [
+        "lenta.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "rambler.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "rambler.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".nav-ad",
+      "note": "Rambler 导航广告",
+      "domains": [
+        "rambler.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#technical-ad",
+      "note": "Rambler 技术广告位",
+      "domains": [
+        "rambler.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_branding_']",
+      "note": "Rambler 品牌广告",
+      "domains": [
+        "rambler.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='banner--']",
+      "note": "Rambler 原生广告",
+      "domains": [
+        "rambler.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ria.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ria.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='section__banner']",
+      "note": "RIA 广告位",
+      "domains": [
+        "ria.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#banner_before_header_index",
+      "note": "RIA 头部广告",
+      "domains": [
+        "ria.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ads]",
+      "note": "RIA 广告容器",
+      "domains": [
+        "ria.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='tm-placeholder-promo']",
+      "note": "Habr 推广占位",
+      "domains": [
+        "habr.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='promo_block_']",
+      "note": "Habr 推广块",
+      "domains": [
+        "habr.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "yandex.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "yandex.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='serp-adv']",
+      "note": "Yandex 搜索广告",
+      "domains": [
+        "yandex.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "mail.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "mail.ru"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ads_ads_news_wrap']",
+      "note": "VK 动态广告",
+      "domains": [
+        "vk.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads_ads_news_wrap",
+      "note": "VK 动态广告",
+      "domains": [
+        "vk.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adfox.ru^",
+      "note": "AdFox 俄罗斯广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adriver.ru^",
+      "note": "AdRiver 俄罗斯广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.mail.ru^",
+      "note": "Mail.ru 广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||an.yandex.ru^",
+      "note": "Yandex 广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||relap.io^",
+      "note": "Relap 内容推荐广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||buzzoola.com^",
+      "note": "Buzzoola 俄罗斯视频广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||smi2.ru^",
+      "note": "SMI2 俄罗斯内容广告"
+    }
+  ]
+}

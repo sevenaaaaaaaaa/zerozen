@@ -1,0 +1,34 @@
+{
+  "id": "zhihu",
+  "name": "知乎",
+  "desc": "信息流广告卡、推荐位、App 引导与登录弹窗",
+  "rules": [
+    { "kind": "cosmetic", "action": "hide", "selector": ".TopstoryItem--advertCard", "note": "信息流广告卡", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".Card--advert", "note": "广告卡片", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".ZhihuAdCard", "note": "广告卡片", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".AdvertCard", "note": "广告卡片", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".AdblockBanner", "note": "反广告拦截提示", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".RecommendationList .Advert", "note": "推荐广告", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".Advert", "note": "广告区块", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-za-detail-view-path-module='AdItem']", "note": "广告条目", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".QuestionItem--ad", "note": "问题推广位", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".AnswerItem--ad", "note": "回答推广位", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".ZVideoItem-ad", "note": "视频推广位", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".Banner", "note": "站内横幅", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".AppBanner", "note": "App 下载横幅", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".OpenInAppButton", "note": "打开 App 引导", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".MobileModal", "note": "移动端弹窗", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".Modal-wrapper", "note": "登录弹窗", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".Modal-backdrop", "note": "弹窗遮罩", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".CornerButtons > .Button:has(.Zi--Close)", "note": "角标浮层", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".Sticky--holder:has(.OpenInAppButton)", "note": "吸底 App 引导", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": ".zhihu-ad", "note": "广告容器", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='AdvertCard']", "note": "广告卡", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='advert']", "note": "广告容器", "domains": ["zhihu.com"] },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-ad]", "note": "广告标记", "domains": ["zhihu.com"] },
+
+    { "kind": "network", "action": "block", "filter": "||ads.zhihu.com^", "note": "知乎广告服务" },
+    { "kind": "network", "action": "block", "filter": "||zhihu.com/api/v4/ads", "note": "广告接口" },
+    { "kind": "network", "action": "block", "filter": "||zhihu-web-analytics.zhihu.com^", "note": "行为埋点" }
+  ]
+}

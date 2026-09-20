@@ -1,0 +1,287 @@
+{
+  "id": "warez",
+  "name": "资源/下载站",
+  "desc": "迷惑性下载按钮、高速下载诱导、下载站弹窗与联盟位",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-ad']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='down-ad']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' down-ad']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='download-ad']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_down']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad_down']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='down_ad']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' down_ad']",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_down",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".down_ad",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".downloadad",
+      "note": "下载页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".downtips",
+      "note": "下载提示广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".tips-ad",
+      "note": "提示广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-box'] [class^='ad-'], [class*='download-box'] [class*=' ad-']",
+      "note": "下载区广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='down-box'], [class*=' down-box']) [class^='ad-'], :is([class^='down-box'], [class*=' down-box']) [class*=' ad-']",
+      "note": "下载区广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='highspeed']",
+      "note": "高速下载诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='high-speed']",
+      "note": "高速下载诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='highspeed']",
+      "note": "高速下载诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='xiazai']",
+      "note": "下载站广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='guesslike']",
+      "note": "猜你喜欢推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='guess-like']",
+      "note": "猜你喜欢推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='hot-recommend']",
+      "note": "热门推荐推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='tuijian-ad']",
+      "note": "推荐广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='rj-ad']",
+      "note": "软件站广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='soft-ad']",
+      "note": "软件站广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-gg']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-gg']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='ggao']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-bt']",
+      "note": "广告按钮"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-bt']",
+      "note": "广告按钮"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='btn-ad']",
+      "note": "广告按钮"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adBtn']",
+      "note": "广告按钮"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is(.download, .down, .downdiv) > [class^='ad-'], :is(.download, .down, .downdiv) > [class*=' ad-']",
+      "note": "下载区广告块"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='pc-download'] [class^='ad-'], [class*='pc-download'] [class*=' ad-']",
+      "note": "PC 下载区广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-list'] > li:has(a[target='_blank'])",
+      "note": "下载列表外链诱导"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "高速下载",
+      "tag": "a",
+      "note": "高速下载诱导按钮"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "极速下载",
+      "tag": "a",
+      "note": "极速下载诱导按钮"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "高速下载器",
+      "note": "下载器诱导"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "推荐下载",
+      "tag": "a",
+      "note": "推荐下载诱导"
+    },
+    {
+      "kind": "text",
+      "action": "hide",
+      "text": "安全下载",
+      "tag": "a",
+      "note": "安全下载诱导"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cpro.baidu.com^",
+      "note": "百度联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pos.baidu.com^",
+      "note": "百度联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cbjs.baidu.com^",
+      "note": "百度联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||union.360.cn^",
+      "note": "360 联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adx.sogou.com^",
+      "note": "搜狗广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||dup.baidustatic.com^",
+      "note": "百度静态推广资源"
+    }
+  ]
+}

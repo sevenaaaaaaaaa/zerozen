@@ -1,0 +1,190 @@
+{
+  "id": "sports",
+  "name": "体育站点",
+  "desc": "ESPN / Bleacher Report / Flashscore / 直播吧 / 懂球帝等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".br-ad",
+      "note": "B/R 广告位",
+      "domains": [
+        "bleacherreport.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='homepage-ad_']",
+      "note": "B/R 首页广告",
+      "domains": [
+        "bleacherreport.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "bleacherreport.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "bleacherreport.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='leftSkel__banner']",
+      "note": "Flashscore 广告位",
+      "domains": [
+        "flashscore.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='banner--']",
+      "note": "Flashscore 横幅广告",
+      "domains": [
+        "flashscore.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".footer__advert",
+      "note": "Flashscore 底部广告",
+      "domains": [
+        "flashscore.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".scrolling-banner-wrap",
+      "note": "Flashscore 滚动广告",
+      "domains": [
+        "flashscore.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "flashscore.com",
+        "sofascore.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "flashscore.com",
+        "sofascore.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='iframe_sdk_advert_']",
+      "note": "直播吧广告 iframe",
+      "domains": [
+        "zhibo8.cc"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "zhibo8.cc",
+        "dongqiudi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "zhibo8.cc",
+        "dongqiudi.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-pdps]",
+      "note": "新浪体育广告容器",
+      "domains": [
+        "sports.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='m-p-ad']",
+      "note": "新浪体育广告位",
+      "domains": [
+        "sports.sina.com.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "espn.com",
+        "sports.yahoo.com",
+        "cbssports.com",
+        "theathletic.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "espn.com",
+        "sports.yahoo.com",
+        "cbssports.com",
+        "theathletic.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "sports.qq.com",
+        "sports.163.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "sports.qq.com",
+        "sports.163.com"
+      ]
+    }
+  ]
+}

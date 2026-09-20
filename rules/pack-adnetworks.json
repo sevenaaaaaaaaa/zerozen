@@ -1,0 +1,697 @@
+{
+  "id": "adnetworks",
+  "name": "广告联盟",
+  "desc": "国内外第三方广告联盟的投放与原生内容容器",
+  "rules": [
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pos.baidu.com^",
+      "note": "百度联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cpro.baidu.com^",
+      "note": "百度联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cbjs.baidu.com^",
+      "note": "百度联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||union.360.cn^",
+      "note": "360 联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tanx.com^",
+      "note": "阿里妈妈 Tanx"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||alimama.com^",
+      "note": "阿里妈妈"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||alimama.cn^",
+      "note": "阿里妈妈"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mmstat.com^",
+      "note": "阿里妈妈统计"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||gdt.qq.com^",
+      "note": "腾讯广点通"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.qq.com^",
+      "note": "腾讯广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pangolin-sdk-toutiao.com^",
+      "note": "穿山甲广告 SDK"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pglstatp-toutiao.com^",
+      "note": "穿山甲统计"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||oceanengine.com^",
+      "note": "巨量引擎"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||miaozhen.com^",
+      "note": "秒针监测"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||admaster.com.cn^",
+      "note": "AdMaster 监测"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ipinyou.com^",
+      "note": "品友互动"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mediav.com^",
+      "note": "聚效广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adview.cn^",
+      "note": "AdView"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||domob.cn^",
+      "note": "多盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||duomeng.cn^",
+      "note": "多盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adcome.cn^",
+      "note": "爱点击"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adx.sogou.com^",
+      "note": "搜狗广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||uedas.com^",
+      "note": "搜狐广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||amazon-adsystem.cn^",
+      "note": "亚马逊广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pangle.io^",
+      "note": "Pangle"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||applovin.com^",
+      "note": "AppLovin"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||unityads.unity3d.com^",
+      "note": "Unity Ads"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||vungle.com^",
+      "note": "Vungle"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||chartboost.com^",
+      "note": "Chartboost"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||inmobi.com^",
+      "note": "InMobi"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mopub.com^",
+      "note": "MoPub"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||propellerads.com^",
+      "note": "PropellerAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adcash.com^",
+      "note": "Adcash"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||media.net^",
+      "note": "Media.net"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||bidvertiser.com^",
+      "note": "Bidvertiser"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||infolinks.com^",
+      "note": "Infolinks 内文广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clicksor.com^",
+      "note": "Clicksor"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adf.ly^",
+      "note": "AdF.ly 跳转广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||popads.net^",
+      "note": "PopAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||popcash.net^",
+      "note": "PopCash"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||onclasrv.com^",
+      "note": "OnClickAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clickadu.com^",
+      "note": "Clickadu"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adsterra.com^",
+      "note": "Adsterra"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adskeeper.com^",
+      "note": "AdsKeeper"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tsyndicate.com^",
+      "note": "TrafficStars"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||hilltopads.net^",
+      "note": "HilltopAds"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||traffichunt.com^",
+      "note": "TrafficHunt"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||zeropark.com^",
+      "note": "ZeroPark"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clickagy.com^",
+      "note": "Clickagy"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adcolony.com^",
+      "note": "AdColony"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tapjoy.com^",
+      "note": "Tapjoy"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||smaato.com^",
+      "note": "Smaato"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cpmstar.com^",
+      "note": "CPMStar"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||undertone.com^",
+      "note": "Undertone"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||kargo.com^",
+      "note": "Kargo"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||triplelift.com^",
+      "note": "TripleLift 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||nativo.com^",
+      "note": "Nativo 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||plista.com^",
+      "note": "Plista 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||dable.io^",
+      "note": "Dable 原生广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||connatix.com^",
+      "note": "Connatix 视频广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||aniview.com^",
+      "note": "Aniview 视频广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||primis.tech^",
+      "note": "Primis 视频广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||unrulymedia.com^",
+      "note": "Unruly"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||spotxchange.com^",
+      "note": "SpotX"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||springserve.com^",
+      "note": "SpringServe"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||xandr.com^",
+      "note": "Xandr"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adsystem.amazon.com^",
+      "note": "Amazon 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".trc_related_container",
+      "note": "Taboola 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".trc_rbox",
+      "note": "Taboola 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='taboola-']",
+      "note": "Taboola 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='taboola']",
+      "note": "Taboola 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='outbrain_widget']",
+      "note": "Outbrain 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='outbrain']",
+      "note": "Outbrain 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".OUTBRAIN",
+      "note": "Outbrain 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ob-widget",
+      "note": "Outbrain 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='mgid']",
+      "note": "MGID 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='revcontent']",
+      "note": "Revcontent 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='revcontent']",
+      "note": "Revcontent 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='dable']",
+      "note": "Dable 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='triplelift']",
+      "note": "TripleLift 容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adthrive']",
+      "note": "AdThrive 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".adthrive-ad",
+      "note": "AdThrive 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='mediavine']",
+      "note": "Mediavine 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".mv-ad-box",
+      "note": "Mediavine 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ezoic']",
+      "note": "Ezoic 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='ezoic']",
+      "note": "Ezoic 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='raptive']",
+      "note": "Raptive 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='infolinks']",
+      "note": "Infolinks 内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='infolinks']",
+      "note": "Infolinks 内文广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-slot-']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-slot-']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad-slot']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id$='ad-slot']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='-ad-slot']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='_ad-slot']",
+      "note": "广告位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ads-by-google']",
+      "note": "Google 联盟"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ads-by-google']",
+      "note": "Google 联盟"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='google-ads']",
+      "note": "Google 联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ezoic.net^",
+      "note": "Ezoic 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ezoic.com^",
+      "note": "Ezoic 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||freestar.com^",
+      "note": "Freestar 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||freestar.io^",
+      "note": "Freestar 广告脚本"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||playwire.com^",
+      "note": "Playwire 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||snigel.com^",
+      "note": "Snigel 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adthrive.com^",
+      "note": "AdThrive 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||mediavine.com^",
+      "note": "Mediavine 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||monumetric.com^",
+      "note": "Monumetric 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||setupad.com^",
+      "note": "Setupad 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sortable.com^",
+      "note": "Sortable 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||venatusmedia.com^",
+      "note": "Venatus 游戏广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||nitropay.com^",
+      "note": "NitroPay 站点广告托管"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||indexexchange.com^",
+      "note": "Index Exchange 广告交易"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||contextweb.com^",
+      "note": "PulsePoint 广告交易"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adkernel.com^",
+      "note": "AdKernel 广告交易"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sharethrough.com^",
+      "note": "Sharethrough 原生广告"
+    }
+  ]
+}

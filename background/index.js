@@ -1,0 +1,19 @@
+importScripts(
+  "lib-compat.js",
+  "ai-prompt.js",
+  "rule-format.js",
+  "store.js",
+  "profiles.js",
+  "rule-index.js",
+  "dnr.js",
+  "ai.js",
+  "bookmarks.js",
+  "learn.js",
+  "counts.js",
+  "sniffer.js",
+  "scanner.js",
+  "autopilot.js",
+  "menus.js",
+  "messages.js",
+  "main.js"
+);

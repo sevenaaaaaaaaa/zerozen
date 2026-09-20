@@ -1,0 +1,433 @@
+{
+  "id": "jp",
+  "name": "日本站点",
+  "desc": "Yahoo! JAPAN / はてな / 価格.com / 5ch / ニコニコ / Ameba / FC2 等",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "yahoo.co.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "yahoo.co.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='yjAd']",
+      "note": "Yahoo! JAPAN 广告位",
+      "domains": [
+        "yahoo.co.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' yjAd']",
+      "note": "Yahoo! JAPAN 广告位",
+      "domains": [
+        "yahoo.co.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='yads']",
+      "note": "Yahoo! JAPAN 广告容器",
+      "domains": [
+        "yahoo.co.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='sc-ad']",
+      "note": "Yahoo! JAPAN 搜索广告",
+      "domains": [
+        "yahoo.co.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "b.hatena.ne.jp",
+        "hatena.ne.jp",
+        "hatena.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "b.hatena.ne.jp",
+        "hatena.ne.jp",
+        "hatena.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".entrylist-ad-pc-banner",
+      "note": "はてな 广告位",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".entrylist-ad-banner-middle",
+      "note": "はてな 中部广告",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".entrylist-ad-banner-bottom",
+      "note": "はてな 底部广告",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#entrylist-ad-following-bookmark",
+      "note": "はてな 关注引导广告",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#entrylist-ad-right-top",
+      "note": "はてな 右侧广告",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".following-bookmark-popup",
+      "note": "はてな 弹层",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".js-dynamic-link-app-banner",
+      "note": "はてな App 推广",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".link-app-banner",
+      "note": "はてな App 推广",
+      "domains": [
+        "hatena.ne.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".c-ad",
+      "note": "価格.com 广告位",
+      "domains": [
+        "kakaku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='c-ad-']",
+      "note": "価格.com 广告尺寸位",
+      "domains": [
+        "kakaku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".l-h_ad",
+      "note": "価格.com 头部广告",
+      "domains": [
+        "kakaku.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_300x250",
+      "note": "5ch 矩形广告",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad_300x250']",
+      "note": "5ch 矩形广告",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".js-ads-content-top_rectangle",
+      "note": "5ch 内容顶部广告",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad-undress",
+      "note": "5ch 文章内广告",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#ads-css",
+      "note": "5ch 广告样式容器",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#js-wipe-banner",
+      "note": "5ch 横幅广告",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#js-interstitial",
+      "note": "5ch 插屏广告",
+      "domains": [
+        "5ch.net"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='nicoad-']",
+      "note": "ニコニコ 广告（nicoad）",
+      "domains": [
+        "nicovideo.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".nicoad-video-information",
+      "note": "ニコニコ 视频内广告",
+      "domains": [
+        "nicovideo.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ads",
+      "note": "ニコニコ 广告容器",
+      "domains": [
+        "nicovideo.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "ameblo.jp",
+        "ameba.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "ameblo.jp",
+        "ameba.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_area",
+      "note": "Ameba 广告区",
+      "domains": [
+        "ameblo.jp"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "livedoor.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "livedoor.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_area",
+      "note": "livedoor 广告区",
+      "domains": [
+        "livedoor.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ad-'], [class*=' ad-'])",
+      "note": "广告容器（ad-* 类名）",
+      "domains": [
+        "fc2.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ":is([class^='ads-'], [class*=' ads-'])",
+      "note": "广告容器（ads-* 类名）",
+      "domains": [
+        "fc2.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad_']",
+      "note": "FC2 广告位",
+      "domains": [
+        "fc2.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "iframe[src*='ad.fc2.com']",
+      "note": "FC2 广告 iframe",
+      "domains": [
+        "fc2.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='admax']",
+      "note": "FC2 广告联盟位",
+      "domains": [
+        "fc2.com"
+      ]
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||i-mobile.co.jp^",
+      "note": "i-mobile 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||nend.net^",
+      "note": "nend 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||adingo.jp^",
+      "note": "fluct/ADINGO 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad-stir.com^",
+      "note": "AdStir 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||geniee.co.jp^",
+      "note": "Geniee 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||microad.jp^",
+      "note": "MicroAd 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||microad.net^",
+      "note": "MicroAd 日本广告联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||popin.cc^",
+      "note": "PopIn 日本内容广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||socdm.com^",
+      "note": "Supership 日本广告平台"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||impact-ad.jp^",
+      "note": "Impact Ad 日本广告联盟"
+    }
+  ]
+}

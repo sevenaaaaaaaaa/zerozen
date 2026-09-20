@@ -1,0 +1,29 @@
+{
+  "id": "linkedin",
+  "name": "LinkedIn",
+  "desc": "Sponsored 推广动态、侧栏广告、推广卡与浮层",
+  "rules": [
+    { "kind": "cosmetic", "action": "hide", "selector": ".feed-shared-update-v2--sponsored", "note": "推广动态" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-ad-banner]", "note": "推广动态包装" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-test-id='ad-banner']", "note": "推广动态包装" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".ad-banner-container", "note": "广告横幅容器" },
+    { "kind": "cosmetic", "action": "hide", "selector": "#ads-container", "note": "侧栏广告" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".video-ads__ad-container", "note": "视频广告" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".feed-shared-update-v2:has(.update-components-actor__sub-description)", "note": "推广标签动态" },
+    { "kind": "cosmetic", "action": "hide", "selector": "li.feed-shared-update-v2:has(.artdeco-pill)", "note": "推广标签动态" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".scaffold-layout__aside .artdeco-card:has(.ad-banner-container)", "note": "侧栏广告卡" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".premium-upsell-card", "note": "会员推广卡" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".premium-upsell-link", "note": "会员推广链接" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".feed-follows-module", "note": "推荐关注模块" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".discover-article-card", "note": "推荐内容卡" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[data-launchpad-scrollable]", "note": "推广启动台" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".msg-overlay-bubble-header:has(.msg-overlay-bubble-header__badge)", "note": "消息浮层提示" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".jobs-upsell-v2", "note": "职位推广" },
+    { "kind": "cosmetic", "action": "hide", "selector": ".ad-banner", "note": "广告横幅" },
+
+    { "kind": "network", "action": "block", "filter": "||ads.linkedin.com^", "note": "LinkedIn 广告服务" },
+    { "kind": "network", "action": "block", "filter": "||dc.ads.linkedin.com^", "note": "广告投放" },
+    { "kind": "network", "action": "block", "filter": "||linkedin.com/px/", "note": "广告像素" },
+    { "kind": "network", "action": "block", "filter": "||linkedin.com/li/track", "note": "广告追踪" }
+  ]
+}

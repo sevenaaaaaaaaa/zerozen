@@ -1,0 +1,351 @@
+{
+  "id": "search",
+  "name": "搜索引擎广告",
+  "desc": "Google / Bing / 百度 / 搜狗 / 360 / DuckDuckGo / Yandex 结果页推广位",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#tads",
+      "note": "Google 顶部文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#tadsb",
+      "note": "Google 底部文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#bottomads",
+      "note": "Google 底部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#tvcap",
+      "note": "Google 顶部广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".uEierd",
+      "note": "Google 文字广告卡片"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-text-ad]",
+      "note": "Google 文字广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ads-config]",
+      "note": "Google 广告配置节点"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".commercial-unit-desktop-top",
+      "note": "Google 购物广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".commercial-unit-desktop-rhs",
+      "note": "Google 右侧购物广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".commercial-unit-mobile-top",
+      "note": "Google 移动购物广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#search [aria-label='Ads']",
+      "note": "Google 广告区块"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#search .ads-ad",
+      "note": "Google 广告区块"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#rhs .uEierd",
+      "note": "Google 右栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "div[data-ads-config]",
+      "note": "Google 广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#b_results > li.b_ad",
+      "note": "Bing 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "li.b_ad",
+      "note": "Bing 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".b_ad",
+      "note": "Bing 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".b_adLastChild",
+      "note": "Bing 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#b_topw",
+      "note": "Bing 顶部广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#b_context .b_ad",
+      "note": "Bing 侧栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "li[data-bm] .b_ad",
+      "note": "Bing 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#content_left .ec_wise_ad",
+      "note": "百度推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#content_left .ec_ad_results",
+      "note": "百度推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-tools*='广告']",
+      "note": "百度广告标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ec-tuiguang",
+      "note": "百度推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ec_wise_ad",
+      "note": "百度移动推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#content_left .c-container[data-click*='ad']",
+      "note": "百度广告卡片"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".result-op[data-click*='ad']",
+      "note": "百度广告卡片"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".cpro-ad",
+      "note": "百度联盟广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ad_result",
+      "note": "搜狗广告",
+      "domains": [
+        "sogou.com",
+        "soso.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='ad_']",
+      "note": "搜狗广告位",
+      "domains": [
+        "sogou.com",
+        "soso.com"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".ec_ad_results",
+      "note": "360 搜索广告",
+      "domains": [
+        "so.com",
+        "360.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-pc']",
+      "note": "360 搜索广告",
+      "domains": [
+        "so.com",
+        "360.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-pc']",
+      "note": "360 搜索广告",
+      "domains": [
+        "so.com",
+        "360.cn"
+      ]
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-testid='ad']",
+      "note": "DuckDuckGo 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".result--ad",
+      "note": "DuckDuckGo 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".module--ads",
+      "note": "DuckDuckGo 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "article[data-testid='ad']",
+      "note": "DuckDuckGo 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".serp-adv",
+      "note": "Yandex 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='serp-adv']",
+      "note": "Yandex 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#search-result .serp-adv__found",
+      "note": "Yandex 广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='search-ad']",
+      "note": "通用搜索广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='result-ad']",
+      "note": "通用搜索结果广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-result']",
+      "note": "通用搜索结果广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-result']",
+      "note": "通用搜索结果广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[data-ad-position]",
+      "note": "通用广告位标记"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".sponsored-result",
+      "note": "通用推广结果"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsored-result']",
+      "note": "通用推广结果"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-square']",
+      "note": "通用广告块"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*=' ad-square']",
+      "note": "通用广告块"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='search-advert']",
+      "note": "通用搜索广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||ad.360.cn^",
+      "note": "360 搜索广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||so.com/cpro^",
+      "note": "360 搜索推广"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sogou.com/cpc^",
+      "note": "搜狗推广"
+    }
+  ]
+}

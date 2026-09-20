@@ -1,0 +1,547 @@
+{
+  "id": "annoyances",
+  "name": "弹窗骚扰",
+  "desc": "Cookie 同意框、登录墙、邮件订阅弹窗、App 下载浮层、通知许可诱导",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#onetrust-consent-sdk",
+      "note": "OneTrust Cookie 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#onetrust-banner-sdk",
+      "note": "OneTrust Cookie 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#CybotCookiebotDialog",
+      "note": "Cookiebot"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#didomi-host",
+      "note": "Didomi CMP"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".cc-window",
+      "note": "Cookie Consent"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#cookiescript_injected",
+      "note": "CookieScript"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cookie-consent']",
+      "note": "Cookie 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cookie-banner']",
+      "note": "Cookie 横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cookie-notice']",
+      "note": "Cookie 提示"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='cookie-notice']",
+      "note": "Cookie 提示"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cookie-wall']",
+      "note": "Cookie 墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cookieWall']",
+      "note": "Cookie 墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='gdpr']",
+      "note": "GDPR 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='consent-banner']",
+      "note": "同意横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='sp_message_container']",
+      "note": "Sourcepoint 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#qc-cmp2-container",
+      "note": "Quantcast CMP"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='osano-cm']",
+      "note": "Osano CMP"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='cmpbox']",
+      "note": "CMP 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cmp-container']",
+      "note": "CMP 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='usercentrics']",
+      "note": "Usercentrics CMP"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='iubenda-cs']",
+      "note": "Iubenda CMP"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='termly']",
+      "note": "Termly CMP"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='cookiescript']",
+      "note": "CookieScript"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='newsletter-modal']",
+      "note": "邮件订阅弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='newsletter-popup']",
+      "note": "邮件订阅弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='subscribe-popup']",
+      "note": "订阅弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='subscribe-modal']",
+      "note": "订阅弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='exit-intent']",
+      "note": "离开意图弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='email-popup']",
+      "note": "邮件收集弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='email-modal']",
+      "note": "邮件收集弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='popup']:has(input[type=email])",
+      "note": "邮件收集弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='modal']:has(input[type=email])",
+      "note": "邮件收集弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[role='dialog']:has(input[type=email])",
+      "note": "邮件收集弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[aria-label*='newsletter' i]",
+      "note": "订阅弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='paywall']",
+      "note": "付费墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='paywall']",
+      "note": "付费墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='login-wall']",
+      "note": "登录墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='signup-wall']",
+      "note": "注册墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='registration-wall']",
+      "note": "注册墙"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#smartbanner",
+      "note": "App 下载横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='smart-banner']",
+      "note": "App 下载横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='smartbanner']",
+      "note": "App 下载横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-banner']",
+      "note": "App 推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-download']",
+      "note": "App 推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-app']",
+      "note": "App 推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='open-in-app']",
+      "note": "打开 App 引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='openapp']",
+      "note": "打开 App 引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-guide']",
+      "note": "App 引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='client-guide']",
+      "note": "客户端引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='app-promo']",
+      "note": "App 推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='mobile-app-banner']",
+      "note": "App 推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='appPopup']",
+      "note": "App 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='floating-video']",
+      "note": "浮动视频"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sticky-video']",
+      "note": "吸底视频"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='float-video']",
+      "note": "浮动视频"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='mini-player']",
+      "note": "小窗播放器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='float-bar']",
+      "note": "浮动工具条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='floating-bar']",
+      "note": "浮动工具条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='share-float']",
+      "note": "浮动分享条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='social-share-sticky']",
+      "note": "浮动分享条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='push-notification']",
+      "note": "通知许可诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='push-notify']",
+      "note": "通知许可诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#onesignal-slidedown-container",
+      "note": "OneSignal 通知弹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='onesignal-slidedown']",
+      "note": "OneSignal 通知弹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='notification-permission']",
+      "note": "通知许可诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='webpush']",
+      "note": "Web Push 诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='push-prompt']",
+      "note": "通知许可诱导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='scroll-to-top-ad']",
+      "note": "回顶广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='corner-ad']",
+      "note": "角落广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='corner-popup']",
+      "note": "角落弹窗"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||onesignal.com^",
+      "note": "OneSignal 推送"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pushcrew.com^",
+      "note": "PushCrew"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pushengage.com^",
+      "note": "PushEngage"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||izooto.com^",
+      "note": "iZooto 推送"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||webpushr.com^",
+      "note": "WebPushr"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".fc-consent-root",
+      "note": "Google Funding Choices 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='fc-consent']",
+      "note": "Google Funding Choices 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='cookie-law-info']",
+      "note": "Cookie Law Info 同意条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".cli-modal",
+      "note": "Cookie Law Info 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='cmplz-']",
+      "note": "Complianz 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='BorlabsCookieBox']",
+      "note": "Borlabs 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": ".borlabs-cookie",
+      "note": "Borlabs 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='eu-cookie-compliance']",
+      "note": "EU Cookie 合规条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#sliding-popup",
+      "note": "EU Cookie 弹层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='moove-gdpr']",
+      "note": "Moove GDPR 弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='truste']",
+      "note": "TrustArc 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "#truste-consent-track",
+      "note": "TrustArc 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='cky-']",
+      "note": "CookieYes 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='cky-']",
+      "note": "CookieYes 同意框"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='gdpr']",
+      "note": "GDPR 同意容器"
+    }
+  ]
+}
