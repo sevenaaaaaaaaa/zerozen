@@ -2,7 +2,7 @@
 // 新增中文文案后运行 `npm run check`：漏翻的条目、占位符对不上的条目都会被列出来。
 globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "ZeroZen 净化控制台": "ZeroZen Console",
-  "净化控制台": " Console",
+  "净化控制台": "Console",
   "规则加载中…": "Loading rules…",
   "总开关": "Master switch",
   "规则": "Rules",
@@ -309,7 +309,7 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "订阅已删除": "Subscription deleted",
   "已忽略 $1 条": "$1 dismissed",
   "后台扫描进行中：$1/$2，可打开批量扫描查看": "A scan is running in the background: $1/$2 — open Bulk scan to watch it",
-  "广告净化器": " Ad Cleaner",
+  "广告净化器": "Ad Cleaner",
   "正在读取站点状态…": "Reading site status…",
   "在此站点启用": "Enable on this site",
   "隐藏广告": "Ads hidden",
@@ -335,7 +335,7 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "纯净浏览": "Clean view",
   "阅读模式": "Reader mode",
   "先在网页里点播放，再点「下载本页视频」。工具箱会列出嗅探到的 m3u8，勾选后下载到 ZeroZen/视频。":
-    "Hit play on the page first, then click \"Download this page's video\". The toolbox lists the m3u8 streams it sniffed; tick them to save into ZeroZen/视频.",
+    "Hit play on the page first, then click \"Download this page's video\". The toolbox lists the m3u8 streams it sniffed; tick them to save into ZeroZen/Videos.",
   "AI 识别本页烦人广告": "Run AI detection on this page",
   "选取元素屏蔽（或按 Alt+Z）": "Pick an element to block (or press Alt+Z)",
   "打开净化控制台": "Open the console",
@@ -358,7 +358,7 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "已添加规则": "Rule added",
   "当前页面": "this page",
   "已嗅探到 $1 条视频流。点「下载本页视频」，勾选后下载到 ZeroZen/视频。":
-    "$1 streams sniffed. Click \"Download this page's video\", tick them and they save into ZeroZen/视频.",
+    "$1 streams sniffed. Click \"Download this page's video\", tick them and they save into ZeroZen/Videos.",
   "先在网页里点播放，再点「下载本页视频」。工具箱会列出嗅探到的 m3u8，勾选后下载。":
     "Hit play on the page first, then click \"Download this page's video\". The toolbox lists the m3u8 streams it sniffed.",
   "此页面不支持": "Not supported here",
@@ -430,7 +430,7 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "回到刚才的网页，先点一下播放（播几秒即可）": "Go back to the page and hit play (a few seconds is enough)",
   "再回到这里点「刷新嗅探」": "Come back here and click \"Refresh sniffer\"",
   "勾选流后点「下载选中」，文件会进浏览器下载目录的 ZeroZen/视频":
-    "Tick a stream, click \"Download selected\", and the file lands in ZeroZen/视频 inside your downloads folder",
+    "Tick a stream, click \"Download selected\", and the file lands in ZeroZen/Videos inside your downloads folder",
   "或手动粘贴 m3u8 地址": "or paste an m3u8 URL",
   "添加": "Add",
   "手动粘贴 m3u8 地址": "Paste an m3u8 URL",
