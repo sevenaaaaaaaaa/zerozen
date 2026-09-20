@@ -632,6 +632,30 @@ assert(
 await Perms.remove("bookmarks");
 assertEqual((await Perms.status()).granted.bookmarks, false, "permission revoke reflected");
 
+console.log("\nwebRequest 延后授权");
+
+const lateSandbox = makeSandbox();
+load(lateSandbox, "background/lib-compat.js", "background/counts.js", "background/sniffer.js");
+lateSandbox.ZZ.RuleIndex = { current: () => ({ networkHosts: new Set() }) };
+// 未授权时安装：不应挂上监听器，也不能把自己标记成已安装
+lateSandbox.ZZ.Counts.installNetworkCounter();
+lateSandbox.ZZ.Sniffer.install();
+let wrListeners = 0;
+lateSandbox.chrome.webRequest = {
+  onBeforeRequest: {
+    addListener() {
+      wrListeners++;
+    },
+  },
+};
+lateSandbox.chrome.tabs = { onRemoved: { addListener() {} } };
+lateSandbox.ZZ.Counts.installNetworkCounter();
+lateSandbox.ZZ.Sniffer.install();
+assertEqual(wrListeners, 2, "listeners attach once the permission arrives later");
+lateSandbox.ZZ.Counts.installNetworkCounter();
+lateSandbox.ZZ.Sniffer.install();
+assertEqual(wrListeners, 2, "repeat install does not duplicate listeners");
+
 let reinstalled = 0;
 permSandbox.ZZ.Counts = { installNetworkCounter: () => reinstalled++ };
 permSandbox.ZZ.Sniffer = { install: () => reinstalled++ };

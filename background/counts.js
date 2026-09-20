@@ -108,9 +108,11 @@
 
     installNetworkCounter() {
       if (counterInstalled) return;
-      counterInstalled = true;
+      // webRequest 是可选权限：还没授权时不要把标志位置上，
+      // 否则用户稍后授权也不会再挂监听器
       const wr = api.webRequest;
       if (!wr || !wr.onBeforeRequest) return;
+      counterInstalled = true;
       const listener = (details) => {
         if (details.tabId < 0 || details.type === "main_frame") return;
         const hosts = ZZ.RuleIndex.current().networkHosts;
