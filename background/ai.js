@@ -250,5 +250,8 @@
     },
   };
 
+  // 供 scripts/selftest.mjs 使用的内部函数
+  Ai.__test = { extractJson, sanitize, endpoint, chat };
+
   ZZ.Ai = Ai;
 })();

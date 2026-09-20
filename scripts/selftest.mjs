@@ -378,6 +378,231 @@ assertEqual(T.clampInterval(1), 6, "interval clamped to minimum");
 assertEqual(T.clampInterval(99999), 720, "interval clamped to maximum");
 assertEqual(T.clampMaxRules(10), 500, "max rules clamped to minimum");
 
+console.log("\nAI 识别");
+
+const aiSandbox = makeSandbox();
+const aiMemory = {};
+aiSandbox.chrome.storage.local = {
+  async get(keys) {
+    if (keys == null) return { ...aiMemory };
+    const list = Array.isArray(keys) ? keys : [keys];
+    const out = {};
+    for (const k of list) if (k in aiMemory) out[k] = aiMemory[k];
+    return out;
+  },
+  async set(obj) {
+    Object.assign(aiMemory, obj);
+  },
+};
+load(
+  aiSandbox,
+  "background/lib-compat.js",
+  "background/ai-prompt.js",
+  "background/rule-format.js",
+  "background/store.js",
+  "background/profiles.js",
+  "background/rule-index.js",
+  "background/ai.js"
+);
+const AiZ = aiSandbox.ZZ;
+const Ai = AiZ.Ai;
+const AiT = Ai.__test;
+
+assertEqual(AiT.endpoint("https://api.openai.com/v1"), "https://api.openai.com/v1/chat/completions", "endpoint appends path");
+assertEqual(AiT.endpoint("https://api.openai.com/v1/"), "https://api.openai.com/v1/chat/completions", "endpoint trims trailing slash");
+assertEqual(
+  AiT.endpoint("https://x.example/v1/chat/completions"),
+  "https://x.example/v1/chat/completions",
+  "endpoint keeps full path"
+);
+assertEqual(AiT.endpoint(""), "", "empty base url yields no endpoint");
+
+assert(AiT.extractJson('```json\n{"results":[]}\n```').results.length === 0, "fenced json parsed");
+assertEqual(AiT.extractJson('prefix {"a":1,} suffix').a, 1, "trailing comma tolerated");
+assertEqual(AiT.extractJson("not json at all"), null, "garbage returns null");
+assertEqual(
+  AiT.sanitize("Bad key sk-secret-123 rejected", { ai: { apiKey: "sk-secret-123" } }),
+  "Bad key *** rejected",
+  "api key redacted from error text"
+);
+
+const candidate = {
+  i: 0,
+  tag: "div",
+  sel: "div#ad-slot-1",
+  gen: ".ad-slot",
+  id: "ad-slot-1",
+  cls: ["ad-slot"],
+  score: 5,
+  signals: ["class"],
+  text: "赞助内容".repeat(60),
+  attrs: { "data-ad": "1" },
+  rect: { w: 300, h: 250 },
+};
+const payloadOn = JSON.parse(
+  AiZ.AiPrompt.candidatePayload([candidate], { host: "p.example.com" }, { ai: { sendText: true, sendAttrs: true } })
+);
+assert(payloadOn.candidates[0].txt.length === 140, "element text capped at 140 chars");
+assert(payloadOn.candidates[0].attr, "attributes sent when enabled");
+const payloadOff = JSON.parse(
+  AiZ.AiPrompt.candidatePayload([candidate], { host: "p.example.com" }, { ai: { sendText: false, sendAttrs: false } })
+);
+assert(payloadOff.candidates[0].txt === undefined, "no element text sent when sendText is off");
+assert(payloadOff.candidates[0].attr === undefined, "no attributes sent when sendAttrs is off");
+assert(!JSON.stringify(payloadOff).includes("赞助内容"), "disabled text never reaches the request body");
+
+assertEqual(Ai.normalizeResult({ ad: false }, candidate, "p.example.com"), null, "non-ad result dropped");
+const normal = Ai.normalizeResult(
+  { ad: true, confidence: 2, selector: ".ad-slot", category: "banner", generic: true, blockDomain: "Ads.Example.COM" },
+  candidate,
+  "p.example.com"
+);
+assertEqual(normal.confidence, 1, "confidence clamped to 1");
+assertEqual(normal.blockDomain, "ads.example.com", "block domain lowercased");
+assertEqual(normal.generic, true, "generic flag kept");
+const badCategory = Ai.normalizeResult({ ad: true, selector: ".ad-slot", category: "nonsense" }, candidate, "p.example.com");
+assertEqual(badCategory.category, "other", "unknown category falls back to other");
+const unsafe = Ai.normalizeResult({ ad: true, selector: "body", confidence: 0.9 }, candidate, "p.example.com");
+assertEqual(unsafe.selector, ".ad-slot", "unsafe selector falls back to candidate selector");
+assert(unsafe.fallback === true, "fallback marked");
+assert(unsafe.confidence < 0.9, "fallback lowers confidence");
+const noSelector = Ai.normalizeResult({ ad: true, selector: "body" }, { i: 1, tag: "div" }, "p.example.com");
+assertEqual(noSelector, null, "result without any usable selector dropped");
+
+const AiStore = AiZ.Store;
+await AiStore.load();
+await AiStore.saveSettings({
+  ai: { enabled: true, baseUrl: "https://ai.example.com/v1", apiKey: "sk-test", model: "test-model", maxCandidates: 10 },
+});
+let aiCalls = 0;
+let lastBody = null;
+aiSandbox.fetch = async (url, opts) => {
+  aiCalls++;
+  lastBody = JSON.parse(opts.body);
+  return {
+    ok: true,
+    status: 200,
+    async text() {
+      return JSON.stringify({
+        choices: [
+          {
+            message: {
+              content: '```json\n{"results":[{"i":0,"ad":true,"confidence":0.95,"category":"banner","selector":".ad-slot","generic":true}]}\n```',
+            },
+          },
+        ],
+        usage: { total_tokens: 100 },
+      });
+    },
+  };
+};
+const classified = await Ai.classify({ host: "p.example.com", candidates: [candidate], url: "https://p.example.com/a", title: "t" });
+assert(classified.ok, "classify succeeded");
+assertEqual(classified.findings.length, 1, "one finding returned");
+assertEqual(classified.findings[0].selector, ".ad-slot", "finding carries selector");
+assertEqual(aiCalls, 1, "one upstream request made");
+assert(lastBody.model === "test-model", "configured model used");
+assert(!JSON.stringify(lastBody).includes("<html"), "no raw html in request body");
+const classifiedAgain = await Ai.classify({ host: "p.example.com", candidates: [candidate] });
+assertEqual(aiCalls, 1, "second run served from cache");
+assertEqual(classifiedAgain.calls, 0, "cached run reports zero calls");
+assertEqual(classifiedAgain.findings.length, 1, "cached finding returned");
+
+aiSandbox.fetch = async () => ({
+  ok: false,
+  status: 401,
+  async text() {
+    return JSON.stringify({ error: { message: "Invalid key sk-test" } });
+  },
+});
+await AiStore.setAiCache({});
+const aiFailed = await Ai.classify({ host: "err.example.com", candidates: [candidate] });
+assert(!aiFailed.ok, "upstream error reported");
+assert(!String(aiFailed.error).includes("sk-test"), "api key never surfaced in error");
+
+console.log("\n自动学习");
+
+const learnSandbox = makeSandbox();
+const learnMemory = {};
+learnSandbox.chrome.storage.local = {
+  async get(keys) {
+    if (keys == null) return { ...learnMemory };
+    const list = Array.isArray(keys) ? keys : [keys];
+    const out = {};
+    for (const k of list) if (k in learnMemory) out[k] = learnMemory[k];
+    return out;
+  },
+  async set(obj) {
+    Object.assign(learnMemory, obj);
+  },
+};
+load(
+  learnSandbox,
+  "background/lib-compat.js",
+  "background/rule-format.js",
+  "background/store.js",
+  "background/profiles.js",
+  "background/rule-index.js",
+  "background/learn.js"
+);
+const Learn = learnSandbox.ZZ.Learn;
+const LearnStore = learnSandbox.ZZ.Store;
+await LearnStore.load();
+
+assertEqual(await Learn.observe("a.example.com", ".main-content"), null, "non-ad selector not learned");
+assertEqual(await Learn.observe("a.example.com", "div:nth-child(3)"), null, "positional selector not learned");
+assertEqual(await Learn.observe("", ".ad-slot"), null, "observation without host ignored");
+assert(await Learn.observe("a.example.com", ".ad-slot"), "ad-like selector learned");
+assertEqual((await Learn.candidates()).length, 0, "one site is not enough to generalize");
+await Learn.observe("b.example.com", ".ad-slot");
+const learnCandidates = await Learn.candidates();
+assertEqual(learnCandidates.length, 1, "pattern promoted after two sites");
+assertEqual(learnCandidates[0].sites, 2, "site count tracked");
+await Learn.observe("b.example.com", ".ad-slot");
+assertEqual((await Learn.candidates())[0].sites, 2, "repeat host does not inflate site count");
+
+const generalized = await Learn.maybeGeneralize("c.example.com", "#ad-box", ".promo-banner");
+assertEqual(generalized, null, "first sighting does not create a global rule");
+const generalized2 = await Learn.maybeGeneralize("d.example.com", "#ad-box", ".promo-banner");
+assert(generalized2 && generalized2.selector === ".promo-banner", "second site creates a global rule");
+assertEqual(generalized2.domains.length, 0, "generalized rule applies to all sites");
+assertEqual(generalized2.source, "learn", "generalized rule tagged as learned");
+const generalized3 = await Learn.maybeGeneralize("e.example.com", "#ad-box", ".promo-banner");
+assertEqual(generalized3, null, "already applied pattern is not re-added");
+assertEqual(LearnStore.rules().filter((r) => r.selector === ".promo-banner").length, 1, "no duplicate learned rule");
+
+await LearnStore.saveSettings({ learning: { autoApply: false } });
+assertEqual(await Learn.maybeGeneralize("f.example.com", "#x", ".another-ad-slot"), null, "autoApply off disables generalization");
+
+console.log("\n扫描结果转规则");
+
+const scanSandbox = makeSandbox();
+load(
+  scanSandbox,
+  "background/lib-compat.js",
+  "background/rule-format.js",
+  "background/store.js",
+  "background/profiles.js",
+  "background/rule-index.js",
+  "background/scanner.js"
+);
+const Findings = scanSandbox.ZZ.Findings;
+const siteRules = Findings.toRules(
+  { host: "shop.example.com", selector: ".ad-box", genericSelector: ".ad-box", source: "ai", blockDomain: "ads.example.net", reason: "横幅广告" },
+  "site"
+);
+assertEqual(siteRules.length, 2, "cosmetic + network rule generated");
+assertEqual(siteRules[0].domains, ["shop.example.com"], "site scope keeps rule on one host");
+assertEqual(siteRules[1].filter, "||ads.example.net^", "block domain converted to network filter");
+const globalRules = Findings.toRules(
+  { host: "shop.example.com", selector: "#ad-1", genericSelector: ".ad-box", source: "scan" },
+  "global"
+);
+assertEqual(globalRules.length, 1, "no network rule without block domain");
+assertEqual(globalRules[0].selector, ".ad-box", "global scope prefers the generic selector");
+assertEqual(globalRules[0].domains.length, 0, "global scope has no domain restriction");
+assertEqual(Findings.toRules({ host: "x.example.com", selector: "body", source: "scan" }, "site").length, 0, "unsafe selector produces no rule");
+
 console.log("\n可选权限");
 
 const permSandbox = makeSandbox();
