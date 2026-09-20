@@ -36,6 +36,7 @@
     subStats: null,
     dnrBudget: 4500,
     subBusy: false,
+    perms: [],
     port: null,
   };
 
@@ -57,7 +58,10 @@
     state.tab = name;
     $$(".zz-tab").forEach((btn) => btn.classList.toggle("active", btn.getAttribute("data-tab") === name));
     $$(".zz-panel").forEach((panel) => panel.classList.toggle("active", panel.id === "panel-" + name));
-    if (name === "stats") renderDiag();
+    if (name === "stats") {
+      renderDiag();
+      loadPerms();
+    }
     if (name === "subs") loadSubs();
     if (name === "findings") renderFindings();
     if (name === "autopilot") {
@@ -836,6 +840,48 @@
         .join("");
   }
 
+  /* ---------------- 可选权限 ---------------- */
+
+  function renderPerms() {
+    const box = $("#permList");
+    if (!box) return;
+    const items = state.perms || [];
+    if (!items.length) {
+      box.innerHTML = '<div class="zz-card zz-small zz-muted">当前浏览器不支持可选权限，相关功能按已授予处理。</div>';
+      return;
+    }
+    box.innerHTML = items
+      .map(
+        (p) =>
+          '<div class="zz-card" style="margin-bottom:8px"><div class="zz-row"><b>' +
+          esc(p.name) +
+          '</b><span class="zz-small ' +
+          (p.granted ? "" : "zz-muted") +
+          '">' +
+          (p.granted ? "已授权" : "未授权") +
+          "</span></div>" +
+          '<div class="zz-small zz-muted" style="margin-top:4px">' +
+          esc(p.why) +
+          "</div>" +
+          '<div class="zz-small zz-muted" style="margin-top:2px">涉及功能：' +
+          esc((p.features || []).join("、")) +
+          "</div>" +
+          '<div class="zz-inline" style="margin-top:8px">' +
+          (p.granted
+            ? '<button class="zz-btn zz-btn-sm zz-btn-danger" data-perm-remove="' + esc(p.id) + '">收回权限</button>'
+            : '<button class="zz-btn zz-btn-sm zz-btn-primary" data-perm-grant="' + esc(p.id) + '">授予权限</button>') +
+          "</div></div>"
+      )
+      .join("");
+  }
+
+  async function loadPerms() {
+    const res = await UI.send({ type: "zz:perms:status" });
+    if (!res || !res.ok) return;
+    state.perms = res.items || [];
+    renderPerms();
+  }
+
   /* ---------------- 规则订阅 ---------------- */
 
   function subStatusText(item) {
@@ -1031,6 +1077,9 @@
       saveSettings({ autonomous: { threshold: v } });
     });
     $("#btnAutoRun").addEventListener("click", async () => {
+      if (!(await UI.ensurePermission("history"))) {
+        return toast("自主增强需要「浏览记录」权限，仅在本地按域名统计访问次数", "err");
+      }
       $("#btnAutoRun").disabled = true;
       $("#autoState").textContent = "启动中…";
       const res = await UI.send({ type: "zz:autopilot:run" });
@@ -1188,7 +1237,12 @@
       $("#aiTestResult").textContent = res && res.ok ? "连接成功（" + res.ms + "ms）" : "失败：" + ((res && res.error) || "未知错误");
     });
 
-    $("#btnLoadBookmarks").addEventListener("click", () => loadBookmarks($("#folderSelect").value));
+    $("#btnLoadBookmarks").addEventListener("click", async () => {
+      if (!(await UI.ensurePermission("bookmarks"))) {
+        return toast("读取收藏夹需要「收藏夹」权限，可在统计与诊断页随时收回", "err");
+      }
+      loadBookmarks($("#folderSelect").value);
+    });
     $("#folderSelect").addEventListener("change", () => loadBookmarks($("#folderSelect").value));
 
     $("#btnMergeUrls").addEventListener("click", () => {
@@ -1315,6 +1369,26 @@
         setTimeout(() => location.reload(), 600);
       } else {
         toast("重置失败：" + ((res && res.error) || "未知错误"), "err");
+      }
+    });
+
+    $("#permList").addEventListener("click", async (event) => {
+      const grant = event.target.closest("[data-perm-grant]");
+      if (grant) {
+        const id = grant.getAttribute("data-perm-grant");
+        const ok = await UI.ensurePermission(id);
+        toast(ok ? "权限已授予" : "未授予权限", ok ? "ok" : "err");
+        await loadPerms();
+        return;
+      }
+      const revoke = event.target.closest("[data-perm-remove]");
+      if (revoke) {
+        const res = await UI.send({ type: "zz:perms:remove", payload: { id: revoke.getAttribute("data-perm-remove") } });
+        if (res && res.ok) {
+          state.perms = res.items || state.perms;
+          renderPerms();
+          toast(res.removed ? "权限已收回" : "收回失败", res.removed ? "ok" : "err");
+        }
       }
     });
 

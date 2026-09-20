@@ -215,6 +215,14 @@ npm run build       # 生成 dist/{chrome,firefox,safari} 与 zip/xpi
 - 下载器的多线程分段依赖服务器支持 `Range`，单文件上限 800MB，任务运行期间需保持工具箱页面打开；普通模式由浏览器接管，可关闭页面、支持断点续传。
 - 阅读模式/图片/下载工具箱的文件只会写入 `下载` 目录下的 `ZeroZen/` 子目录，不会碰其他文件。
 
+## 权限与隐私
+
+安装时只申请广告屏蔽必需的权限（`storage` / `declarativeNetRequest` / `scripting` / `tabs` / `webNavigation` / `contextMenus` / `alarms` / `activeTab` 与 http(s) 主机权限）。
+
+`bookmarks`（批量扫描读收藏夹）、`history`（自主增强）、`downloads`（阅读保存 / 视频 / 图片 / 下载器）、`webRequest`（拦截计数与视频嗅探）改为**按需申请**：第一次用到对应功能时才弹窗，控制台 →「统计与诊断」→「可选权限」里可以随时查看和收回。
+
+扩展没有后端服务器，不收集、不上传任何浏览数据。完整说明见 [docs/privacy-policy.md](docs/privacy-policy.md)，上架材料见 [docs/store-listing.md](docs/store-listing.md)。
+
 ## 许可
 
 内置规则包为原创整理，可按需修改。`开源合并规则` 由 `npm run import:lists` 从 EasyList、EasyPrivacy、AdGuard、uBlock Origin、CJX、1Hosts、Peter Lowe 等开源列表自动转换、去重、截断生成，各列表版权与许可证见 [docs/oss-sources.md](docs/oss-sources.md)。

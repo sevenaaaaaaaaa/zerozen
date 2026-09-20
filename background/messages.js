@@ -433,6 +433,20 @@
           return { ok: true, enabled: ZZ.Store.packEnabled(p.id) };
         }
 
+        case "zz:perms:status": {
+          return Object.assign({ ok: true }, await ZZ.Perms.status());
+        }
+
+        case "zz:perms:granted": {
+          ZZ.Perms.onGranted((msg.payload && msg.payload.permissions) || []);
+          return Object.assign({ ok: true }, await ZZ.Perms.status());
+        }
+
+        case "zz:perms:remove": {
+          const removed = await ZZ.Perms.remove((msg.payload || {}).id);
+          return Object.assign({ ok: true, removed }, await ZZ.Perms.status());
+        }
+
         case "zz:subs:list": {
           return {
             ok: true,
@@ -703,6 +717,9 @@
           const filename = dir.replace(/\/+$/, "") + "/" + (safe || "article") + ".md";
           const text = "# " + (p.title || "") + "\n\n> 来源：" + (p.url || "") + "\n\n" + String(p.markdown || "");
           const dataUrl = "data:text/markdown;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(text)));
+          if (!api.downloads || !api.downloads.download) {
+            return { ok: false, error: "需要先授予「下载」权限：打开净化控制台 → 统计与诊断 → 可选权限" };
+          }
           try {
             const id = await new Promise((resolve, reject) => {
               api.downloads.download({ url: dataUrl, filename, saveAs: false, conflictAction: "uniquify" }, (downloadId) => {

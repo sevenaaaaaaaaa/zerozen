@@ -233,6 +233,7 @@
 
   Main.installListeners();
   ZZ.Menus.listen();
+  ZZ.Perms.listen();
   ZZ.Counts.installNetworkCounter();
   if (ZZ.Sniffer) ZZ.Sniffer.install();
   ZZ.Messages.listen();

@@ -12,9 +12,51 @@
     return Array.from((root || document).querySelectorAll(sel));
   }
 
+  // 可选权限：用到对应功能时才申请（必须在用户点击等手势里调用）
+  function hasPermission(ids) {
+    const list = Array.isArray(ids) ? ids : [ids];
+    if (!api.permissions || !api.permissions.contains) {
+      return Promise.resolve(list.every((id) => !!api[id]));
+    }
+    return new Promise((resolve) => {
+      try {
+        const ret = api.permissions.contains({ permissions: list }, (ok) => resolve(!!ok));
+        if (ret && typeof ret.then === "function") ret.then((ok) => resolve(!!ok)).catch(() => resolve(false));
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+
+  function requestPermission(ids) {
+    const list = Array.isArray(ids) ? ids : [ids];
+    if (!api.permissions || !api.permissions.request) return Promise.resolve(false);
+    return new Promise((resolve) => {
+      try {
+        const ret = api.permissions.request({ permissions: list }, (ok) => resolve(!!ok));
+        if (ret && typeof ret.then === "function") ret.then((ok) => resolve(!!ok)).catch(() => resolve(false));
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+
   g.ZZUI = {
     $,
     $$,
+    hasPermission,
+    requestPermission,
+    async ensurePermission(ids) {
+      const list = Array.isArray(ids) ? ids : [ids];
+      if (await hasPermission(list)) return true;
+      const ok = await requestPermission(list);
+      if (ok) {
+        try {
+          await api.runtime.sendMessage({ type: "zz:perms:granted", payload: { permissions: list } });
+        } catch (e) {}
+      }
+      return ok;
+    },
     send(message) {
       return new Promise((resolve) => {
         let settled = false;

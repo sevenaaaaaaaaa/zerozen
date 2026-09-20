@@ -65,7 +65,9 @@
       .slice(0, 120) || "download";
   }
 
-  function download(url, filename) {
+  async function download(url, filename) {
+    const granted = await UI.ensurePermission("downloads");
+    if (!granted) throw new Error("需要「下载」权限才能保存文件");
     const opts = { url, filename, saveAs: false, conflictAction: "uniquify" };
     return new Promise((resolve, reject) => {
       try {
@@ -608,6 +610,7 @@
   }
 
   function dlSearch() {
+    if (!api.downloads || !api.downloads.search) return Promise.resolve([]);
     return new Promise((resolve) => api.downloads.search({ orderBy: ["-startTime"], limit: 300 }, resolve));
   }
 

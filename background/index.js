@@ -5,6 +5,7 @@ importScripts(
   "store.js",
   "profiles.js",
   "rule-index.js",
+  "permissions.js",
   "dnr.js",
   "subscriptions.js",
   "ai.js",

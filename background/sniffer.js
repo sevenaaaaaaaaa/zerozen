@@ -35,10 +35,14 @@
     return "";
   }
 
+  let installed = false;
+
   const Sniffer = {
     install() {
+      if (installed) return;
       const wr = api.webRequest;
       if (!wr || !wr.onBeforeRequest) return;
+      installed = true;
       try {
         wr.onBeforeRequest.addListener(
           (details) => {

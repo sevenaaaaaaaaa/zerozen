@@ -378,6 +378,43 @@ assertEqual(T.clampInterval(1), 6, "interval clamped to minimum");
 assertEqual(T.clampInterval(99999), 720, "interval clamped to maximum");
 assertEqual(T.clampMaxRules(10), 500, "max rules clamped to minimum");
 
+console.log("\n可选权限");
+
+const permSandbox = makeSandbox();
+const grantedSet = new Set(["bookmarks"]);
+permSandbox.chrome.permissions = {
+  async contains(req) {
+    return (req.permissions || []).every((p) => grantedSet.has(p));
+  },
+  async remove(req) {
+    for (const p of req.permissions || []) grantedSet.delete(p);
+    return true;
+  },
+  onAdded: { addListener() {} },
+  onRemoved: { addListener() {} },
+};
+load(permSandbox, "background/lib-compat.js", "background/permissions.js");
+const Perms = permSandbox.ZZ.Perms;
+const permStatus = await Perms.status();
+assert(permStatus.supported, "permissions api detected");
+assertEqual(permStatus.granted.bookmarks, true, "granted permission reported");
+assertEqual(permStatus.granted.history, false, "missing permission reported");
+assertEqual(permStatus.items.length, 4, "four optional permissions described");
+assert(
+  permStatus.items.every((p) => p.name && p.why && (p.features || []).length),
+  "every optional permission carries a user-facing reason"
+);
+await Perms.remove("bookmarks");
+assertEqual((await Perms.status()).granted.bookmarks, false, "permission revoke reflected");
+
+let reinstalled = 0;
+permSandbox.ZZ.Counts = { installNetworkCounter: () => reinstalled++ };
+permSandbox.ZZ.Sniffer = { install: () => reinstalled++ };
+Perms.onGranted(["webRequest"]);
+assertEqual(reinstalled, 2, "webRequest grant re-installs counter and sniffer");
+Perms.onGranted(["bookmarks"]);
+assertEqual(reinstalled, 2, "unrelated grant does not re-install listeners");
+
 console.log("\n订阅规则优先级");
 
 const weightSandbox = makeSandbox();

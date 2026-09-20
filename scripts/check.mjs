@@ -136,6 +136,26 @@ for (const page of ["popup", "options"]) {
   }
 }
 
+const permsSrc = readFileSync(join(root, "background", "permissions.js"), "utf8");
+const permIds = [...permsSrc.matchAll(/id:\s*"([a-zA-Z]+)"/g)].map((m) => m[1]);
+const optional = manifest.optional_permissions || [];
+if (permIds.length !== optional.length || permIds.some((id) => !optional.includes(id))) {
+  errors++;
+  console.error("FAIL  background/permissions.js OPTIONAL does not match manifest optional_permissions");
+  console.error("      permissions.js: " + permIds.join(", "));
+  console.error("      manifest:       " + optional.join(", "));
+} else {
+  checked++;
+}
+for (const id of optional) {
+  if ((manifest.permissions || []).includes(id)) {
+    errors++;
+    console.error(`FAIL  "${id}" listed in both permissions and optional_permissions`);
+  } else {
+    checked++;
+  }
+}
+
 const messagesSrc = readFileSync(join(root, "background", "messages.js"), "utf8");
 const cases = new Set([...messagesSrc.matchAll(/case "(zz:[a-z:-]+)"/g)].map((m) => m[1]));
 const sent = new Set();

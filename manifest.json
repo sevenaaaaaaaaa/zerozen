@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ZeroZen 广告净化器",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "跨浏览器广告与弹窗屏蔽：规则引擎 + AI 识别 + 收藏夹批量扫描，支持自定义规则导入导出。",
   "minimum_chrome_version": "105",
   "permissions": [
@@ -11,13 +11,15 @@
     "alarms",
     "scripting",
     "tabs",
-    "bookmarks",
     "contextMenus",
     "webNavigation",
-    "webRequest",
+    "activeTab"
+  ],
+  "optional_permissions": [
+    "bookmarks",
     "history",
     "downloads",
-    "activeTab"
+    "webRequest"
   ],
   "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
@@ -29,6 +31,7 @@
       "background/store.js",
       "background/profiles.js",
       "background/rule-index.js",
+      "background/permissions.js",
       "background/dnr.js",
       "background/subscriptions.js",
       "background/ai.js",
