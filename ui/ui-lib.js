@@ -146,6 +146,22 @@
         return null;
       }
     },
+    async sendToTab(tabId, message) {
+      if (typeof tabId !== "number") return null;
+      return new Promise((resolve) => {
+        let ret;
+        try {
+          ret = api.tabs.sendMessage(tabId, message, (res) => {
+            const err = api.runtime.lastError;
+            resolve(err ? null : res);
+          });
+        } catch (e) {
+          resolve(null);
+          return;
+        }
+        if (ret && typeof ret.catch === "function") ret.catch(() => resolve(null));
+      });
+    },
     toast(el, text, kind) {
       if (!el) return;
       el.textContent = text;

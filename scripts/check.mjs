@@ -178,7 +178,9 @@ for (const file of ["ui/popup.js", "ui/options.js", "content/10-css.js", "conten
   const src = readFileSync(join(root, file), "utf8");
   for (const m of src.matchAll(/type:\s*"(zz:[a-z:-]+)"/g)) sent.add(m[1]);
 }
-const unhandled = [...sent].filter((t) => !cases.has(t) && !t.startsWith("zz:scan:"));
+// popup 直发 content tab 的消息（tabs.sendMessage），不经过 background
+const TAB_DIRECT = new Set(["zz:toolbox:streams", "zz:fx:clean"]);
+const unhandled = [...sent].filter((t) => !cases.has(t) && !t.startsWith("zz:scan:") && !TAB_DIRECT.has(t));
 if (unhandled.length) {
   errors++;
   console.error(`FAIL  messages sent but not handled in background: ${unhandled.join(", ")}`);

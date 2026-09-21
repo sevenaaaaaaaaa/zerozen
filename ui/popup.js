@@ -4,15 +4,29 @@
   const T = UI.T;
   const api = globalThis.ZZ.browser;
 
+  ZZDLEngine.init({ UI, T, referrerOf: () => (tab && tab.url) || "" });
+
   let tab = null;
   let host = "";
   let refreshTimer = null;
+  let mediaStreams = [];
+  let taskFilter = "all";
+
+  function bumpStat(id, value) {
+    const el = $(id);
+    const next = String(value == null ? 0 : value);
+    if (!el || el.textContent === next) return;
+    el.textContent = next;
+    el.classList.remove("zz-bump");
+    void el.offsetWidth; // 重启动画
+    el.classList.add("zz-bump");
+  }
 
   function renderState(state) {
     const c = state.counts || {};
-    $("#statHidden").textContent = (c.cosmetic || 0) + (c.texts || 0) + (c.removed || 0);
-    $("#statNetwork").textContent = c.network || 0;
-    $("#statPopups").textContent = c.popups || 0;
+    bumpStat("#statHidden", (c.cosmetic || 0) + (c.texts || 0) + (c.removed || 0));
+    bumpStat("#statNetwork", c.network || 0);
+    bumpStat("#statPopups", c.popups || 0);
     $("#globalEnabled").checked = !!state.enabled;
     $("#siteEnabled").checked = !!state.siteEnabled;
     lastState = state;
@@ -73,6 +87,16 @@
     }
   }
 
+  function escapeHtml(text) {
+    return String(text == null ? "" : text).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[c]);
+  }
+
   async function loadFindings() {
     const res = await UI.send({ type: "zz:findings:list", payload: { host, status: "pending" } });
     const list = (res && res.findings) || [];
@@ -109,22 +133,285 @@
       });
       if (res2 && res2.ok) {
         UI.toast($("#msg"), T("已添加规则"), "ok");
+        playSparkle(btn);
+        fxClean(1);
         await refresh();
       }
     };
   }
 
-  function escapeHtml(text) {
-    return String(text == null ? "" : text).replace(/[&<>"']/g, (c) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    })[c]);
+  // ---------- 嗅探：网络请求 + 页面 DOM/脚本扫描 ----------
+  async function scanMedia() {
+    if (!tab || !/^https?:/i.test(tab.url || "")) return;
+    const [sniff, dom] = await Promise.all([
+      UI.send({ type: "zz:sniff:list", payload: { tabId: tab.id } }).catch(() => null),
+      UI.sendToTab(tab.id, { type: "zz:toolbox:streams" }).catch(() => null),
+    ]);
+    const map = new Map();
+    for (const s of (sniff && sniff.streams) || []) map.set(s.url, { url: s.url, kind: s.kind, note: T("网络请求") });
+    for (const s of (dom && dom.streams) || []) if (!map.has(s.url)) map.set(s.url, s);
+    const score = (s) => {
+      let n = 0;
+      if (/\.m3u8|\/hls\//i.test(s.url)) n += 5;
+      if (/\.mpd/i.test(s.url)) n += 4;
+      if (/\.mp4|\.webm/i.test(s.url)) n += 3;
+      if (/master|index|playlist/i.test(s.url)) n += 1;
+      return n;
+    };
+    mediaStreams = Array.from(map.values()).sort((a, b) => score(b) - score(a)).slice(0, 8);
+    renderMedia();
   }
 
-  async function refresh() {
+  function streamName(url) {
+    try {
+      const base = decodeURIComponent((url.split(/[?#]/)[0].split("/").pop() || "").slice(0, 60));
+      return base || url.slice(0, 60);
+    } catch (e) {
+      return url.slice(0, 60);
+    }
+  }
+
+  function renderMedia() {
+    const section = $("#mediaSection");
+    const box = $("#mediaList");
+    const hint = $("#mediaHint");
+    if (!mediaStreams.length) {
+      section.hidden = true;
+      return;
+    }
+    section.hidden = false;
+    box.innerHTML = "";
+    for (const s of mediaStreams) {
+      const item = document.createElement("div");
+      item.className = "zz-media-item";
+      const kindLabel = s.kind === "m3u8" ? "HLS" : s.kind === "mpd" ? "DASH" : s.kind === "ts" ? "TS" : "VIDEO";
+      item.innerHTML =
+        '<span class="mi-kind">' + kindLabel + "</span>" +
+        '<span class="mi-url" title="' + escapeHtml(s.url) + '">' + escapeHtml(streamName(s.url)) + "</span>" +
+        '<button class="zz-btn zz-btn-sm zz-btn-primary" data-dl="' + escapeHtml(s.url) + '" data-kind="' + (s.kind || "media") + '">' + T("下载") + "</button>";
+      box.appendChild(item);
+    }
+    hint.textContent = T("点「下载」直接创建任务（弹窗关闭进度也会保留）");
+  }
+
+  // 下载按钮魔法特效：迸发六颗光点
+  function playSparkle(btn) {
+    if (!btn || !btn.getBoundingClientRect) return;
+    const r = btn.getBoundingClientRect();
+    const holder = document.createElement("div");
+    holder.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:99999";
+    document.body.appendChild(holder);
+    for (let i = 0; i < 6; i++) {
+      const spark = document.createElement("span");
+      const ang = (Math.PI * 2 * i) / 6 + Math.random() * 0.5;
+      const dist = 26 + Math.random() * 18;
+      const dx = Math.cos(ang) * dist;
+      const dy = Math.sin(ang) * dist - 8;
+      spark.style.cssText =
+        "position:absolute;left:" + (r.left + r.width / 2) + "px;top:" + (r.top + r.height / 2) + "px;" +
+        "width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,#93c5fd,#3b82f6);" +
+        "box-shadow:0 0 8px rgba(59,130,246,.9);" +
+        "transition:transform .55s cubic-bezier(.22,1.4,.36,1),opacity .55s ease;";
+      holder.appendChild(spark);
+      requestAnimationFrame(() => {
+        spark.style.transform = "translate(" + dx + "px," + dy + "px) scale(0.2)";
+        spark.style.opacity = "0";
+      });
+    }
+    setTimeout(() => holder.remove(), 700);
+  }
+
+  async function fxClean(count) {
+    if (!tab) return;
+    try {
+      await api.tabs.sendMessage(tab.id, { type: "zz:fx:clean", payload: { count: count || 0 } });
+    } catch (e) {}
+  }
+
+  const busyStreams = new Set();
+  $("#mediaList").addEventListener("click", async (event) => {
+    const btn = event.target.closest("button[data-dl]");
+    if (!btn || busyStreams.has(btn.getAttribute("data-dl"))) return;
+    const url = btn.getAttribute("data-dl");
+    const kind = btn.getAttribute("data-kind") || "media";
+    const dir = kind === "m3u8" || kind === "mpd" || kind === "ts" ? "ZeroZen/视频" : "ZeroZen/下载";
+    let name = ZZDLEngine.sanitize(streamName(url));
+    busyStreams.add(url);
+    btn.disabled = true;
+    btn.textContent = T("创建中…");
+    try {
+      let saved = "";
+      if (/\.m3u8|\/hls\//i.test(url)) {
+        const res = await ZZDLEngine.downloadM3u8(url, {
+          concurrency: 6,
+          nameBase: name.replace(/\.(m3u8|mp4|ts)$/i, "") || "video",
+          dir,
+          onProgress: () => {},
+        });
+        if (res.cancelled) throw new Error(T("已取消"));
+        saved = res.saved;
+      } else if (/\.mpd/i.test(url)) {
+        await ZZDLEngine.download(url, dir + "/" + name);
+        saved = dir + "/" + name;
+      } else {
+        // 直链：优先多线程，失败回浏览器默认下载
+        try {
+          const res = await ZZDLEngine.multiThreadDownload(url, name, dir, 4, () => {}, null);
+          saved = res.cancelled ? "" : res.saved;
+        } catch (e) {
+          await ZZDLEngine.download(url, dir + "/" + name);
+          saved = dir + "/" + name;
+        }
+      }
+      playSparkle(btn);
+      UI.toast($("#msg"), T("任务已创建：$1", saved || name), "ok");
+      await refreshTasks(true);
+    } catch (e) {
+      UI.toast($("#msg"), T("创建失败：$1", (e && e.message) || e), "err");
+      btn.disabled = false;
+      btn.textContent = T("下载");
+    } finally {
+      busyStreams.delete(url);
+      if (btn.isConnected && btn.textContent !== T("下载")) {
+        btn.disabled = false;
+        btn.textContent = T("下载");
+      }
+    }
+  });
+  $("#btnRescan").addEventListener("click", scanMedia);
+
+  // ---------- 任务中心：浏览器下载记录 + 本地未完成任务，按类型分组 ----------
+  function classifyFile(nameOrUrl) {
+    const ext = (String(nameOrUrl).split(/[?#]/)[0].split(".").pop() || "").toLowerCase();
+    if (/^(mp4|ts|webm|mkv|avi|mov|flv|m4v|m3u8|mpd)$/.test(ext)) return "video";
+    if (/^(mp3|m4a|flac|wav|aac|ogg|opus)$/.test(ext)) return "audio";
+    if (/^(jpg|jpeg|png|gif|webp|avif|bmp|svg|ico)$/.test(ext)) return "image";
+    if (/^(zip|rar|7z|tar|gz|bz2|xz|apk|dmg|iso)$/.test(ext)) return "archive";
+    if (/^(pdf|doc|docx|xls|xlsx|ppt|pptx|epub|mobi|txt|md|csv)$/.test(ext)) return "doc";
+    return "other";
+  }
+
+  function taskNameOf(path) {
+    return String(path || "").split(/[\\/]/).pop() || "—";
+  }
+
+  async function refreshTasks(interactive) {
+    const section = $("#taskSection");
+    let items = [];
+    // downloads 是可选权限：只允许用户手势触发申请；定时刷新静默跳过，已授权才读取记录
+    let granted = false;
+    try {
+      if (interactive) granted = await UI.ensurePermission("downloads");
+      else granted = !!(api.downloads && api.downloads.search);
+    } catch (e) {}
+    if (granted && api.downloads && api.downloads.search) {
+      const records = await new Promise((resolve) =>
+        api.downloads.search({ orderBy: ["-startTime"], limit: 60 }, (r) => resolve(r || []))
+      );
+      for (const it of records) {
+        const name = taskNameOf(it.filename || it.url);
+        items.push({
+          key: "d" + it.id,
+          id: it.id,
+          name,
+          cat: classifyFile(name),
+          state: it.state === "complete" ? "done" : it.state === "interrupted" ? "err" : it.paused ? "paused" : "run",
+          pct: it.totalBytes > 0 ? Math.min(100, Math.round(((it.bytesReceived || 0) / it.totalBytes) * 100)) : it.state === "complete" ? 100 : 0,
+          size: it.totalBytes || it.bytesReceived || 0,
+          resume: null,
+        });
+      }
+    }
+    try {
+      const local = (globalThis.ZZDLStore ? await ZZDLStore.listTasks() : []) || [];
+      for (const t of local) {
+        const name = t.kind === "m3u8" ? t.nameBase : t.name;
+        items.unshift({
+          key: "l" + t.id,
+          id: t.id,
+          name,
+          cat: classifyFile(name),
+          state: t.status === "error" ? "err" : "paused",
+          pct: t.total ? Math.min(100, Math.round(((t.done || 0) / t.total) * 100)) : 0,
+          size: t.total || 0,
+          resume: t,
+        });
+      }
+    } catch (e) {}
+    items = items.filter((it) => taskFilter === "all" || it.cat === taskFilter).slice(0, 14);
+    // 渲染签名：内容没变就不重建 DOM，避免定时刷新导致滚动位置跳动
+    const sig = items.map((it) => it.key + ":" + it.state + ":" + it.pct).join("|");
+    if (sig === taskRenderSig) {
+      section.hidden = !items.length;
+      return;
+    }
+    taskRenderSig = sig;
+    section.hidden = !items.length;
+    const box = $("#taskList");
+    box.innerHTML = "";
+    const stateLabel = { done: T("已完成"), err: T("失败"), paused: T("已暂停"), run: T("下载中") };
+    for (const it of items) {
+      const row = document.createElement("div");
+      row.className = "zz-task-item" + (it.state === "run" ? " run" : "");
+      row.innerHTML =
+        '<span class="ti-name" title="' + escapeHtml(it.name) + '">' + escapeHtml(it.name) + "</span>" +
+        '<span class="ti-meta">' + (it.size ? ZZDLEngine.bytes(it.size) + " · " : "") + stateLabel[it.state] + "</span>" +
+        (it.resume ? '<button class="zz-btn zz-btn-sm" data-tresume="' + escapeHtml(it.id) + '">' + T("继续") + "</button>" : "") +
+        (it.resume ? '<button class="zz-btn zz-btn-sm zz-btn-danger" data-tdrop="' + escapeHtml(it.id) + '">' + T("删除") + "</button>" : "") +
+        '<i class="ti-bar" style="width:' + it.pct + '%"></i>';
+      box.appendChild(row);
+    }
+    if (!box.childElementCount && taskFilter !== "all") section.hidden = true;
+  }
+
+  const busyTasks = new Set();
+  let taskRenderSig = "";
+  $("#taskList").addEventListener("click", async (event) => {
+    const resumeBtn = event.target.closest("button[data-tresume]");
+    const dropBtn = event.target.closest("button[data-tdrop]");
+    if (dropBtn) {
+      await ZZDLStore.removeTask(dropBtn.getAttribute("data-tdrop"));
+      await refreshTasks();
+      return;
+    }
+    if (!resumeBtn || busyTasks.has(resumeBtn.getAttribute("data-tresume"))) return;
+    const id = resumeBtn.getAttribute("data-tresume");
+    const task = (globalThis.ZZDLStore ? await ZZDLStore.getTask(id) : null);
+    if (!task) return;
+    busyTasks.add(id);
+    resumeBtn.disabled = true;
+    try {
+      if (task.kind === "m3u8") {
+        const res = await ZZDLEngine.downloadM3u8(task.url, {
+          concurrency: Math.max(1, Math.min(12, task.concurrency || 6)),
+          nameBase: task.nameBase,
+          dir: task.dir,
+          tsAsMp4: !!task.tsAsMp4,
+          onProgress: () => {},
+        });
+        UI.toast($("#msg"), res.cancelled ? T("已暂停，进度已保留") : T("任务完成：$1", res.saved), res.cancelled ? "" : "ok");
+      } else {
+        const res = await ZZDLEngine.multiThreadDownload(task.url, task.name, task.dir, task.threads || 4, () => {}, null);
+        UI.toast($("#msg"), res.cancelled ? T("已暂停，进度已保留") : T("任务完成：$1", res.saved), res.cancelled ? "" : "ok");
+      }
+      playSparkle(resumeBtn);
+    } catch (e) {
+      UI.toast($("#msg"), T("失败：$1", (e && e.message) || e), "err");
+    } finally {
+      busyTasks.delete(id);
+      await refreshTasks(true);
+    }
+  });
+  $("#taskFilters").addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-cat]");
+    if (!btn) return;
+    taskFilter = btn.getAttribute("data-cat");
+    for (const b of document.querySelectorAll("#taskFilters button")) b.classList.toggle("active", b === btn);
+    refreshTasks(false);
+  });
+  $("#btnTaskRefresh").addEventListener("click", () => refreshTasks(true));
+
+  async function refresh(interactive) {
     if (!tab) return;
     const res = await UI.send({ type: "zz:state:get", payload: { tabId: tab.id } });
     if (res && res.ok) {
@@ -132,16 +419,9 @@
       $("#host").textContent = host || tab.title || T("当前页面");
       renderState(res);
     }
-    const sniff = await UI.send({ type: "zz:sniff:list", payload: { tabId: tab.id } });
-    const count = sniff && sniff.streams ? sniff.streams.length : 0;
-    const badge = $("#sniffCount");
-    if (badge) badge.textContent = count ? "(" + count + ")" : "";
-    const hint = $("#toolHint");
-    if (hint) {
-      hint.textContent = count
-        ? T("已嗅探到 $1 条视频流。点「下载本页视频」，勾选后下载到 ZeroZen/视频。", count)
-        : T("先在网页里点播放，再点「下载本页视频」。工具箱会列出嗅探到的 m3u8，勾选后下载。");
-    }
+    // 嗅探只在打开弹窗或手动触发时全量扫描，定时刷新不做（页面源码正则扫描开销大）
+    if (interactive || !mediaStreams.length) await scanMedia();
+    await refreshTasks(!!interactive);
   }
 
   async function init() {
@@ -162,9 +442,9 @@
       return;
     }
     $("#host").textContent = host || tab.title || T("当前页面");
-    await refresh();
+    await refresh(true);
     await loadFindings();
-    refreshTimer = setInterval(refresh, 2000);
+    refreshTimer = setInterval(() => refresh(), 3000);
   }
 
   $("#globalEnabled").addEventListener("change", async (event) => {
@@ -230,24 +510,16 @@
 
   $("#btnClean").addEventListener("click", async () => {
     const res = await UI.send({ type: "zz:clean:set", payload: { tabId: tab && tab.id } });
-    if (res && res.ok) UI.toast($("#msg"), T(res.active ? "已进入纯净浏览（再点一次恢复）" : "已退出纯净浏览"), "ok");
-    else UI.toast($("#msg"), T("操作失败：$1", (res && res.error) || T("内容脚本无响应")), "err");
+    if (res && res.ok) {
+      UI.toast($("#msg"), T(res.active ? "已进入纯净浏览（再点一次恢复）" : "已退出纯净浏览"), "ok");
+      if (res.active) fxClean(0);
+    } else UI.toast($("#msg"), T("操作失败：$1", (res && res.error) || T("内容脚本无响应")), "err");
   });
 
   $("#btnReader").addEventListener("click", async () => {
     const res = await UI.send({ type: "zz:reader:toggle", payload: { tabId: tab && tab.id } });
     if (res && res.ok) UI.toast($("#msg"), T(res.active ? "已进入阅读模式（可保存 Markdown）" : "已退出阅读模式"), "ok");
     else UI.toast($("#msg"), T("阅读模式失败：$1", (res && res.error) || T("无法提取正文")), "err");
-  });
-
-  $("#btnToolbox").addEventListener("click", async () => {
-    UI.toast($("#msg"), T("正在打开下载工具箱…"), "ok");
-    const ok = await UI.openToolbox(tab && tab.id);
-    if (!ok) {
-      UI.toast($("#msg"), T("打不开工具箱，请重载扩展后再试"), "err");
-      return;
-    }
-    window.close();
   });
 
   document.querySelector(".zz-chips").addEventListener("change", async (event) => {
@@ -285,6 +557,7 @@
         : T("未发现新的广告元素"),
       "ok"
     );
+    if (res.applied) fxClean(res.applied);
     await refresh();
     await loadFindings();
   });
@@ -313,6 +586,7 @@
       applied && applied.ok ? T("已屏蔽 $1 条", applied.rules) : T("操作失败"),
       applied && applied.ok ? "ok" : "err"
     );
+    if (applied && applied.ok) fxClean(applied.rules);
     await refresh();
     await loadFindings();
   });
