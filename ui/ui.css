@@ -281,6 +281,22 @@ button {
   font-size: 12px;
 }
 
+.zz-select {
+  font: inherit;
+  font-size: 12px;
+  color: var(--zz-text);
+  background: var(--zz-panel-2);
+  border: 1px solid var(--zz-border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.zz-select option {
+  background: #141a2c;
+  color: var(--zz-text);
+}
+
 .zz-seg {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

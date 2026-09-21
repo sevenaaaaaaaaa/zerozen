@@ -119,6 +119,9 @@
     toolbox: {
       videoDir: ZZ.T("ZeroZen/视频"),
       imageDir: ZZ.T("ZeroZen/图片"),
+      audioDir: ZZ.T("ZeroZen/音频"),
+      archiveDir: ZZ.T("ZeroZen/压缩包"),
+      docDir: ZZ.T("ZeroZen/文档"),
       articleDir: ZZ.T("ZeroZen/阅读"),
       downloadDir: ZZ.T("ZeroZen/下载"),
       concurrency: 4,

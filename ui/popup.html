@@ -208,6 +208,13 @@
     <div class="zz-section" id="taskSection" hidden>
       <div class="zz-row">
         <b class="zz-small" data-i18n="任务中心">任务中心</b>
+        <select id="taskSort" class="zz-select" style="flex: 1; max-width: 120px">
+          <option value="time" data-i18n="按时间">按时间</option>
+          <option value="size" data-i18n="按大小">按大小</option>
+          <option value="speed" data-i18n="按速度">按速度</option>
+          <option value="name" data-i18n="按字母">按字母</option>
+          <option value="state" data-i18n="按状态">按状态</option>
+        </select>
         <button type="button" class="zz-btn zz-btn-sm" id="btnTaskRefresh" data-i18n="刷新">刷新</button>
       </div>
       <div class="zz-chipbar-sm" id="taskFilters">
@@ -218,6 +225,13 @@
         <button data-cat="archive" data-i18n="压缩包">压缩包</button>
         <button data-cat="doc" data-i18n="文档">文档</button>
         <button data-cat="other" data-i18n="其他">其他</button>
+      </div>
+      <div class="zz-chipbar-sm" id="taskStateFilters">
+        <button data-state="all" class="active" data-i18n="全部">全部</button>
+        <button data-state="run" data-i18n="下载中">下载中</button>
+        <button data-state="paused" data-i18n="已暂停">已暂停</button>
+        <button data-state="done" data-i18n="已完成">已完成</button>
+        <button data-state="err" data-i18n="失败">失败</button>
       </div>
       <div id="taskList" style="margin-top: 8px"></div>
     </div>

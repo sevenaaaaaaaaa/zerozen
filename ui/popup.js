@@ -10,7 +10,7 @@
   let host = "";
   let refreshTimer = null;
   let mediaStreams = [];
-  let taskFilter = "all";
+  let currentTaskItems = [];
 
   function bumpStat(id, value) {
     const el = $(id);
@@ -234,7 +234,8 @@
     if (!btn || busyStreams.has(btn.getAttribute("data-dl"))) return;
     const url = btn.getAttribute("data-dl");
     const kind = btn.getAttribute("data-kind") || "media";
-    const dir = kind === "m3u8" || kind === "mpd" || kind === "ts" ? "ZeroZen/视频" : "ZeroZen/下载";
+    const cat = /^(m3u8|mpd|ts)$/.test(kind) ? "video" : ZZDLEngine.classifyExt(url);
+    const dir = ZZDLEngine.dirForType(cat);
     let name = ZZDLEngine.sanitize(streamName(url));
     busyStreams.add(url);
     btn.disabled = true;
@@ -280,19 +281,34 @@
   });
   $("#btnRescan").addEventListener("click", scanMedia);
 
-  // ---------- 任务中心：浏览器下载记录 + 本地未完成任务，按类型分组 ----------
-  function classifyFile(nameOrUrl) {
-    const ext = (String(nameOrUrl).split(/[?#]/)[0].split(".").pop() || "").toLowerCase();
-    if (/^(mp4|ts|webm|mkv|avi|mov|flv|m4v|m3u8|mpd)$/.test(ext)) return "video";
-    if (/^(mp3|m4a|flac|wav|aac|ogg|opus)$/.test(ext)) return "audio";
-    if (/^(jpg|jpeg|png|gif|webp|avif|bmp|svg|ico)$/.test(ext)) return "image";
-    if (/^(zip|rar|7z|tar|gz|bz2|xz|apk|dmg|iso)$/.test(ext)) return "archive";
-    if (/^(pdf|doc|docx|xls|xlsx|ppt|pptx|epub|mobi|txt|md|csv)$/.test(ext)) return "doc";
-    return "other";
-  }
+  // ---------- 任务中心：浏览器下载记录 + 本地未完成任务 ----------
+  // 分类/目录/错误分析逻辑在 dl-engine，popup 与工具箱共用
+  const taskState = { filter: "all", stateFilter: "all", sort: "time" };
+  const taskSpeeds = new Map(); // key -> { bytes, at, speed }
+  const CAT_LABEL = {
+    video: T("视频"),
+    audio: T("音频"),
+    image: T("图片"),
+    archive: T("压缩包"),
+    doc: T("文档"),
+    other: T("其他"),
+  };
 
   function taskNameOf(path) {
     return String(path || "").split(/[\\/]/).pop() || "—";
+  }
+
+  function sortByMode(items, mode) {
+    const byName = (a, b) => String(a.name).localeCompare(String(b.name), "zh-Hans-CN", { numeric: true });
+    const arr = items.slice();
+    if (mode === "size") arr.sort((a, b) => (b.totalBytes || 0) - (a.totalBytes || 0) || byName(a, b));
+    else if (mode === "name") arr.sort(byName);
+    else if (mode === "speed") arr.sort((a, b) => (b.speed || 0) - (a.speed || 0) || (b.at || 0) - (a.at || 0));
+    else if (mode === "state") {
+      const order = { run: 0, paused: 1, err: 2, done: 3 };
+      arr.sort((a, b) => order[a.state] - order[b.state] || byName(a, b));
+    } else arr.sort((a, b) => (b.at || 0) - (a.at || 0)); // time
+    return arr;
   }
 
   async function refreshTasks(interactive) {
@@ -308,17 +324,32 @@
       const records = await new Promise((resolve) =>
         api.downloads.search({ orderBy: ["-startTime"], limit: 60 }, (r) => resolve(r || []))
       );
+      const now = Date.now();
       for (const it of records) {
         const name = taskNameOf(it.filename || it.url);
+        // 速度采样：两次刷新的字节差 / 时间差
+        const prev = taskSpeeds.get("d" + it.id);
+        let speed = prev ? prev.speed : 0;
+        if (prev && now > prev.at && it.state === "in_progress") {
+          const inst = ((it.bytesReceived || 0) - prev.bytes) / ((now - prev.at) / 1000);
+          if (inst > 0) speed = inst;
+        }
+        taskSpeeds.set("d" + it.id, { bytes: it.bytesReceived || 0, at: now, speed });
+        const hint = it.state === "interrupted" && it.error !== "USER_CANCELED" ? ZZDLEngine.errorHint({ error: it.error }) : null;
         items.push({
           key: "d" + it.id,
           id: it.id,
+          src: "chrome",
           name,
-          cat: classifyFile(name),
+          cat: ZZDLEngine.classifyExt(name),
+          url: it.url || "",
+          path: it.filename || "",
           state: it.state === "complete" ? "done" : it.state === "interrupted" ? "err" : it.paused ? "paused" : "run",
           pct: it.totalBytes > 0 ? Math.min(100, Math.round(((it.bytesReceived || 0) / it.totalBytes) * 100)) : it.state === "complete" ? 100 : 0,
-          size: it.totalBytes || it.bytesReceived || 0,
-          resume: null,
+          totalBytes: it.totalBytes || 0,
+          hint,
+          at: it.startTime ? new Date(it.startTime).getTime() : 0,
+          speed,
         });
       }
     }
@@ -329,18 +360,30 @@
         items.unshift({
           key: "l" + t.id,
           id: t.id,
+          src: "local",
           name,
-          cat: classifyFile(name),
+          cat: ZZDLEngine.classifyExt(name),
+          url: t.url || "",
+          path: (t.dir || "") + "/" + name,
           state: t.status === "error" ? "err" : "paused",
           pct: t.total ? Math.min(100, Math.round(((t.done || 0) / t.total) * 100)) : 0,
-          size: t.total || 0,
+          totalBytes: t.total || 0,
+          hint: t.status === "error" ? ZZDLEngine.errorHint({ message: t.error }) : null,
+          at: t.createdAt || 0,
+          speed: 0,
           resume: t,
         });
       }
     } catch (e) {}
-    items = items.filter((it) => taskFilter === "all" || it.cat === taskFilter).slice(0, 14);
+    items = items.filter(
+      (it) =>
+        (taskState.filter === "all" || it.cat === taskState.filter) &&
+        (taskState.stateFilter === "all" || it.state === taskState.stateFilter)
+    );
+    items = sortByMode(items, taskState.sort).slice(0, 16);
+    currentTaskItems = items;
     // 渲染签名：内容没变就不重建 DOM，避免定时刷新导致滚动位置跳动
-    const sig = items.map((it) => it.key + ":" + it.state + ":" + it.pct).join("|");
+    const sig = items.map((it) => it.key + ":" + it.state + ":" + it.pct + ":" + Math.round(it.speed || 0)).join("|");
     if (sig === taskRenderSig) {
       section.hidden = !items.length;
       return;
@@ -352,61 +395,146 @@
     const stateLabel = { done: T("已完成"), err: T("失败"), paused: T("已暂停"), run: T("下载中") };
     for (const it of items) {
       const row = document.createElement("div");
-      row.className = "zz-task-item" + (it.state === "run" ? " run" : "");
+      row.className = "zz-task-item" + (it.state === "run" ? " run" : "") + (it.state === "err" ? " err" : "");
+      const metaParts = [CAT_LABEL[it.cat] || ""];
+      if (it.totalBytes) metaParts.push(ZZDLEngine.bytes(it.totalBytes) + (it.pct ? " · " + it.pct + "%" : ""));
+      if (it.state === "run" && it.speed) metaParts.push(ZZDLEngine.bytes(it.speed) + "/s");
+      metaParts.push(stateLabel[it.state]);
+      if (it.hint) metaParts.push(it.hint.reason);
+      const btns = [];
+      const b = (attr, key, cls) => '<button class="zz-btn zz-btn-sm ' + (cls || "") + '" ' + attr + ">" + T(key) + "</button>";
+      if (it.state === "done" && it.src === "chrome") {
+        btns.push(b('data-tact="open" data-key="' + it.key + '"', "打开"));
+        btns.push(b('data-tact="show" data-key="' + it.key + '"', "Finder"));
+      }
+      if (it.state === "run" && it.src === "chrome") btns.push(b('data-tact="pause" data-key="' + it.key + '"', "暂停"));
+      if (it.state === "paused" && it.src === "chrome") btns.push(b('data-tact="resume" data-key="' + it.key + '"', "继续"));
+      if (it.state === "err") btns.push(b('data-tact="report" data-key="' + it.key + '"', "反馈", "zz-btn-danger"));
+      if (it.src === "local") {
+        btns.push(b('data-tact="localresume" data-key="' + escapeHtml(it.id) + '"', "继续", "zz-btn-primary"));
+        btns.push(b('data-tact="drop" data-key="' + escapeHtml(it.id) + '"', "删除", "zz-btn-danger"));
+      } else if (it.state === "err" && it.url) {
+        btns.push(b('data-tact="retry" data-key="' + it.key + '"', "重试"));
+      }
+      if (it.url) btns.push(b('data-tact="copyurl" data-key="' + it.key + '" data-url="' + escapeHtml(it.url) + '"', "链接"));
+      if (it.path) btns.push(b('data-tact="copypath" data-key="' + it.key + '" data-path="' + escapeHtml(it.path) + '"', "路径"));
       row.innerHTML =
-        '<span class="ti-name" title="' + escapeHtml(it.name) + '">' + escapeHtml(it.name) + "</span>" +
-        '<span class="ti-meta">' + (it.size ? ZZDLEngine.bytes(it.size) + " · " : "") + stateLabel[it.state] + "</span>" +
-        (it.resume ? '<button class="zz-btn zz-btn-sm" data-tresume="' + escapeHtml(it.id) + '">' + T("继续") + "</button>" : "") +
-        (it.resume ? '<button class="zz-btn zz-btn-sm zz-btn-danger" data-tdrop="' + escapeHtml(it.id) + '">' + T("删除") + "</button>" : "") +
-        '<i class="ti-bar" style="width:' + it.pct + '%"></i>';
+        '<span class="ti-name" title="' + escapeHtml(it.name + (it.path ? "\n" + it.path : "")) + '">' + escapeHtml(it.name) + "</span>" +
+        '<span class="ti-meta">' + metaParts.filter(Boolean).join(" · ") + "</span>" +
+        btns.join("") +
+        '<i class="ti-bar" style="width:' + (it.state === "err" ? 100 : it.pct) + "%;opacity:" + (it.state === "err" ? 0.5 : 1) + '"></i>';
       box.appendChild(row);
     }
-    if (!box.childElementCount && taskFilter !== "all") section.hidden = true;
+    if (!box.childElementCount && taskState.filter !== "all") section.hidden = true;
+  }
+
+  async function reportTask(item) {
+    const report = ZZDLEngine.buildReport(item);
+    try {
+      await navigator.clipboard.writeText(report);
+    } catch (e) {}
+    api.tabs.create({ url: ZZDLEngine.issueUrl(report) });
+    UI.toast($("#msg"), T("诊断报告已复制，已打开 GitHub 反馈页，粘贴到正文即可"), "ok");
   }
 
   const busyTasks = new Set();
   let taskRenderSig = "";
   $("#taskList").addEventListener("click", async (event) => {
-    const resumeBtn = event.target.closest("button[data-tresume]");
-    const dropBtn = event.target.closest("button[data-tdrop]");
-    if (dropBtn) {
-      await ZZDLStore.removeTask(dropBtn.getAttribute("data-tdrop"));
-      await refreshTasks();
-      return;
-    }
-    if (!resumeBtn || busyTasks.has(resumeBtn.getAttribute("data-tresume"))) return;
-    const id = resumeBtn.getAttribute("data-tresume");
-    const task = (globalThis.ZZDLStore ? await ZZDLStore.getTask(id) : null);
-    if (!task) return;
-    busyTasks.add(id);
-    resumeBtn.disabled = true;
+    const btn = event.target.closest("button[data-tact]");
+    if (!btn) return;
+    const act = btn.getAttribute("data-tact");
+    const key = btn.getAttribute("data-key") || "";
+    const byKey = () => currentTaskItems.find((x) => x.key === key);
+    const call = (fn) => {
+      try {
+        const ret = fn();
+        if (ret && typeof ret.catch === "function") ret.catch(() => {});
+      } catch (e) {}
+    };
     try {
-      if (task.kind === "m3u8") {
-        const res = await ZZDLEngine.downloadM3u8(task.url, {
-          concurrency: Math.max(1, Math.min(12, task.concurrency || 6)),
-          nameBase: task.nameBase,
-          dir: task.dir,
-          tsAsMp4: !!task.tsAsMp4,
-          onProgress: () => {},
-        });
-        UI.toast($("#msg"), res.cancelled ? T("已暂停，进度已保留") : T("任务完成：$1", res.saved), res.cancelled ? "" : "ok");
-      } else {
-        const res = await ZZDLEngine.multiThreadDownload(task.url, task.name, task.dir, task.threads || 4, () => {}, null);
-        UI.toast($("#msg"), res.cancelled ? T("已暂停，进度已保留") : T("任务完成：$1", res.saved), res.cancelled ? "" : "ok");
+      if (act === "drop") {
+        await ZZDLStore.removeTask(key);
+        await refreshTasks(false);
+        return;
       }
-      playSparkle(resumeBtn);
+      if (act === "copyurl") {
+        await navigator.clipboard.writeText(btn.getAttribute("data-url") || "");
+        UI.toast($("#msg"), T("链接已复制"), "ok");
+        return;
+      }
+      if (act === "copypath") {
+        await navigator.clipboard.writeText(btn.getAttribute("data-path") || "");
+        UI.toast($("#msg"), T("路径已复制，可在 Finder「前往文件夹」粘贴"), "ok");
+        return;
+      }
+      if (act === "report") {
+        const item = byKey();
+        if (item) await reportTask(item);
+        return;
+      }
+      const item = byKey();
+      if (!item) return;
+      if (act === "open") call(() => api.downloads.open(item.id));
+      else if (act === "show") call(() => api.downloads.show(item.id));
+      else if (act === "pause") call(() => api.downloads.pause(item.id));
+      else if (act === "resume") call(() => api.downloads.resume(item.id));
+      else if (act === "retry" && item.url) {
+        call(() => api.downloads.erase({ id: item.id }));
+        await new Promise((r) => setTimeout(r, 250));
+        const dir = ZZDLEngine.dirForType(item.cat);
+        await ZZDLEngine.download(item.url, dir + "/" + item.name);
+        UI.toast($("#msg"), T("已重新下载到 $1", dir), "ok");
+        playSparkle(btn);
+      } else if (act === "localresume") {
+        if (busyTasks.has(key)) return;
+        busyTasks.add(key);
+        btn.disabled = true;
+        try {
+          const task = globalThis.ZZDLStore ? await ZZDLStore.getTask(key) : null;
+          if (!task) return;
+          let res;
+          if (task.kind === "m3u8") {
+            res = await ZZDLEngine.downloadM3u8(task.url, {
+              concurrency: Math.max(1, Math.min(12, task.concurrency || 6)),
+              nameBase: task.nameBase,
+              dir: task.dir,
+              tsAsMp4: !!task.tsAsMp4,
+              onProgress: () => {},
+            });
+          } else {
+            res = await ZZDLEngine.multiThreadDownload(task.url, task.name, task.dir, task.threads || 4, () => {}, null);
+          }
+          UI.toast($("#msg"), res.cancelled ? T("已暂停，进度已保留") : T("任务完成：$1", res.saved), res.cancelled ? "" : "ok");
+          playSparkle(btn);
+        } finally {
+          busyTasks.delete(key);
+        }
+      }
     } catch (e) {
-      UI.toast($("#msg"), T("失败：$1", (e && e.message) || e), "err");
+      UI.toast($("#msg"), T("操作失败：$1", (e && e.message) || e), "err");
     } finally {
-      busyTasks.delete(id);
-      await refreshTasks(true);
+      setTimeout(() => refreshTasks(false), 400);
     }
   });
   $("#taskFilters").addEventListener("click", (event) => {
     const btn = event.target.closest("button[data-cat]");
     if (!btn) return;
-    taskFilter = btn.getAttribute("data-cat");
+    taskState.filter = btn.getAttribute("data-cat");
     for (const b of document.querySelectorAll("#taskFilters button")) b.classList.toggle("active", b === btn);
+    taskRenderSig = "";
+    refreshTasks(false);
+  });
+  $("#taskStateFilters").addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-state]");
+    if (!btn) return;
+    taskState.stateFilter = btn.getAttribute("data-state");
+    for (const b of document.querySelectorAll("#taskStateFilters button")) b.classList.toggle("active", b === btn);
+    taskRenderSig = "";
+    refreshTasks(false);
+  });
+  $("#taskSort").addEventListener("change", (event) => {
+    taskState.sort = event.target.value;
+    taskRenderSig = "";
     refreshTasks(false);
   });
   $("#btnTaskRefresh").addEventListener("click", () => refreshTasks(true));

@@ -236,6 +236,13 @@
         <button class="zz-btn zz-btn-sm" data-dlfilter="complete" data-i18n="已完成">已完成</button>
         <button class="zz-btn zz-btn-sm" data-dlfilter="failed" data-i18n="失败">失败</button>
         <span style="flex:1"></span>
+        <select id="dlSort" class="zz-select">
+          <option value="time" data-i18n="按时间">按时间</option>
+          <option value="size" data-i18n="按大小">按大小</option>
+          <option value="speed" data-i18n="按速度">按速度</option>
+          <option value="name" data-i18n="按字母">按字母</option>
+          <option value="state" data-i18n="按状态">按状态</option>
+        </select>
         <button class="zz-btn zz-btn-sm" id="btnDlRefresh" data-i18n="刷新">刷新</button>
         <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnDlClear" data-i18n="清除已完成记录">清除已完成记录</button>
       </div>

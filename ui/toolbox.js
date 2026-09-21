@@ -477,10 +477,9 @@
   function stateInfo(it) {
     if (it.state === "complete") return { label: T("已完成"), cls: "ok" };
     if (it.state === "interrupted") {
-      return {
-        label: it.error === "USER_CANCELED" ? T("已取消") : T("失败：$1", it.error || T("中断")),
-        cls: "err",
-      };
+      if (it.error === "USER_CANCELED") return { label: T("已取消"), cls: "err" };
+      const hint = ZZDLEngine.errorHint({ error: it.error });
+      return { label: T("失败：$1", hint.reason), hint, cls: "err" };
     }
     if (it.paused) return { label: T("已暂停"), cls: "" };
     return { label: T("下载中"), cls: "" };
@@ -510,6 +509,7 @@
   function renderDownloader() {
     const box = $("#dlList");
     const q = ($("#dlQuery").value || "").toLowerCase();
+    const sortMode = ($("#dlSort") && $("#dlSort").value) || "time";
     const items = dl.items.filter((it) => {
       if (dl.filter === "progressing" && it.state !== "in_progress") return false;
       if (dl.filter === "complete" && it.state !== "complete") return false;
@@ -517,6 +517,17 @@
       if (q && !((it.filename || "").toLowerCase().includes(q) || (it.url || "").toLowerCase().includes(q))) return false;
       return true;
     });
+    const stateOrder = { in_progress: 0, interrupted: 1, complete: 2 };
+    const byName = (a, b) => String(basename(a.filename)).localeCompare(String(basename(b.filename)), "zh-Hans-CN", { numeric: true });
+    if (sortMode === "size") items.sort((a, b) => (b.totalBytes || b.fileSize || 0) - (a.totalBytes || a.fileSize || 0) || byName(a, b));
+    else if (sortMode === "name") items.sort(byName);
+    else if (sortMode === "state") items.sort((a, b) => stateOrder[a.state] - stateOrder[b.state] || byName(a, b));
+    else if (sortMode === "speed")
+      items.sort((a, b) => {
+        const sa = (dl.speeds.get(a.id) || {}).speed || 0;
+        const sb = (dl.speeds.get(b.id) || {}).speed || 0;
+        return sb - sa || byName(a, b);
+      });
     if (!items.length) {
       box.innerHTML = '<div class="zz-small zz-muted">' + T("没有下载任务。粘贴一个 http/https 直链开始下载。") + "</div>";
       return;
@@ -529,7 +540,7 @@
         const speed = dl.speeds.get(it.id) || { speed: 0 };
         const meta = [
           basename((it.filename || "").replace(/[^\\/]+$/, "")) || "",
-          total ? bytes(it.bytesReceived) + " / " + bytes(total) : bytes(it.bytesReceived),
+          total ? bytes(it.bytesReceived) + " / " + bytes(total) + (pct ? "（" + pct + "%）" : "") : bytes(it.bytesReceived),
           st.label,
         ];
         if (it.state === "in_progress" && speed.speed) meta.push(bytes(speed.speed) + "/s");
@@ -542,13 +553,19 @@
           buttons.push('<button class="zz-btn zz-btn-sm" data-act="open">' + T("打开") + "</button>");
           buttons.push('<button class="zz-btn zz-btn-sm" data-act="folder">' + T("文件夹") + "</button>");
         }
-        if (it.state === "interrupted") buttons.push('<button class="zz-btn zz-btn-sm" data-act="retry">' + T("重试") + "</button>");
+        if (it.state === "interrupted") {
+          buttons.push('<button class="zz-btn zz-btn-sm" data-act="retry">' + T("重试") + "</button>");
+          buttons.push('<button class="zz-btn zz-btn-sm zz-btn-danger" data-act="report">' + T("反馈") + "</button>");
+        }
         buttons.push('<button class="zz-btn zz-btn-sm" data-act="copy">' + T("链接") + "</button>");
+        if (it.filename) buttons.push('<button class="zz-btn zz-btn-sm" data-act="copypath">' + T("路径") + "</button>");
         buttons.push('<button class="zz-btn zz-btn-sm zz-btn-danger" data-act="remove">' + T("删除记录") + "</button>");
         return (
           '<div class="zz-tool-item" data-id="' + it.id + '">' +
           '<div style="flex:1;min-width:0">' +
-          '<div class="zz-small" style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+          '<div class="zz-small" style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' +
+          escapeHtmlAttr(it.filename) +
+          '">' +
           basename(it.filename) +
           "</div>" +
           '<div class="zz-small zz-muted">' + meta.filter(Boolean).join(" · ") + "</div>" +
@@ -560,6 +577,25 @@
         );
       })
       .join("");
+  }
+
+  function escapeHtmlAttr(text) {
+    return String(text == null ? "" : text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  async function reportDownload(it) {
+    const hint = ZZDLEngine.errorHint({ error: it.error });
+    const report = ZZDLEngine.buildReport({
+      url: it.url,
+      filename: it.filename,
+      hint,
+      totalBytes: it.totalBytes || it.fileSize || 0,
+    });
+    try {
+      await navigator.clipboard.writeText(report);
+    } catch (e) {}
+    api.tabs.create({ url: ZZDLEngine.issueUrl(report) });
+    log("dlLog", T("诊断报告已复制，已在 GitHub 打开反馈页，粘贴到正文即可"));
   }
 
   $("#dlList").addEventListener("click", async (event) => {
@@ -583,6 +619,12 @@
         await navigator.clipboard.writeText(item.url).catch(() => {});
         btn.textContent = T("已复制");
         setTimeout(() => (btn.textContent = T("链接")), 1200);
+      } else if (act === "copypath" && item) {
+        await navigator.clipboard.writeText(item.filename || "").catch(() => {});
+        btn.textContent = T("已复制");
+        setTimeout(() => (btn.textContent = T("路径")), 1200);
+      } else if (act === "report" && item) {
+        await reportDownload(item);
       } else if (act === "remove") {
         await api.downloads.erase({ id });
       }

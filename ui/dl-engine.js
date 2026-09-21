@@ -42,6 +42,85 @@
     );
   }
 
+  // 按扩展名分类，用于分目录归档与任务分组
+  function classifyExt(nameOrUrl) {
+    const ext = (String(nameOrUrl || "").split(/[?#]/)[0].split(".").pop() || "").toLowerCase();
+    if (/^(mp4|ts|webm|mkv|avi|mov|flv|m4v|m3u8|mpd)$/.test(ext)) return "video";
+    if (/^(mp3|m4a|flac|wav|aac|ogg|opus)$/.test(ext)) return "audio";
+    if (/^(jpg|jpeg|png|gif|webp|avif|bmp|svg|ico)$/.test(ext)) return "image";
+    if (/^(zip|rar|7z|tar|gz|bz2|xz|apk|dmg|iso)$/.test(ext)) return "archive";
+    if (/^(pdf|doc|docx|xls|xlsx|ppt|pptx|epub|mobi|txt|md|csv)$/.test(ext)) return "doc";
+    return "other";
+  }
+
+  // 分类 → 归档目录（dirs 可由调用方传入自定义映射）
+  function dirForType(cat, dirs) {
+    const d = dirs || {};
+    const fallback = {
+      video: "ZeroZen/视频",
+      audio: "ZeroZen/音频",
+      image: "ZeroZen/图片",
+      archive: "ZeroZen/压缩包",
+      doc: "ZeroZen/文档",
+      other: "ZeroZen/下载",
+    };
+    return d[cat] || fallback[cat] || "ZeroZen/下载";
+  }
+
+  // 失败原因分析：chrome.downloads 错误码 / 引擎错误消息 → { reason, advice }
+  function errorHint(err) {
+    const raw = String((err && (err.error || err.message)) || err || "").trim();
+    const code = String((err && err.error) || "").trim();
+    const map = {
+      FILE_FAILED: [T("本地写入失败"), T("磁盘空间不足或文件被占用；清理空间或更换保存目录后重试")],
+      FILE_ACCESS_DENIED: [T("无写入权限"), T("下载目录不可写；在系统设置中检查浏览器/扩展的文件访问权限")],
+      FILE_NO_SPACE: [T("磁盘空间不足"), T("清理磁盘空间后重试")],
+      FILE_NAME_TOO_LONG: [T("文件名过长"), T("换一个更短的文件名")],
+      NETWORK_TIMEOUT: [T("连接超时"), T("网络不稳定或服务器响应慢；稍后重试，大文件建议用多线程分段模式")],
+      NETWORK_FAILED: [T("网络错误"), T("连接被重置或 DNS 解析失败；检查网络/代理后重试")],
+      NETWORK_INVALID_REQUEST: [T("请求无效"), T("链接可能已过期或需要登录；在原页面重新获取地址")],
+      SERVER_BAD_CONTENT: [T("服务器返回 404"), T("文件不存在或链接已失效；回到来源页面重新获取")],
+      SERVER_FORBIDDEN: [T("服务器返回 403"), T("服务器拒绝访问；可能需要登录、Referer 或已限流，稍后重试")],
+      SERVER_UNAUTHORIZED: [T("服务器返回 401"), T("需要登录或鉴权；在浏览器登录该站点后重试")],
+      SERVER_FAILED: [T("服务器错误（5xx）"), T("服务器临时故障；稍后重试")],
+      SERVER_CONTENT_LENGTH_MISMATCH: [T("数据不完整"), T("服务器传输中断；重试或改用多线程分段模式")],
+      SERVER_CROSS_ORIGIN_REDIRECT: [T("跨域重定向被拒"), T("链接重定向到其他域名被浏览器拒绝；在原页面重新获取地址")],
+      USER_CANCELED: [T("已取消"), ""],
+      CRASH: [T("浏览器崩溃"), T("重启浏览器后重试")],
+    };
+    if (code && map[code]) return { reason: map[code][0], advice: map[code][1], raw };
+    // 引擎错误的中文消息里带关键词的补充建议
+    if (/m3u8|分片/.test(raw)) return { reason: raw, advice: T("分片下载失败多为链接过期或防盗链；重新嗅探获取新地址，或稍后重试（进度已保留）"), raw };
+    if (/Range|分段/.test(raw)) return { reason: raw, advice: T("该服务器不支持断点续传；取消勾选「多线程分段」改用默认模式"), raw };
+    if (/HTTP|网络|timeout|超时/i.test(raw)) return { reason: raw, advice: T("检查网络连接后重试；目标站点可能限流或需要代理"), raw };
+    if (/权限/.test(raw)) return { reason: raw, advice: T("在控制台「统计与诊断」→「可选权限」中开启所需权限"), raw };
+    return { reason: raw || T("未知错误"), advice: "", raw };
+  }
+
+  // 构造可反馈的诊断报告文本（用于 GitHub issue 或剪贴板）
+  function buildReport(item, extra) {
+    const lines = [
+      "- " + T("扩展版本") + ": ZeroZen " + ((globalThis.ZZ && ZZ.browser && ZZ.browser.runtime && ZZ.browser.runtime.getManifest) ? ZZ.browser.runtime.getManifest().version : "?"),
+      "- " + T("时间") + ": " + new Date().toISOString(),
+      "- " + T("下载地址") + ": " + (item.url || "-"),
+      "- " + T("文件名") + ": " + (item.filename || item.name || "-"),
+      "- " + T("失败原因") + ": " + (item.hint ? item.hint.reason + (item.hint.raw && item.hint.raw !== item.hint.reason ? " (" + item.hint.raw + ")" : "") : "-"),
+    ];
+    if (item.totalBytes) lines.push("- " + T("大小") + ": " + bytes(item.totalBytes));
+    if (extra && extra.length) lines.push("- " + T("补充说明") + ": " + extra.join("; "));
+    lines.push("", "<!-- " + T("请在此补充：站点地址、复现步骤") + " -->");
+    return lines.join("\n");
+  }
+
+  function issueUrl(report) {
+    return (
+      "https://github.com/sevenaaaaaaaaa/zerozen/issues/new" +
+      "?labels=bug,download" +
+      "&title=" + encodeURIComponent(T("下载失败反馈")) +
+      "&body=" + encodeURIComponent(report.slice(0, 1800))
+    );
+  }
+
   function bytes(n) {
     if (n === undefined || n === null || Number.isNaN(n)) return "—";
     const units = ["B", "KB", "MB", "GB"];
@@ -527,5 +606,10 @@
     qualityLabel,
     fetchText,
     fetchBuf,
+    classifyExt,
+    dirForType,
+    errorHint,
+    buildReport,
+    issueUrl,
   };
 })();
