@@ -4,3 +4,7 @@ node_modules/
 *.log
 *.pem
 *.crx
+
+# ZCode 插件（video2code / video-agent-kit）留在工作区的标记文件，与项目无关
+.v2c/
+.video_agent/
