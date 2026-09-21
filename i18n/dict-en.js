@@ -880,6 +880,11 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "链接已复制": "Link copied",
   "路径已复制，可在 Finder「前往文件夹」粘贴": "Path copied — paste it into Finder's Go to Folder",
   "已重新下载到 $1": "Re-downloaded to $1",
+  "任务已创建，正在后台下载": "Task created — downloading in the background",
+  "已加入下载": "Added to downloads",
+  "排队中": "Queued",
+  "已交给下载器后台执行": "Handed to the downloader running in the background",
+  "派发失败：$1": "Dispatch failed: $1",
 
   // 排序
   "按时间": "By time",

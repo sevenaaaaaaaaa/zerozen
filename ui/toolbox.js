@@ -856,6 +856,84 @@
     }
   });
 
+  // ---------- 下载任务队列执行器 ----------
+  // popup 创建的任务以 queued 记录入队；工具箱页面（常驻标签页）负责真正执行，
+  // popup 关闭不影响下载。同一任务不会被重复执行。
+  const queueState = { running: new Set() };
+
+  async function runTaskById(id) {
+    if (!globalThis.ZZDLStore || queueState.running.has(id)) return { ok: false, error: "busy-or-missing" };
+    const record = await ZZDLStore.getTask(id);
+    if (!record) return { ok: false, error: "not found" };
+    queueState.running.add(id);
+    try {
+      let res;
+      if (record.kind === "m3u8") {
+        res = await ZZDLEngine.downloadM3u8(record.url, {
+          concurrency: Math.max(1, Math.min(12, record.concurrency || 6)),
+          nameBase: record.nameBase || sanitize(record.name || "video"),
+          dir: record.dir || "ZeroZen/视频",
+          tsAsMp4: !!record.tsAsMp4,
+          onProgress: (t) => log("dlLog", (record.nameBase || record.name || "") + " " + t),
+        });
+      } else {
+        res = await ZZDLEngine.multiThreadDownload(
+          record.url,
+          record.name || "download",
+          record.dir || "ZeroZen/下载",
+          Math.max(2, Math.min(8, record.threads || 4)),
+          (got, total) => {
+            if (total) log("dlLog", (record.name || "") + " " + T("多线程 $1 / $2（$3%）", bytes(got), bytes(total), Math.round((got / total) * 100)));
+          },
+          null
+        );
+      }
+      // 队列条目（queued:true）执行完即清理；引擎自己的续传 meta 由引擎管理
+      if (record.queued) await ZZDLStore.removeTask(id);
+      if (!res || !res.cancelled) {
+        log("dlLog", T("任务完成：$1", (res && res.saved) || record.name || id));
+        refreshDownloader();
+      }
+      return { ok: true, cancelled: !!(res && res.cancelled) };
+    } catch (e) {
+      log("dlLog", "× " + T("失败：$1", (e && e.message) || e) + (record.queued ? "" : "") + "（" + T("进度已保留，可稍后继续") + "）");
+      if (record.queued) {
+        // 队列条目转为 error 留在「未完成任务」列表，可继续/删除
+        record.status = "error";
+        record.error = String((e && e.message) || e);
+        await ZZDLStore.putTask(record);
+      }
+      return { ok: false, error: String((e && e.message) || e) };
+    } finally {
+      queueState.running.delete(id);
+      refreshResumes();
+    }
+  }
+
+  let queueDraining = false;
+  async function drainQueue() {
+    if (queueDraining || !globalThis.ZZDLStore) return;
+    queueDraining = true;
+    try {
+      const tasks = await ZZDLStore.listTasks();
+      for (const t of tasks) {
+        if (!t.queued || t.status !== "queued") continue;
+        await runTaskById(t.id);
+      }
+    } catch (e) {
+    } finally {
+      queueDraining = false;
+    }
+  }
+
+  api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg && msg.type === "zz:dl:run") {
+      runTaskById((msg.payload && msg.payload.taskId) || "").then(sendResponse);
+      return true;
+    }
+    return false;
+  });
+
   UI.initLocale()
     .then(() => loadContext())
     .then(() => {
@@ -866,5 +944,7 @@
       setInterval(refreshDownloader, 2000);
       refreshResumes();
       setInterval(refreshResumes, 5000);
+      drainQueue(); // 启动即消化 popup 创建的排队任务
+      setInterval(drainQueue, 15000);
     });
 })();

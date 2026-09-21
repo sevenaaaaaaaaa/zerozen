@@ -646,6 +646,30 @@
           return { ok: true, streams: [] };
         }
 
+        // 下载任务派发：交给已打开的工具箱页执行；没有则后台静默开一个（不抢焦点）。
+        // popup 生命周期短，长下载必须在普通标签页里跑
+        case "zz:dl:dispatch": {
+          const p = msg.payload || {};
+          let target = null;
+          try {
+            const tabs = await ZZ.call(api.tabs, "query", { url: api.runtime.getURL("ui/toolbox.html*") });
+            target = (tabs && tabs.find((t) => typeof t.id === "number")) || null;
+          } catch (e) {}
+          if (target) {
+            try {
+              await ZZ.call(api.tabs, "sendMessage", target.id, { type: "zz:dl:run", payload: { taskId: p.taskId } });
+              return { ok: true, dispatched: true, reused: true };
+            } catch (e) {}
+          }
+          try {
+            const url = api.runtime.getURL("ui/toolbox.html") + "?autostart=" + encodeURIComponent(p.taskId || "");
+            await ZZ.call(api.tabs, "create", { url, active: false });
+            return { ok: true, dispatched: true, opened: true };
+          } catch (e) {
+            return { ok: false, error: (e && e.message) || "dispatch failed" };
+          }
+        }
+
         case "zz:reader:toggle": {
           const p = msg.payload || {};
           const target = typeof p.tabId === "number" ? p.tabId : tabId;

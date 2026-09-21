@@ -234,46 +234,47 @@
     if (!btn || busyStreams.has(btn.getAttribute("data-dl"))) return;
     const url = btn.getAttribute("data-dl");
     const kind = btn.getAttribute("data-kind") || "media";
-    const cat = /^(m3u8|mpd|ts)$/.test(kind) ? "video" : ZZDLEngine.classifyExt(url);
-    const dir = ZZDLEngine.dirForType(cat);
-    let name = ZZDLEngine.sanitize(streamName(url));
     busyStreams.add(url);
     btn.disabled = true;
     btn.textContent = T("创建中…");
     try {
-      let saved = "";
-      if (/\.m3u8|\/hls\//i.test(url)) {
-        const res = await ZZDLEngine.downloadM3u8(url, {
+      // 入队 + 派发到工具箱页后台执行（popup 生命周期短，长下载不在弹窗里跑）
+      const Store = globalThis.ZZDLStore;
+      let queued = false;
+      if (Store && (/\.m3u8|\/hls\//i.test(url) || /\.(mp4|webm|mkv|avi|mov|flv|m4v|mp3|m4a|zip|rar|7z|apk|pdf|iso|ts)(\?|#|$)/i.test(url))) {
+        const isHls = /\.m3u8|\/hls\//i.test(url);
+        const rawName = streamName(url);
+        const record = {
+          id: Store.taskId("queue", url, rawName),
+          queued: true,
+          status: "queued",
+          kind: isHls ? "m3u8" : "multi",
+          url,
+          name: isHls ? undefined : ZZDLEngine.sanitize(rawName),
+          nameBase: isHls ? ZZDLEngine.sanitize(rawName.replace(/\.(m3u8|mp4|ts)$/i, "")) : undefined,
+          dir: ZZDLEngine.dirForType(isHls ? "video" : ZZDLEngine.classifyExt(url)),
           concurrency: 6,
-          nameBase: name.replace(/\.(m3u8|mp4|ts)$/i, "") || "video",
-          dir,
-          onProgress: () => {},
-        });
-        if (res.cancelled) throw new Error(T("已取消"));
-        saved = res.saved;
-      } else if (/\.mpd/i.test(url)) {
-        await ZZDLEngine.download(url, dir + "/" + name);
-        saved = dir + "/" + name;
-      } else {
-        // 直链：优先多线程，失败回浏览器默认下载
-        try {
-          const res = await ZZDLEngine.multiThreadDownload(url, name, dir, 4, () => {}, null);
-          saved = res.cancelled ? "" : res.saved;
-        } catch (e) {
-          await ZZDLEngine.download(url, dir + "/" + name);
-          saved = dir + "/" + name;
-        }
+          threads: 4,
+          tsAsMp4: false,
+          createdAt: Date.now(),
+        };
+        await Store.putTask(record);
+        const res = await UI.send({ type: "zz:dl:dispatch", payload: { taskId: record.id } });
+        queued = !!(res && res.ok);
+      }
+      if (!queued) {
+        // 无法入队（无存储或类型不适用）：直接走浏览器默认下载
+        const dir = ZZDLEngine.dirForType(ZZDLEngine.classifyExt(url));
+        await ZZDLEngine.download(url, dir + "/" + ZZDLEngine.sanitize(streamName(url)));
       }
       playSparkle(btn);
-      UI.toast($("#msg"), T("任务已创建：$1", saved || name), "ok");
+      UI.toast($("#msg"), queued ? T("任务已创建，正在后台下载") : T("已加入下载"), "ok");
       await refreshTasks(true);
     } catch (e) {
       UI.toast($("#msg"), T("创建失败：$1", (e && e.message) || e), "err");
-      btn.disabled = false;
-      btn.textContent = T("下载");
     } finally {
       busyStreams.delete(url);
-      if (btn.isConnected && btn.textContent !== T("下载")) {
+      if (btn.isConnected) {
         btn.disabled = false;
         btn.textContent = T("下载");
       }
@@ -365,7 +366,7 @@
           cat: ZZDLEngine.classifyExt(name),
           url: t.url || "",
           path: (t.dir || "") + "/" + name,
-          state: t.status === "error" ? "err" : "paused",
+          state: t.status === "error" ? "err" : t.status === "queued" ? "queued" : "paused",
           pct: t.total ? Math.min(100, Math.round(((t.done || 0) / t.total) * 100)) : 0,
           totalBytes: t.total || 0,
           hint: t.status === "error" ? ZZDLEngine.errorHint({ message: t.error }) : null,
@@ -378,7 +379,7 @@
     items = items.filter(
       (it) =>
         (taskState.filter === "all" || it.cat === taskState.filter) &&
-        (taskState.stateFilter === "all" || it.state === taskState.stateFilter)
+        (taskState.stateFilter === "all" || it.state === taskState.stateFilter || (taskState.stateFilter === "paused" && it.state === "queued"))
     );
     items = sortByMode(items, taskState.sort).slice(0, 16);
     currentTaskItems = items;
@@ -392,7 +393,7 @@
     section.hidden = !items.length;
     const box = $("#taskList");
     box.innerHTML = "";
-    const stateLabel = { done: T("已完成"), err: T("失败"), paused: T("已暂停"), run: T("下载中") };
+    const stateLabel = { done: T("已完成"), err: T("失败"), paused: T("已暂停"), run: T("下载中"), queued: T("排队中") };
     for (const it of items) {
       const row = document.createElement("div");
       row.className = "zz-task-item" + (it.state === "run" ? " run" : "") + (it.state === "err" ? " err" : "");
@@ -486,28 +487,13 @@
         UI.toast($("#msg"), T("已重新下载到 $1", dir), "ok");
         playSparkle(btn);
       } else if (act === "localresume") {
-        if (busyTasks.has(key)) return;
-        busyTasks.add(key);
-        btn.disabled = true;
-        try {
-          const task = globalThis.ZZDLStore ? await ZZDLStore.getTask(key) : null;
-          if (!task) return;
-          let res;
-          if (task.kind === "m3u8") {
-            res = await ZZDLEngine.downloadM3u8(task.url, {
-              concurrency: Math.max(1, Math.min(12, task.concurrency || 6)),
-              nameBase: task.nameBase,
-              dir: task.dir,
-              tsAsMp4: !!task.tsAsMp4,
-              onProgress: () => {},
-            });
-          } else {
-            res = await ZZDLEngine.multiThreadDownload(task.url, task.name, task.dir, task.threads || 4, () => {}, null);
-          }
-          UI.toast($("#msg"), res.cancelled ? T("已暂停，进度已保留") : T("任务完成：$1", res.saved), res.cancelled ? "" : "ok");
+        // 统一派发到工具箱页后台执行（popup 关闭也不中断）
+        const res = await UI.send({ type: "zz:dl:dispatch", payload: { taskId: key } });
+        if (res && res.ok) {
           playSparkle(btn);
-        } finally {
-          busyTasks.delete(key);
+          UI.toast($("#msg"), T("已交给下载器后台执行"), "ok");
+        } else {
+          UI.toast($("#msg"), T("派发失败：$1", (res && res.error) || T("未知错误")), "err");
         }
       }
     } catch (e) {
