@@ -39,18 +39,41 @@
         align-items: center;
         gap: 8px;
         padding: 7px 10px;
-        border-radius: 12px;
+        border-radius: 10px;
         border: 1px solid var(--zz-border);
         background: var(--zz-glass-2);
         font-size: 12px;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.15s ease, background 0.15s ease;
+      }
+      .zz-media-item:hover {
+        border-color: var(--zz-border-strong);
+        background: rgba(255, 255, 255, 0.07);
+      }
+      .zz-media-item::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+        transform: translateX(-120%);
+        pointer-events: none;
+      }
+      .zz-media-item:hover::after {
+        animation: zzShine 0.6s ease;
+      }
+      @keyframes zzShine {
+        to {
+          transform: translateX(120%);
+        }
       }
       .zz-media-item .mi-kind {
         flex: 0 0 auto;
         font-size: 10px;
-        padding: 2px 7px;
-        border-radius: 999px;
-        background: rgba(59, 130, 246, 0.18);
-        color: #93c5fd;
+        padding: 2px 6px;
+        border-radius: 5px;
+        background: rgba(61, 123, 253, 0.14);
+        color: #8ab6ff;
         font-weight: 600;
       }
       .zz-media-item .mi-url {
@@ -72,7 +95,7 @@
         align-items: center;
         gap: 8px;
         padding: 7px 10px;
-        border-radius: 12px;
+        border-radius: 10px;
         border: 1px solid var(--zz-border);
         background: var(--zz-glass-2);
         font-size: 12px;
@@ -95,13 +118,18 @@
         left: 0;
         bottom: 0;
         height: 2px;
-        background: linear-gradient(90deg, #3b82f6, #22d3ee, #3b82f6);
-        background-size: 200% 100%;
+        background: var(--zz-accent);
         border-radius: 2px;
         pointer-events: none;
       }
       .zz-task-item.run .ti-bar {
+        background: linear-gradient(90deg, var(--zz-accent-2), #6fd3f7, var(--zz-accent-2));
+        background-size: 200% 100%;
         animation: zzFlow 1.2s linear infinite;
+      }
+      .zz-task-item.err .ti-bar {
+        background: var(--zz-danger);
+        opacity: 0.5;
       }
       @keyframes zzFlow {
         from {
@@ -109,32 +137,6 @@
         }
         to {
           background-position: 200% 0;
-        }
-      }
-      .zz-media-item {
-        position: relative;
-        overflow: hidden;
-        transition: border-color 0.2s ease, background 0.2s ease;
-      }
-      .zz-media-item:hover {
-        border-color: var(--zz-border-strong);
-        background: rgba(255, 255, 255, 0.08);
-      }
-      /* 玻璃光泽扫过 */
-      .zz-media-item::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.14) 50%, transparent 65%);
-        transform: translateX(-120%);
-        pointer-events: none;
-      }
-      .zz-media-item:hover::after {
-        animation: zzShine 0.7s ease;
-      }
-      @keyframes zzShine {
-        to {
-          transform: translateX(120%);
         }
       }
       .zz-task-item {
@@ -156,11 +158,15 @@
         background: transparent;
         color: var(--zz-muted);
         cursor: pointer;
+        transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+      }
+      .zz-chipbar-sm button:hover {
+        color: var(--zz-text);
       }
       .zz-chipbar-sm button.active {
-        background: var(--zz-accent);
-        border-color: var(--zz-accent);
-        color: #fff;
+        border-color: rgba(91, 157, 255, 0.55);
+        color: var(--zz-accent);
+        background: rgba(61, 123, 253, 0.1);
         font-weight: 600;
       }
     </style>
