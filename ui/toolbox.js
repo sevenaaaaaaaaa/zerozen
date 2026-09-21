@@ -66,23 +66,9 @@
       .slice(0, 120) || "download";
   }
 
-  async function download(url, filename) {
-    const granted = await UI.ensurePermission("downloads");
-    if (!granted) throw new Error(T("需要「下载」权限才能保存文件"));
-    const opts = { url, filename, saveAs: false, conflictAction: "uniquify" };
-    return new Promise((resolve, reject) => {
-      try {
-        const ret = api.downloads.download(opts, (id) => {
-          const err = api.runtime.lastError;
-          if (err || id === undefined) reject(new Error((err && err.message) || "download failed"));
-          else resolve(id);
-        });
-        if (ret && typeof ret.then === "function") ret.then((id) => resolve(id)).catch((e) => reject(e));
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
+  ZZDLEngine.init({ UI, T, referrerOf: () => state.url });
+  const download = (...args) => ZZDLEngine.download(...args);
+
 
   async function proxy(type, payload) {
     return UI.send({ type: "zz:toolbox:proxy", payload: { tabId: state.tabId, type, payload } });
@@ -213,164 +199,7 @@
 
   $("#btnStreams").addEventListener("click", refreshStreams);
 
-  async function fetchViaBg(url, as) {
-    const res = await UI.send({
-      type: "zz:toolbox:fetch",
-      payload: { url, as: as || "text", referrer: state.url || "" },
-    });
-    if (!res || !res.ok) throw new Error((res && res.error) || T("后台抓取失败"));
-    return res;
-  }
 
-  async function fetchText(url) {
-    try {
-      const proxied = await fetchViaBg(url, "text");
-      return proxied.text || "";
-    } catch (e) {
-      const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) throw new Error((e && e.message) || "HTTP " + res.status);
-      return await res.text();
-    }
-  }
-
-  function decodeBase64(b64) {
-    const bin = atob(b64);
-    const out = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-    return out;
-  }
-
-  async function fetchBuf(url) {
-    try {
-      const proxied = await fetchViaBg(url, "bin");
-      if (proxied.base64) return decodeBase64(proxied.base64);
-    } catch (e) {}
-    const res = await fetch(url, { credentials: "include" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return new Uint8Array(await res.arrayBuffer());
-  }
-
-  function parseMaster(text, base) {
-    const lines = text.split(/\r?\n/);
-    const variants = [];
-    for (let i = 0; i < lines.length; i++) {
-      const l = lines[i].trim();
-      if (!l.startsWith("#EXT-X-STREAM-INF")) continue;
-      const attrs = {};
-      for (const m of l.matchAll(/([A-Z-]+)=("[^"]*"|[^,]*)/g)) attrs[m[1]] = String(m[2]).replace(/"/g, "");
-      const next = lines.slice(i + 1).find((x) => x.trim() && !x.trim().startsWith("#"));
-      if (next) variants.push({ url: new URL(next.trim(), base).href, bandwidth: parseInt(attrs.BANDWIDTH || "0", 10) || 0, resolution: attrs.RESOLUTION || "" });
-    }
-    return variants.sort((a, b) => b.bandwidth - a.bandwidth);
-  }
-
-  function parseMedia(text, base) {
-    const lines = text.split(/\r?\n/);
-    const out = { segments: [], map: "", seq: 0 };
-    let key = null;
-    for (const raw of lines) {
-      const l = raw.trim();
-      if (!l) continue;
-      if (l.startsWith("#EXT-X-MEDIA-SEQUENCE")) out.seq = parseInt(l.split(":")[1], 10) || 0;
-      else if (l.startsWith("#EXT-X-MAP")) {
-        const m = l.match(/URI="([^"]+)"/);
-        if (m) out.map = new URL(m[1], base).href;
-      } else if (l.startsWith("#EXT-X-KEY")) {
-        if (/METHOD=NONE/.test(l)) key = null;
-        else {
-          const uri = (l.match(/URI="([^"]+)"/) || [])[1];
-          const iv = (l.match(/IV=0x([0-9A-Fa-f]+)/) || [])[1];
-          key = { uri: uri ? new URL(uri, base).href : "", iv };
-        }
-      } else if (!l.startsWith("#")) {
-        out.segments.push({ url: new URL(l, base).href, key });
-      }
-    }
-    return out;
-  }
-
-  const keyCache = new Map();
-
-  async function getKey(uri) {
-    if (keyCache.has(uri)) return keyCache.get(uri);
-    const buf = await fetchBuf(uri);
-    keyCache.set(uri, buf);
-    return buf;
-  }
-
-  function ivFor(key, index, seq) {
-    if (key && key.iv) {
-      const hex = key.iv.replace(/^0x/i, "").padStart(32, "0").slice(-32);
-      return Uint8Array.from(hex.match(/.{2}/g).map((h) => parseInt(h, 16)));
-    }
-    const iv = new Uint8Array(16);
-    let n = BigInt(seq + index);
-    for (let i = 15; i >= 0; i--) {
-      iv[i] = Number(n & 0xffn);
-      n >>= 8n;
-    }
-    return iv;
-  }
-
-  async function downloadM3u8(url, opts) {
-    const { concurrency = 4, onProgress = () => {}, isCancelled = () => false } = opts || {};
-    let text = await fetchText(url);
-    let mediaUrl = url;
-    if (/#EXT-X-STREAM-INF/.test(text)) {
-      const variants = parseMaster(text, url);
-      if (!variants.length) throw new Error(T("主播放列表为空"));
-      let pick = variants[0];
-      for (const v of variants.slice(0, 3)) {
-        try {
-          const probe = parseMedia(await fetchText(v.url), v.url);
-          const fmp4 = !!probe.map || /\.(m4s|mp4)(\?|#|$)/i.test((probe.segments[0] || {}).url || "");
-          if (fmp4) {
-            pick = v;
-            break;
-          }
-        } catch (e) {}
-      }
-      onProgress(T("选择清晰度：$1", pick.resolution || pick.bandwidth + "bps"));
-      mediaUrl = pick.url;
-      text = await fetchText(mediaUrl);
-    }
-    const media = parseMedia(text, mediaUrl);
-    if (!media.segments.length) throw new Error(T("没有解析到分片"));
-    const parts = [];
-    if (media.map) {
-      onProgress(T("下载初始化分片…"));
-      parts.push(await fetchBuf(media.map));
-    }
-    let done = 0;
-    const total = media.segments.length;
-    const queue = media.segments.map((s, i) => ({ ...s, i }));
-    const workers = Array.from({ length: Math.max(1, Math.min(8, concurrency)) }, async () => {
-      while (queue.length) {
-        if (isCancelled()) throw new Error(T("已取消"));
-        const seg = queue.shift();
-        let buf = await fetchBuf(seg.url);
-        if (seg.key && seg.key.uri) {
-          const rawKey = await getKey(seg.key.uri);
-          const cryptoKey = await crypto.subtle.importKey("raw", rawKey, { name: "AES-CBC" }, false, ["decrypt"]);
-          buf = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-CBC", iv: ivFor(seg.key, seg.i, media.seq) }, cryptoKey, buf));
-        }
-        parts[seg.i + (media.map ? 1 : 0)] = buf;
-        done++;
-        if (done % 5 === 0 || done === total) onProgress(T("分片 $1/$2", done, total));
-      }
-    });
-    await Promise.all(workers);
-    let size = 0;
-    for (const p of parts) size += p ? p.length : 0;
-    const out = new Uint8Array(size);
-    let offset = 0;
-    for (const p of parts) {
-      if (!p) continue;
-      out.set(p, offset);
-      offset += p.length;
-    }
-    return { data: out, isFmp4: !!media.map || /\.(m4s|mp4)(\?|#|$)/i.test(media.segments[0].url) };
-  }
 
   $("#btnM3u8").addEventListener("click", async () => {
     const urls = Array.from(state.selected);
@@ -383,28 +212,49 @@
     const tsAsMp4 = $("#tsAsMp4").checked;
     state.cancel = false;
     $("#btnM3u8").disabled = true;
+    $("#btnVideoCancel").disabled = false;
     setLog("videoLog", T("开始下载：$1 个流", urls.length));
     try {
       for (let i = 0; i < urls.length; i++) {
         const url = urls[i];
-        const res = await downloadM3u8(url, {
-          concurrency: (state.settings && state.settings.toolbox && state.settings.toolbox.concurrency) || 4,
-          onProgress: (t) => log("videoLog", t),
-          isCancelled: () => state.cancel,
-        });
-        const ext = res.isFmp4 || tsAsMp4 ? "mp4" : "ts";
-        const name = urls.length > 1 ? title + " (" + (i + 1) + ")." + ext : title + "." + ext;
-        const blob = new Blob([res.data], { type: res.isFmp4 ? "video/mp4" : "video/mp2t" });
-        const blobUrl = URL.createObjectURL(blob);
-        await download(blobUrl, dir + "/" + name);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-        log("videoLog", T("已保存 $1（$2 MB）", dir + "/" + name, Math.round((blob.size / 1048576) * 10) / 10));
+        const nameBase = title + (urls.length > 1 ? " (" + (i + 1) + ")" : "");
+        try {
+          const res = await ZZDLEngine.downloadM3u8(url, {
+            concurrency: Math.max(1, Math.min(12, Number($("#videoThreads").value) || 6)),
+            onProgress: (t) => log("videoLog", t),
+            isCancelled: () => state.cancel,
+            nameBase,
+            dir,
+            tsAsMp4,
+          });
+          if (res.cancelled) {
+            log("videoLog", T("已取消，进度已保留，可在「下载器」里继续"));
+            break;
+          }
+          log("videoLog", T("已保存 $1（$2 MB）", res.saved, Math.round((res.size / 1048576) * 10) / 10));
+        } catch (e) {
+          // 单个流失败（进度已保留）不阻断后面的流
+          log("videoLog", "× " + T("失败：$1", (e && e.message) || e));
+          log("videoLog", T("进度已保留，可在「下载器」里继续"));
+        }
       }
-    } catch (e) {
-      log("videoLog", "× " + T("失败：$1", (e && e.message) || e));
     } finally {
       $("#btnM3u8").disabled = false;
+      $("#btnVideoCancel").disabled = true;
+      refreshResumes();
     }
+  });
+
+  $("#videoThreads").addEventListener("change", async () => {
+    await UI.send({
+      type: "zz:settings:set",
+      payload: { settings: { toolbox: { concurrency: Math.max(1, Math.min(12, Number($("#videoThreads").value) || 6)) } }, rebuild: false },
+    });
+  });
+
+  $("#btnVideoCancel").addEventListener("click", () => {
+    state.cancel = true;
+    log("videoLog", T("正在取消…"));
   });
 
   // ---------- images ----------
@@ -756,54 +606,6 @@
     log("dlLog", T("已清除完成记录（文件保留）"));
   });
 
-  async function multiThreadDownload(url, name, dir, threads, onProgress) {
-    const head = await fetch(url, { method: "HEAD", credentials: "include" });
-    const len = Number(head.headers.get("content-length") || 0);
-    const accept = head.headers.get("accept-ranges") || "";
-    if (!len) throw new Error(T("服务器未返回文件大小"));
-    if (!/bytes/i.test(accept) && !(head.status === 206)) throw new Error(T("服务器不支持分段下载"));
-    if (len > 800 * 1024 * 1024) throw new Error(T("文件超过 800MB，请使用默认模式"));
-    const total = len;
-    const chunk = Math.ceil(total / threads);
-    const parts = new Array(threads);
-    let received = 0;
-    let cancelled = false;
-    const tasks = Array.from({ length: threads }, async (_, i) => {
-      const start = i * chunk;
-      const end = Math.min(total - 1, start + chunk - 1);
-      if (start > end) return;
-      const res = await fetch(url, { headers: { Range: "bytes=" + start + "-" + end }, credentials: "include" });
-      if (!res.ok && res.status !== 206) throw new Error(T("分片 HTTP $1", res.status));
-      const buf = new Uint8Array(await res.arrayBuffer());
-      parts[i] = buf;
-      received += buf.length;
-      onProgress(received, total);
-    });
-    await Promise.all(tasks);
-    const ext = (name.split(".").pop() || "").toLowerCase();
-    const MIME = {
-      mp4: "video/mp4",
-      m4v: "video/mp4",
-      ts: "video/mp2t",
-      webm: "video/webm",
-      mp3: "audio/mpeg",
-      m4a: "audio/mp4",
-      zip: "application/zip",
-      rar: "application/vnd.rar",
-      "7z": "application/x-7z-compressed",
-      apk: "application/vnd.android.package-archive",
-      pdf: "application/pdf",
-      iso: "application/x-iso9660-image",
-    };
-    const blob = new Blob(parts, { type: MIME[ext] || "application/octet-stream" });
-    const blobUrl = URL.createObjectURL(blob);
-    try {
-      await download(blobUrl, dir + "/" + name);
-    } finally {
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-    }
-    return { size: total, cancelled };
-  }
 
   $("#dlUrl").addEventListener("input", () => {
     if ($("#dlName").value.trim()) return;
@@ -845,28 +647,35 @@
           log("dlLog", T("m3u8 请在「视频（m3u8）」标签里下载（支持自动选清晰度与解密）"));
           return;
         }
+        state.cancel = false;
         setLog("dlLog", T("多线程下载中…"));
-        await multiThreadDownload(url, name, dir, Math.max(2, Math.min(8, Number($("#dlThreads").value) || 4)), (got, total) => {
-          setLog("dlLog", T("多线程 $1 / $2（$3%）", bytes(got), bytes(total), Math.round((got / total) * 100)));
-        });
-        log("dlLog", T("多线程完成，已保存 $1", dir + "/" + name));
+        const res = await ZZDLEngine.multiThreadDownload(
+          url,
+          name,
+          dir,
+          Math.max(2, Math.min(8, Number($("#dlThreads").value) || 4)),
+          (got, total) => {
+            setLog("dlLog", T("多线程 $1 / $2（$3%）", bytes(got), bytes(total), Math.round((got / total) * 100)));
+          },
+          () => state.cancel
+        );
+        if (res.cancelled) {
+          log("dlLog", T("已取消，进度已保留，可稍后继续"));
+        } else {
+          log("dlLog", T("多线程完成，已保存 $1", res.saved));
+          $("#dlName").value = "";
+        }
       } else {
         await download(url, dir + "/" + name);
         log("dlLog", T("已加入下载：$1", dir + "/" + name));
+        $("#dlName").value = "";
       }
-      $("#dlName").value = "";
     } catch (e) {
       log("dlLog", "× " + ((e && e.message) || e));
-      if ($("#dlMulti").checked) {
-        try {
-          await download(url, dir + "/" + name);
-          log("dlLog", T("已改用默认模式加入下载"));
-        } catch (e2) {
-          log("dlLog", "× " + T("默认模式也失败：$1", (e2 && e2.message) || e2));
-        }
-      }
+      log("dlLog", T("进度已保留，可稍后继续；也可取消勾选「多线程分段」改用浏览器默认下载"));
     } finally {
       $("#btnDlStart").disabled = false;
+      refreshResumes();
       setTimeout(refreshDownloader, 500);
     }
   });
@@ -885,6 +694,126 @@
     if (api.downloads.onCreated) api.downloads.onCreated.addListener(() => setTimeout(refreshDownloader, 600));
   }
 
+  // ---------- 断点续传任务列表 ----------
+  const resumes = { items: [], busy: new Set() };
+
+  async function refreshResumes() {
+    if (!globalThis.ZZDLStore) return;
+    try {
+      resumes.items = await ZZDLStore.listTasks();
+    } catch (e) {
+      return;
+    }
+    renderResumes();
+  }
+
+  function resumeMeta(task) {
+    const kindLabel = task.kind === "m3u8" ? T("视频（m3u8）") : T("多线程分段");
+    let pct = 0;
+    let progressText = "";
+    if (task.kind === "m3u8") {
+      pct = task.total ? Math.min(100, Math.round(((task.done || 0) / task.total) * 100)) : 0;
+      progressText = T("分片 $1/$2", task.done || 0, task.total || 0);
+    } else {
+      pct = task.total ? Math.min(100, Math.round(((task.done || 0) / task.total) * 100)) : 0;
+      progressText = bytes(task.done || 0) + " / " + bytes(task.total);
+    }
+    let status;
+    if (task.status === "error") status = T("失败：$1", task.error || T("中断"));
+    else status = T("已暂停");
+    const name = task.kind === "m3u8" ? task.nameBase : task.name;
+    return { kindLabel, pct, progressText, status, name };
+  }
+
+  function renderResumes() {
+    const box = $("#resumeList");
+    if (!box) return;
+    if (!resumes.items.length) {
+      box.innerHTML = '<div class="zz-small zz-muted">' + T("暂无未完成任务。") + "</div>";
+      return;
+    }
+    box.innerHTML = resumes.items
+      .map((task) => {
+        const m = resumeMeta(task);
+        const busy = resumes.busy.has(task.id);
+        const buttons = busy
+          ? '<span class="zz-small zz-muted">' + T("下载中") + "</span>"
+          : '<button class="zz-btn zz-btn-sm zz-btn-primary" data-ract="resume">' + T("继续") + "</button>";
+        return (
+          '<div class="zz-tool-item" data-rid="' + task.id + '">' +
+          '<div style="flex:1;min-width:0">' +
+          '<div class="zz-small" style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+          m.name +
+          "</div>" +
+          '<div class="zz-small zz-muted">' + [m.kindLabel, m.progressText, m.status].filter(Boolean).join(" · ") + "</div>" +
+          '<div style="height:4px;border-radius:2px;background:rgba(127,127,127,.25);margin-top:4px">' +
+          '<i style="display:block;height:100%;width:' + m.pct + "%;border-radius:2px;background:" + (task.status === "error" ? "#dc2626" : "#3b82f6") + '"></i></div>' +
+          "</div>" +
+          buttons +
+          '<button class="zz-btn zz-btn-sm zz-btn-danger" data-ract="drop" ' + (busy ? "disabled" : "") + ">" + T("删除") + "</button>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
+  $("#resumeList").addEventListener("click", async (event) => {
+    const btn = event.target.closest("button[data-ract]");
+    if (!btn) return;
+    const row = btn.closest(".zz-tool-item");
+    const id = row.getAttribute("data-rid");
+    const task = resumes.items.find((x) => x.id === id);
+    if (!task) return;
+    const act = btn.getAttribute("data-ract");
+    try {
+      if (act === "drop") {
+        await ZZDLStore.removeTask(id);
+        await refreshResumes();
+        log("dlLog", T("已删除未完成任务与已下载分片"));
+        return;
+      }
+      if (act !== "resume" || resumes.busy.has(id)) return;
+      resumes.busy.add(id);
+      state.cancel = false;
+      renderResumes();
+      try {
+        if (task.kind === "m3u8") {
+          const res = await ZZDLEngine.downloadM3u8(task.url, {
+            concurrency: Math.max(1, Math.min(12, task.concurrency || 6)),
+            onProgress: (t) => log("dlLog", t),
+            isCancelled: () => state.cancel,
+            nameBase: task.nameBase,
+            dir: task.dir,
+            tsAsMp4: !!task.tsAsMp4,
+          });
+          if (!res.cancelled) log("dlLog", T("已保存 $1（$2 MB）", res.saved, Math.round((res.size / 1048576) * 10) / 10));
+          else log("dlLog", T("已取消，进度已保留，可稍后继续"));
+        } else {
+          const res = await ZZDLEngine.multiThreadDownload(
+            task.url,
+            task.name,
+            task.dir,
+            task.threads || 4,
+            (got, total) => {
+              log("dlLog", T("多线程 $1 / $2（$3%）", bytes(got), bytes(total), Math.round((got / total) * 100)));
+            },
+            () => state.cancel
+          );
+          if (!res.cancelled) log("dlLog", T("多线程完成，已保存 $1", res.saved));
+          else log("dlLog", T("已取消，进度已保留，可稍后继续"));
+        }
+      } finally {
+        resumes.busy.delete(id);
+        await refreshResumes();
+      }
+    } catch (e) {
+      log("dlLog", "× " + T("失败：$1", (e && e.message) || e));
+      log("dlLog", T("进度已保留，可稍后继续"));
+      resumes.busy.delete(id);
+      await refreshResumes();
+    }
+  });
+
   UI.initLocale()
     .then(() => loadContext())
     .then(() => {
@@ -893,5 +822,7 @@
       bindDownloadEvents();
       refreshDownloader();
       setInterval(refreshDownloader, 2000);
+      refreshResumes();
+      setInterval(refreshResumes, 5000);
     });
 })();

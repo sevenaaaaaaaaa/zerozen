@@ -15,23 +15,40 @@
         display: flex;
         gap: 6px;
         margin: 12px 0 16px;
+        padding: 4px;
+        width: fit-content;
+        border-radius: 999px;
+        background: var(--zz-panel-2);
+        border: 1px solid var(--zz-border);
+        backdrop-filter: blur(18px) saturate(1.5);
+        -webkit-backdrop-filter: blur(18px) saturate(1.5);
       }
       .zz-tool-tab {
         font: inherit;
         font-size: 13px;
         padding: 6px 14px;
         border-radius: 999px;
-        border: 1px solid rgba(127, 127, 127, 0.35);
+        border: 0;
         background: transparent;
+        color: var(--zz-muted);
         cursor: pointer;
+        transition: background 0.18s ease, color 0.18s ease;
       }
       .zz-tool-tab.active {
-        background: #3b82f6;
-        border-color: #3b82f6;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         color: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 10px rgba(37, 99, 235, 0.4);
       }
       .zz-tool-panel {
         display: none;
+        background: var(--zz-panel);
+        border: 1px solid var(--zz-border);
+        border-radius: var(--zz-radius, 16px);
+        box-shadow: var(--zz-glass-shadow, 0 8px 32px rgba(2, 6, 18, 0.4));
+        backdrop-filter: blur(22px) saturate(1.6);
+        -webkit-backdrop-filter: blur(22px) saturate(1.6);
+        padding: 14px 16px;
       }
       .zz-tool-panel.active {
         display: block;
@@ -46,8 +63,9 @@
       .zz-tool-log {
         font-family: ui-monospace, monospace;
         font-size: 12px;
-        background: rgba(127, 127, 127, 0.08);
-        border-radius: 8px;
+        background: rgba(8, 12, 24, 0.55);
+        border: 1px solid var(--zz-border);
+        border-radius: 12px;
         padding: 10px 12px;
         max-height: 200px;
         overflow: auto;
@@ -60,10 +78,10 @@
         margin-top: 10px;
       }
       .zz-media-card {
-        border: 1px solid rgba(127, 127, 127, 0.25);
-        border-radius: 8px;
+        border: 1px solid var(--zz-border);
+        border-radius: 12px;
         overflow: hidden;
-        background: rgba(127, 127, 127, 0.04);
+        background: var(--zz-panel-2);
       }
       .zz-media-card img {
         width: 100%;
@@ -95,10 +113,11 @@
         display: flex;
         gap: 8px;
         align-items: center;
-        border: 1px solid rgba(127, 127, 127, 0.25);
-        border-radius: 8px;
+        border: 1px solid var(--zz-border);
+        border-radius: 12px;
         padding: 8px 10px;
         font-size: 12px;
+        background: var(--zz-panel-2);
       }
       .zz-tool-item .url {
         flex: 1;
@@ -115,14 +134,17 @@
       }
       .zz-chipbar label {
         font-size: 12px;
-        border: 1px solid rgba(127, 127, 127, 0.35);
+        border: 1px solid var(--zz-border);
         border-radius: 999px;
-        padding: 3px 9px;
+        padding: 3px 10px;
         cursor: pointer;
+        background: rgba(255, 255, 255, 0.04);
+        transition: border-color 0.18s ease, color 0.18s ease;
       }
       .zz-chipbar label:has(input:checked) {
         border-color: #3b82f6;
-        color: #3b82f6;
+        color: #93c5fd;
+        background: rgba(59, 130, 246, 0.12);
       }
     </style>
   </head>
@@ -146,8 +168,10 @@
       <div class="zz-tool-row">
         <label class="zz-small"><span data-i18n="标题">标题</span> <input type="text" id="videoTitle" style="width: 360px" /></label>
         <label class="zz-small"><span data-i18n="保存目录">保存目录</span> <input type="text" id="videoDir" style="width: 180px" /></label>
+        <label class="zz-small"><span data-i18n="线程">线程</span> <input type="number" id="videoThreads" min="1" max="12" value="6" style="width: 56px" /></label>
         <button class="zz-btn zz-btn-sm" id="btnStreams" data-i18n="刷新嗅探">刷新嗅探</button>
         <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnM3u8" data-i18n="下载选中">下载选中</button>
+        <button class="zz-btn zz-btn-sm" id="btnVideoCancel" data-i18n="取消（保留进度）" disabled>取消（保留进度）</button>
       </div>
       <div class="zz-tool-list" id="streamList"></div>
       <div class="zz-tool-row">
@@ -196,10 +220,16 @@
           <label class="zz-small"><span data-i18n="线程">线程</span> <input type="number" id="dlThreads" min="2" max="8" value="4" style="width: 56px" /></label>
           <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnDlStart" data-i18n="开始下载">开始下载</button>
         </div>
-        <div class="zz-small zz-muted" data-i18n="多线程分段需要服务器支持 Range；大文件会占用较多内存，任务需保持本页面打开，失败可改回默认模式。">多线程分段需要服务器支持 Range；大文件会占用较多内存，任务需保持本页面打开，失败可改回默认模式。</div>
+        <div class="zz-small zz-muted" data-i18n="多线程分段需要服务器支持 Range；分片会暂存本地（断点续传），任务完成后自动清理。">多线程分段需要服务器支持 Range；分片会暂存本地（断点续传），任务完成后自动清理。</div>
       </div>
 
-      <div class="zz-tool-row">
+      <div class="zz-tool-row" style="justify-content: space-between">
+        <span class="zz-small" style="font-weight: 600" data-i18n="未完成任务（断点续传）">未完成任务（断点续传）</span>
+        <span class="zz-small zz-muted" data-i18n="取消或失败的任务会保留进度，随时可继续。">取消或失败的任务会保留进度，随时可继续。</span>
+      </div>
+      <div class="zz-tool-list" id="resumeList"></div>
+
+      <div class="zz-tool-row" style="margin-top: 14px">
         <input type="text" id="dlQuery" placeholder="搜索文件名 / 地址" data-i18n-ph="搜索文件名 / 地址" style="max-width: 220px" />
         <button class="zz-btn zz-btn-sm" data-dlfilter="all" data-i18n="全部">全部</button>
         <button class="zz-btn zz-btn-sm" data-dlfilter="progressing" data-i18n="进行中">进行中</button>
@@ -219,6 +249,8 @@
     <script src="../i18n/i18n.js"></script>
     <script src="../i18n/dict-en.js"></script>
     <script src="ui-lib.js"></script>
+    <script src="dl-store.js"></script>
+    <script src="dl-engine.js"></script>
     <script src="toolbox.js"></script>
   </body>
 </html>
