@@ -73,4 +73,7 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "网络请求": "network request",
   "页面脚本": "page script",
   "页面源码": "page source",
+  "页面链接": "page link",
+  "内嵌页面": "embedded frame",
+  "已净化本页": "Page cleaned",
 });

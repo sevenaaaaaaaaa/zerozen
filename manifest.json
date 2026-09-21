@@ -40,7 +40,9 @@
         "content/50-picker.js",
         "content/60-bridge.js",
         "content/65-antidodge.js",
-        "content/70-toolbox.js"
+        "content/70-toolbox.js",
+        "content/80-flowfix.js",
+        "content/85-fx.js"
       ],
       "css": ["content/picker.css"],
       "run_at": "document_start",

@@ -17,6 +17,7 @@
     schema: SCHEMA,
     enabled: true,
     cosmetic: true,
+    flowFix: true,
     network: true,
     popupGuard: true,
     youtubeAuto: true,

@@ -294,12 +294,14 @@
       reader.host.remove();
       reader.host = null;
     }
+    if (ZZ.FX && ZZ.FX.readerOut) ZZ.FX.readerOut();
     document.documentElement.style.removeProperty("overflow");
   }
 
   function enterReader(article) {
     exitReader();
-    const host = document.createElement("div");
+    const mount = () => {
+      const host = document.createElement("div");
     host.setAttribute("data-zz-ui", "1");
     host.style.cssText = "position:fixed;inset:0;z-index:2147483600;background:#fff;color:#1f2328;overflow:auto;";
     const root = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
@@ -361,6 +363,12 @@
         res && res.ok ? ZZ.T("已保存：$1", res.filename || "") : ZZ.T("保存失败：$1", (res && res.error) || ZZ.T("未知错误"))
       );
     });
+    };
+    if (ZZ.FX && ZZ.FX.readerIn) {
+      ZZ.FX.readerIn(mount);
+    } else {
+      mount();
+    }
     return { ok: true, length: article.length };
   }
 
@@ -380,12 +388,26 @@
       }
       for (const s of Array.from(v.querySelectorAll("source"))) push(s.src || s.getAttribute("src"), "source");
     }
+    // 页面链接与 iframe：未播放也能发现（如站点直接给出 m3u8/mp4 地址）
+    try {
+      for (const a of Array.from(document.querySelectorAll("a[href]"))) push(a.getAttribute("href"), ZZ.T("页面链接"));
+      for (const f of Array.from(document.querySelectorAll("iframe[src], embed[src]"))) push(f.getAttribute("src"), ZZ.T("内嵌页面"));
+      for (const s of Array.from(document.querySelectorAll("source[src], track[src]"))) push(s.getAttribute("src"), "source");
+    } catch (e) {}
+    // data-* 属性：懒加载播放器常把流地址放在 data-url / data-video 等属性里
+    try {
+      for (const el of Array.from(document.querySelectorAll("[data-src],[data-url],[data-video],[data-hls],[data-m3u8],[data-mp4],[data-file],[data-stream],[data-source]"))) {
+        for (const attr of el.attributes) {
+          if (/^data-(src|url|video|hls|m3u8|mp4|file|stream|source)$/i.test(attr.name)) push(attr.value, attr.name);
+        }
+      }
+    } catch (e) {}
     try {
       for (const e of performance.getEntriesByType("resource") || []) {
         if (/\.m3u8|m3u8|\/hls\//i.test(e.name)) push(e.name, ZZ.T("网络请求"));
       }
     } catch (e) {}
-    const re = /https?:\/\/[^"'\\\s<>]+?(?:\.m3u8|\/hls\/)[^"'\\\s<>]*/gi;
+    const re = /https?:\/\/[^"'\\\s<>]+?(?:\.m3u8|\.mpd|\.mp4|\/hls\/)[^"'\\\s<>]*/gi;
     try {
       for (const script of Array.from(document.scripts || []).slice(0, 40)) {
         const text = script.textContent || "";

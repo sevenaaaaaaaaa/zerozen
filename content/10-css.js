@@ -20,6 +20,7 @@
     removed: 0,
     textsHidden: 0,
     popups: 0,
+    flowFix: true,
     observer: null,
     running: false,
     startedAt: 0,
@@ -300,12 +301,14 @@
       state.hide = [];
       state.remove = [];
       state.texts = [];
+      state.flowFix = false;
       stopObserver();
       return;
     }
     state.enabled = true;
     state.version = p.version;
     state.profile = p.profile || "standard";
+    state.flowFix = p.flowFix !== false;
     state.hide = Array.isArray(p.hide) ? p.hide : [];
     state.remove = Array.isArray(p.remove) ? p.remove : [];
     state.textRules = p.textRules !== false;

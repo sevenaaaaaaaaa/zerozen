@@ -90,6 +90,7 @@
       unlockScroll: payload.unlockScroll && settings.cosmetic,
       guard: { enabled: !!settings.popupGuard, notifications: !!settings.popupGuard },
       youtube: !!settings.youtubeAuto,
+      flowFix: settings.flowFix !== false,
       hide: [],
       stats: payload.stats,
     };
