@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_appName__",
   "default_locale": "en",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "__MSG_appDesc__",
   "minimum_chrome_version": "105",
   "permissions": [
@@ -22,13 +22,19 @@
     "downloads",
     "webRequest"
   ],
-  "host_permissions": ["http://*/*", "https://*/*"],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "background": {
     "service_worker": "background/index.js"
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
       "js": [
         "i18n/i18n.js",
         "i18n/dict-en-content.js",
@@ -44,7 +50,9 @@
         "content/80-flowfix.js",
         "content/85-fx.js"
       ],
-      "css": ["content/picker.css"],
+      "css": [
+        "content/picker.css"
+      ],
       "run_at": "document_start",
       "all_frames": true,
       "match_about_blank": false
@@ -52,8 +60,13 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/inject-guard.js"],
-      "matches": ["http://*/*", "https://*/*"]
+      "resources": [
+        "content/inject-guard.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
     }
   ],
   "action": {
@@ -72,11 +85,15 @@
   },
   "commands": {
     "zz-pick": {
-      "suggested_key": { "default": "Alt+Z" },
+      "suggested_key": {
+        "default": "Alt+Z"
+      },
       "description": "__MSG_cmdPick__"
     },
     "zz-ai-page": {
-      "suggested_key": { "default": "Alt+A" },
+      "suggested_key": {
+        "default": "Alt+A"
+      },
       "description": "__MSG_cmdAiPage__"
     }
   },
