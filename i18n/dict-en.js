@@ -885,6 +885,12 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "排队中": "Queued",
   "已交给下载器后台执行": "Handed to the downloader running in the background",
   "派发失败：$1": "Dispatch failed: $1",
+  "加入白名单": "Whitelist site",
+  "移出白名单": "Remove from whitelist",
+  "已移出白名单，恢复正常拦截": "Removed from whitelist — blocking restored",
+  "已加入白名单，本站不再拦截": "Whitelisted — no blocking on this site",
+  "刷新页面（应用新规则）": "Reload page (apply rules)",
+  "页面已刷新": "Page reloaded",
 
   // 排序
   "按时间": "By time",

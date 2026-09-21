@@ -66,6 +66,11 @@
     for (const input of document.querySelectorAll(".zz-chip input[data-type]")) {
       input.checked = !!types[input.getAttribute("data-type")];
     }
+    const wl = $("#btnWhitelist");
+    if (wl) {
+      wl.textContent = state.siteEnabled ? T("加入白名单") : T("移出白名单");
+      wl.classList.toggle("zz-btn-danger", !state.siteEnabled);
+    }
     $("#siteHint").textContent = state.siteEnabled
       ? T("本站已启用") + (state.index && state.index.invalid ? T("（$1 条规则无效已跳过）", state.index.invalid) : "")
       : T("本站已停用，不会隐藏或拦截任何内容");
@@ -614,6 +619,29 @@
       UI.toast($("#msg"), T("已临时放行本站 $1 分钟", minutes), "ok");
     }
     setTimeout(refresh, 300);
+  });
+
+  $("#btnWhitelist").addEventListener("click", async () => {
+    const enable = !(lastState && lastState.siteEnabled);
+    const res = await UI.send({ type: "zz:site:set", payload: { host, enabled: enable, tabId: tab && tab.id } });
+    if (res && res.ok) {
+      playSparkle($("#btnWhitelist"));
+      UI.toast($("#msg"), T(enable ? "已移出白名单，恢复正常拦截" : "已加入白名单，本站不再拦截"), "ok");
+    } else {
+      UI.toast($("#msg"), T("操作失败：$1", (res && res.error) || T("后台无响应")), "err");
+    }
+    setTimeout(refresh, 300);
+  });
+
+  $("#btnReload").addEventListener("click", async () => {
+    if (!tab || typeof tab.id !== "number") return;
+    try {
+      await api.tabs.reload(tab.id);
+      UI.toast($("#msg"), T("页面已刷新"), "ok");
+      setTimeout(() => window.close(), 400);
+    } catch (e) {
+      UI.toast($("#msg"), T("操作失败：$1", (e && e.message) || e), "err");
+    }
   });
 
   $("#btnResetAuto").addEventListener("click", async () => {

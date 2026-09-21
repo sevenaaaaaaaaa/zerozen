@@ -213,6 +213,68 @@
     return removed;
   }
 
+  // ---------- 全局占位残留清理 ----------
+  // 很多站点广告位被拦截后，站点自己渲染「该广告已被屏蔽 / Advertisement」等占位文字，
+  // 或留下带广告类名的空容器。只删整节点文本就是占位词、或广告类名的空壳节点，正文一律不动。
+  const PLACEHOLDER_RE =
+    /^(广告|广告位|该广告已被屏蔽|已屏蔽广告|广告被屏蔽|屏蔽了广告|广告已屏蔽|advertisement|ads?|ad\s*slot|sponsored|sponsored\s*(content|links)|広告|광고|реклама|publicité|anzeige|publicidad|reklame)[\s.!。：:：-]*$/i;
+  const AD_CONTAINER_SELECTOR =
+    '[id^="ad_"],[id^="ad-"],[id$="_ad"],[id$="-ad"],[id^="ads"],[id^="google_ads"],' +
+    '[class^="ad-"],[class*=" ad-"],[class^="ads-"],[class*=" ads-"],[class*="-ads"],[class*="_ads"],' +
+    '[data-ad],[data-ad-slot],[data-adunit],[data-ad-unit],[data-google-query-id]';
+  const PLACEHOLDER_SCAN_SELECTOR = "div,aside,section,p,span,center";
+
+  function isPlaceholderText(el) {
+    let text = "";
+    try {
+      text = (el.textContent || "").trim();
+    } catch (e) {
+      return false;
+    }
+    if (!text || text.length > 40 || !PLACEHOLDER_RE.test(text)) return false;
+    // 有链接/媒体/输入控件的节点不是占位标签（避免误杀正文与广告联盟兜底链接）
+    try {
+      if (el.querySelector("a[href],img,video,iframe,canvas,svg,button,input,select,textarea")) return false;
+    } catch (e) {}
+    return true;
+  }
+
+  function sweepGlobalShells() {
+    let removed = 0;
+    // a) 广告类名/id 空壳容器
+    let nodes = [];
+    try {
+      nodes = document.querySelectorAll(AD_CONTAINER_SELECTOR);
+    } catch (e) {}
+    const cap = Math.min(nodes.length, 600);
+    for (let i = 0; i < cap && removed < MAX_REMOVE; i++) {
+      const el = nodes[i];
+      try {
+        if (el.hasAttribute("data-zz-ui") || !el.isConnected) continue;
+        const kind = visibilityKind(el);
+        if (kind === false) continue;
+        if (!shouldDrop(el) && !isPlaceholderText(el)) continue;
+        el.remove();
+        removed++;
+      } catch (e) {}
+    }
+    // b) 任意位置的纯占位文字节点（如站点渲染的「该广告已被屏蔽」）
+    try {
+      nodes = document.querySelectorAll(PLACEHOLDER_SCAN_SELECTOR);
+    } catch (e) {}
+    const cap2 = Math.min(nodes.length, 1500);
+    for (let i = 0; i < cap2 && removed < MAX_REMOVE; i++) {
+      const el = nodes[i];
+      try {
+        if (el.hasAttribute("data-zz-ui") || !el.isConnected) continue;
+        if (!isPlaceholderText(el)) continue;
+        el.remove();
+        removed++;
+      } catch (e) {}
+    }
+    return removed;
+  }
+
   function runPass() {
     if (!enabled() || state.running || document.fullscreenElement) return;
     state.running = true;
@@ -227,6 +289,7 @@
           if (removed >= MAX_REMOVE) break;
         }
       }
+      if (removed < MAX_REMOVE) removed += sweepGlobalShells();
     } catch (e) {
       ZZ.log("flowfix pass error", e);
     }
