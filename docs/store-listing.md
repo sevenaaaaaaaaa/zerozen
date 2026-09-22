@@ -17,7 +17,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | 名称 | ZeroZen 广告净化器（英文：ZeroZen Ad Cleaner，由 `_locales` 按浏览器语言切换） |
-| 简介（132 字符内） | 规则引擎 + AI 识别的广告与弹窗屏蔽器，内置 7100+ 条规则，支持订阅开源列表、点选屏蔽与批量扫描。 |
+| 简介（132 字符内） | 规则引擎 + AI 识别的广告与弹窗屏蔽器，内置 7270+ 条规则，支持订阅开源列表、点选屏蔽与批量扫描。 |
 | 类别 | 生产工具 / Privacy & Security |
 | 语言 | 简体中文 + English（界面跟随浏览器语言，`default_locale` 为 en） |
 | 单一用途声明 | 屏蔽网页广告与打扰性元素（Block advertisements and intrusive page elements） |
@@ -27,7 +27,7 @@
 ```
 ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 
-• 内置 35 个规则包、7100+ 条规则，覆盖搜索、视频、社交、论坛、电商、资讯与多语区站点
+• 内置 39 个规则包、7270+ 条规则，覆盖搜索、视频、社交、论坛、电商、资讯与多语区站点
 • 订阅 EasyList / EasyPrivacy / anti-AD / AdGuard 等开源过滤列表，按周期自动更新
 • 网络拦截由浏览器的 declarativeNetRequest 完成，扩展看不到任何请求内容
 • Alt+Z 点选页面元素直接生成规则，支持隐藏 / 移除 / 放行三种处理
@@ -37,7 +37,7 @@ ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 
 隐私：没有后端服务器，不收集、不上传任何浏览数据。只有你主动启用 AI 识别或添加规则订阅时，扩展才会向你自己填写的地址发起请求。收藏夹、浏览记录、下载权限都不在安装时申请，用到时才询问，并可随时收回。
 
-隐私政策：<在此填写公开网址>
+隐私政策：https://github.com/sevenaaaaaaaaa/zerozen/blob/main/docs/privacy-policy.md
 ```
 
 ## 2b. 英文描述（Chrome Web Store / AMO 的英文 listing）
@@ -45,7 +45,7 @@ ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 ```
 ZeroZen is a fully local ad and popup cleaner.
 
-• 35 built-in rule packs, 7100+ rules covering search, video, social, forums, shopping, news and sites across Japan, Korea, Russia, Europe, South-East Asia, India, Latin America and Greater China
+• 39 built-in rule packs, 7270+ rules covering search, video, social, forums, shopping, news and sites across Japan, Korea, Russia, Europe, South-East Asia, India, Latin America and Greater China
 • Subscribe to EasyList / EasyPrivacy / anti-AD / AdGuard and any other filter list, refreshed automatically
 • Network blocking runs on the browser's declarativeNetRequest engine — the extension never sees request contents
 • Press Alt+Z to click any element and turn it into a rule (hide / remove / allow)

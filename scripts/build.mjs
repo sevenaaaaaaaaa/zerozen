@@ -62,7 +62,7 @@ console.log("building extension targets:");
 const chromeDir = writeTarget("chrome", (m) => {
   delete m.background.scripts;
   delete m.browser_specific_settings;
-  m.name = m.name + " (Chrome)";
+  // 商店发布用纯净名；本地多浏览器共存靠目录名区分即可
 });
 
 const firefoxDir = writeTarget("firefox", (m) => {
