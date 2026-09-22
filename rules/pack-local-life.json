@@ -1,0 +1,22 @@
+{
+  "id": "local-life",
+  "name": "本地生活 / 外卖",
+  "desc": "美团/饿了么/大众点评/飞猪 的开屏弹窗、下载诱导与促销浮层",
+  "rules": [
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='open-app'],[class*='openapp'],[class*='openApp']", "note": "唤起 App 引导" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='download-bar'],[class*='downloadBar']", "note": "下载横幅" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='app-download'],[class*='appDownload']", "note": "App 下载位" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='guide-layer'],[class*='guide-mask']", "note": "引导遮罩" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='first-order'],[class*='new-user-pop'],[class*='newuser']", "note": "新人礼包弹窗" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='red-packet-pop'],[class*='redpacket'],[class*='hongbao-pop']", "note": "红包弹窗" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='coupon-layer'],[class*='coupon-mask']", "note": "领券浮层" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='sign-banner'],[class*='checkin-pop'],[class*='signin-pop']", "note": "签到活动弹窗" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='lottery-pop'],[class*='lucky-draw'],[class*='draw-layer']", "note": "抽奖弹窗" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='float-entrance'],[class*='suspend-btn'],[class*='suspend-icon']", "note": "悬浮活动按钮" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='time-limit-pop'],[class*='flash-sale-pop']", "note": "限时促销弹窗" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='member-pop'],[class*='member-banner'],[class*='member-card-ad']", "note": "会员促销" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[id*='appGuide'],[id*='openAppLayer'],[id*='downloadLayer']", "note": "App 引导层" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='footer-app'],[class*='bottom-download']", "note": "底部下载条" },
+    { "kind": "cosmetic", "action": "hide", "selector": "[class*='qrcode-layer'],[class*='qr-layer']", "note": "扫码引导层" }
+  ]
+}

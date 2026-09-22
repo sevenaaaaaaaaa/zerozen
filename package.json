@@ -1,6 +1,6 @@
 {
   "name": "zerozen",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "description": "ZeroZen - 跨浏览器广告与弹窗净化扩展（规则引擎 + AI 识别 + 收藏夹批量扫描）",
   "scripts": {

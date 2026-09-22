@@ -1,0 +1,91 @@
+{
+  "id": "ai-tools",
+  "name": "AI 工具站",
+  "desc": "AI 导航/聚合站与工具站的推广卡、付费弹窗与营销浮层",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promo-card'],[class*='promoCard']",
+      "note": "推广卡"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sponsor-card'],[class*='sponsorCard']",
+      "note": "赞助卡"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='featured-ad'],[class*='featuredAd']",
+      "note": "推荐位广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='nav-ad'],[class*='navAd'],[class*='nav_ad']",
+      "note": "导航位广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='upgrade-pop'],[class*='upgradePop'],[class*='upsell']",
+      "note": "升级付费弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='discount-banner'],[class*='sale-banner']",
+      "note": "折扣横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='gift-banner'],[class*='reward-banner']",
+      "note": "营销横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='sticky-promo'],[class*='bottom-promo']",
+      "note": "底部促销条"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='tool-ad'],[class*='toolAd']",
+      "note": "工具页广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='hot-tool-promo'],[class*='recommend-promo']",
+      "note": "推荐推广位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='promoModal'],[id*='adModal'],[id*='upsellModal']",
+      "note": "营销弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='wechat-qr-promo'],[class*='qr-promo'],[class*='follow-promo']",
+      "note": "关注/二维码推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-label'],[class*=' ad-label']",
+      "note": "广告角标容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='partner-banner'],[class*='partner-card']",
+      "note": "合作伙伴位"
+    }
+  ]
+}

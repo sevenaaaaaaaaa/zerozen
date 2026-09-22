@@ -2,11 +2,56 @@
   const ZZ = globalThis.ZZ;
   const api = ZZ.browser;
 
+  const TAB_ALLOW_BASE = 2000000000; // tab 级放行规则 id 段（session 空间）
+
   const Dnr = {
     lastResult: { applied: 0, dropped: 0, total: 0, at: 0, error: null, supported: true },
 
     supported() {
       return !!(api.declarativeNetRequest && api.declarativeNetRequest.updateDynamicRules);
+    },
+
+    // tab 级全量放行：内网/文档站等默认关闭的页面，网络层不再拦任何请求
+    async setTabAllowed(tabId, allowed) {
+      if (!api.declarativeNetRequest || !api.declarativeNetRequest.updateSessionRules) return;
+      const id = TAB_ALLOW_BASE + tabId;
+      const addRules = allowed
+        ? [
+            {
+              id,
+              priority: 1000000,
+              action: { type: "allow" },
+              condition: {
+                tabIds: [tabId],
+                resourceTypes: [
+                  "main_frame",
+                  "sub_frame",
+                  "stylesheet",
+                  "script",
+                  "image",
+                  "font",
+                  "object",
+                  "xmlhttprequest",
+                  "ping",
+                  "media",
+                  "websocket",
+                  "webtransport",
+                  "other",
+                ],
+              },
+            },
+          ]
+        : [];
+      try {
+        await ZZ.call(api.declarativeNetRequest, "updateSessionRules", { removeRuleIds: [id], addRules });
+      } catch (e) {}
+    },
+
+    async clearTab(tabId) {
+      if (!api.declarativeNetRequest || !api.declarativeNetRequest.updateSessionRules) return;
+      try {
+        await ZZ.call(api.declarativeNetRequest, "updateSessionRules", { removeRuleIds: [TAB_ALLOW_BASE + tabId], addRules: [] });
+      } catch (e) {}
     },
 
     async existingIds() {

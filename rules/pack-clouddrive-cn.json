@@ -1,0 +1,109 @@
+{
+  "id": "clouddrive-cn",
+  "name": "网盘页面推广",
+  "desc": "百度网盘/阿里云盘/夸克/115/天翼云盘 的会员推广、活动浮层与下载诱导",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='vip-banner'],[class*='vipBanner']",
+      "note": "会员横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='vip-popup'],[class*='vipPopup'],[class*='vip-dialog']",
+      "note": "会员弹窗"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='activity-dialog'],[class*='activityDialog'],[class*='activity-pop']",
+      "note": "活动浮层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='promo-banner'],[class*='promoBanner'],[class*='promo-pop']",
+      "note": "促销浮层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='open-vip'],[class*='openvip']",
+      "note": "开通会员引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='download-app'],[class*='downloadApp'],[class*='app-guide']",
+      "note": "引导下载 App"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='client-guide'],[class*='client-tip']",
+      "note": "客户端引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='side-activity'],[class*=' side-activity'],[class^='side-entrance'],[class*=' side-entrance']",
+      "note": "侧边活动入口"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='speed-up-guide'],[class*='speedup-tip']",
+      "note": "提速引导"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='limited-offer'],[class*='special-offer']",
+      "note": "限时优惠"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='activityLayer'],[id*='promoLayer'],[id*='vipLayer']",
+      "note": "活动层"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='ad-wrapper'],[class*=' ad-wrapper'],[class^='adWrapper'],[class*=' adWrapper']",
+      "note": "广告容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='share-banner'],[class*='share-tip']",
+      "note": "分享横幅"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='coupon-pop'],[class*='coupon-dialog']",
+      "note": "优惠券弹窗"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pan.baidu.com/pzone/^",
+      "note": "百度网盘运营位"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||issuecdn.baidu.com^",
+      "note": "百度运营投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||bcetch.baidu.com^",
+      "note": "百度运营投放"
+    }
+  ]
+}

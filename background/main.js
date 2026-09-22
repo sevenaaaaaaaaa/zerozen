@@ -175,7 +175,11 @@
           if (!details || details.frameId !== 0) return;
           if (!ZZ.isHttpUrl(details.url)) return;
           Main.forgetTab(details.tabId);
-          if (details.tabId >= 0) ZZ.Counts.reset(details.tabId);
+          if (details.tabId >= 0) {
+            ZZ.Counts.reset(details.tabId);
+            // 内网/NAS/在线文档等默认关闭站点：网络层整 tab 放行
+            ZZ.Dnr.setTabAllowed(details.tabId, ZZ.Store.defaultOffUrl(details.url)).catch(() => {});
+          }
           Main.init().then(() => Main.injectForTab(details.tabId, details.url));
         });
       }
@@ -191,6 +195,7 @@
       }
       if (api.tabs && api.tabs.onRemoved) {
         api.tabs.onRemoved.addListener((tabId) => {
+          ZZ.Dnr.clearTab(tabId).catch(() => {});
           cssByTab.delete(tabId);
           ZZ.Counts.reset(tabId);
           if (ZZ.Scanner && ZZ.Scanner.onTabRemoved) ZZ.Scanner.onTabRemoved(tabId);

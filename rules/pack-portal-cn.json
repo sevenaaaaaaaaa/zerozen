@@ -1,0 +1,127 @@
+{
+  "id": "portal-cn",
+  "name": "导航 / 门户浮层",
+  "desc": "上网导航（hao123/2345/360）与门户站点的对联、浮标、弹底与推广位",
+  "rules": [
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id^='BAIDU_']",
+      "note": "百度联盟容器"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[id*='duilian'],[class*='duilian']",
+      "note": "对联广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='float-ad'],[class*='floatAd'],[class*='float_ad']",
+      "note": "悬浮广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class^='side-ad'],[class*=' side-ad'],[class^='sideAd'],[class*=' sideAd'],[class^='side_ad'],[class*=' side_ad']",
+      "note": "侧栏广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='pop-ad'],[class*='popAd'],[class*='pop_ad']",
+      "note": "弹层广告"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='tuiguang'],[class*='tui-guang']",
+      "note": "推广位"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='hot-ad'],[class*='hotAd'],[id*='hot_ad']",
+      "note": "热门推广"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='adv-box'],[class*='advBox'],[class*='adv_box']",
+      "note": "广告盒"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='gg-'],[id^='gg-']",
+      "note": "广告（gg 缩写）"
+    },
+    {
+      "kind": "cosmetic",
+      "action": "hide",
+      "selector": "[class*='backdrop-ad'],[class*='bg-ad']",
+      "note": "背景广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pos.baidu.com^",
+      "note": "百度联盟投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cpro.baidu.com^",
+      "note": "百度联盟投放"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||eclick.baidu.com^",
+      "note": "百度效果广告"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||cbjs.baidu.com^",
+      "note": "百度联盟脚本"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||union.360.cn^",
+      "note": "360 联盟"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||s.360.cn^",
+      "note": "360 统计与推广"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||tanx.com^",
+      "note": "阿里妈妈交易"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||g.163.com^",
+      "note": "网易易效"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||gtimg.com/ads^",
+      "note": "腾讯广告路径"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||l.qq.com^",
+      "note": "腾讯统计曝光"
+    }
+  ]
+}

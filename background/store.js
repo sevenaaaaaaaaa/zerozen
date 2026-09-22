@@ -13,6 +13,37 @@
   };
   const SCHEMA = 1;
 
+  // 默认不启用拦截的站点（用户显式设置优先）：在线文档、NAS 远程访问、内网专用后缀
+  const DEFAULT_OFF_EXACT = new Set([
+    "docs.qq.com",
+    "docs.google.com",
+    "shimo.im",
+    "wolai.com",
+    "www.wolai.com",
+    "flowus.cn",
+    "notion.so",
+    "kdocs.cn",
+  ]);
+  const DEFAULT_OFF_SUFFIXES = [
+    ".feishu.cn",
+    ".larksuite.com",
+    ".larkoffice.com",
+    ".yuque.com",
+    ".notion.site",
+    ".kdocs.cn",
+    ".dingtalk.com",
+    ".quickconnect.to", // 群晖
+    ".myqnapcloud.com", // 威联通
+    ".ts.net", // Tailscale 内网
+    ".fnos.net", // 飞牛 fnOS
+    ".local",
+    ".lan",
+    ".internal",
+    ".home.arpa",
+    ".localdomain",
+    ".nas",
+  ];
+
   const DEFAULT_SETTINGS = {
     schema: SCHEMA,
     enabled: true,
@@ -404,11 +435,31 @@
       const s = Store.settings();
       if (!s.enabled) return false;
       const site = s.sites && s.sites[host];
+      if (!site && Store.defaultOffHost(host)) return false; // 内网/NAS/在线文档等默认不启用
       if (!site) return true;
       if (site.enabled === false) return false;
       if (site.until && site.until > Date.now()) return false;
       if (site.profile === "off") return false;
       return true;
+    },
+
+    // 内网/本地服务/在线文档默认关闭拦截，避免管理后台与文档编辑功能异常。
+    // 用户对站点做过显式设置（开关/档位/临时放行）时，以用户设置为准
+    defaultOffHost(host) {
+      if (!host) return false;
+      if (host === "localhost" || host.endsWith(".localhost")) return true;
+      // 私网/链路本地/CGNAT（Tailscale 等）IPv4
+      if (/^(10\.|127\.|0\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(host)) return true;
+      // IPv6 本地回环/链路本地/ULA
+      if (/^(::1$|f[cd][0-9a-f]{2}:|fe80:)/i.test(host)) return true;
+      if (DEFAULT_OFF_EXACT.has(host)) return true;
+      const h = "." + host;
+      for (const suffix of DEFAULT_OFF_SUFFIXES) if (h.endsWith(suffix)) return true;
+      return false;
+    },
+
+    defaultOffUrl(url) {
+      return Store.defaultOffHost(ZZ.hostOf(url || ""));
     },
 
     siteInfo(host) {
@@ -420,6 +471,9 @@
       const s = Store.settings();
       if (!s.enabled) return { profile: "off", source: "global-disabled", until: 0 };
       const site = (s.sites || {})[host] || null;
+      if (!site && Store.defaultOffHost(host)) {
+        return { profile: "off", source: "default-off", until: 0 };
+      }
       const now = Date.now();
       if (site) {
         if (site.until && site.until > now) {

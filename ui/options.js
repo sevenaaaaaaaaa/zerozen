@@ -535,6 +535,12 @@
       select.innerHTML = options.join("");
     }
     $("#bookmarkInfo").textContent = T("共 $1 个站点", res.total);
+    if (!res.total) {
+      // Arc 等浏览器的收藏存在自有体系，不会同步到标准书签接口，读到的是空树
+      $("#bookmarkInfo").textContent = T(
+        "未读到任何书签。Arc 等浏览器的收藏存放在自有体系、不暴露给标准书签接口——可把收藏导出为 HTML/文本后用下方「自定义站点列表」粘贴，或开启「读取浏览记录」扫描常访问站点"
+      );
+    }
     state.bookmarks = res.sites || [];
     mergeSites(state.bookmarks);
   }

@@ -56,6 +56,11 @@
     { id: "travel", group: "life", file: "rules/pack-travel.json", name: "旅游 / 出行", desc: "携程 / 去哪儿 / 马蜂窝 / Booking / Agoda / Trip.com" },
     { id: "edu", group: "life", file: "rules/pack-edu.json", name: "教育 / 学术 / 文档", desc: "知网 / 道客巴巴 / 豆丁 / 百度文库 / 在线课程" },
     { id: "tools", group: "life", file: "rules/pack-tools.json", name: "工具 / 网盘 / 天气", desc: "网盘下载、天气、快递、查询类高广告密度站点" },
+    { id: "local-life", group: "life", file: "rules/pack-local-life.json", name: "本地生活 / 外卖", desc: "美团/饿了么/大众点评 的开屏弹窗、下载诱导与促销浮层" },
+    { id: "clouddrive-cn", group: "life", file: "rules/pack-clouddrive-cn.json", name: "网盘页面推广", desc: "百度网盘/阿里云盘/夸克/115/天翼 的会员推广与活动浮层" },
+
+    { id: "portal-cn", group: "news", file: "rules/pack-portal-cn.json", name: "导航 / 门户浮层", desc: "上网导航（hao123/2345/360）与门户站点的对联、浮标、弹底与推广位" },
+    { id: "ai-tools", group: "news", file: "rules/pack-ai-tools.json", name: "AI 工具站", desc: "AI 导航/聚合站与工具站的推广卡、付费弹窗与营销浮层" },
   ];
 
   const CACHE_PAYLOAD = 600;

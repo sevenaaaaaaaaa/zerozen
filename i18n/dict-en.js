@@ -892,6 +892,20 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "刷新页面（应用新规则）": "Reload page (apply rules)",
   "页面已刷新": "Page reloaded",
 
+  // 品牌与新规则包 / 诊断提示
+  "零真": "ZeroZen",
+  "未读到任何书签。Arc 等浏览器的收藏存放在自有体系、不暴露给标准书签接口——可把收藏导出为 HTML/文本后用下方「自定义站点列表」粘贴，或开启「读取浏览记录」扫描常访问站点": "No bookmarks found. Arc and similar browsers keep favorites in their own system that is not exposed via the standard bookmarks API — export them to HTML/text and paste into the custom site list below, or enable history scanning",
+  "本地生活 / 外卖": "Local life / Food delivery",
+  "美团/饿了么/大众点评 的开屏弹窗、下载诱导与促销浮层": "Meituan/Ele.me/Dianping splash popups, app-download nagging and promo overlays",
+  "美团/饿了么/大众点评/飞猪 的开屏弹窗、下载诱导与促销浮层": "Meituan/Ele.me/Dianping/Fliggy splash popups, app-download nagging and promo overlays",
+  "网盘页面推广": "Cloud-drive promos",
+  "百度网盘/阿里云盘/夸克/115/天翼 的会员推广与活动浮层": "Baidu Netdisk/Aliyun Drive/Quark/115/Tianyi VIP promos and activity overlays",
+  "百度网盘/阿里云盘/夸克/115/天翼云盘 的会员推广、活动浮层与下载诱导": "Baidu Netdisk/Aliyun Drive/Quark/115/Tianyi VIP promos, activity overlays and app-download nagging",
+  "导航 / 门户浮层": "Portals & start-page overlays",
+  "上网导航（hao123/2345/360）与门户站点的对联、浮标、弹底与推广位": "hao123/2345/360 start pages and portal sites: floating ads, side banners, pop-unders and promo slots",
+  "AI 工具站": "AI tool sites",
+  "AI 导航/聚合站与工具站的推广卡、付费弹窗与营销浮层": "AI directories/aggregators and tool sites: promo cards, upsell popups and marketing overlays",
+
   // 排序
   "按时间": "By time",
   "按大小": "By size",
