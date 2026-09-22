@@ -1,23 +1,23 @@
-/* ZeroZen 现代暗色 UI —— 克制、留白、排版驱动（Raycast/Linear 式）
-   层次：近黑背景 → 单层平面卡片 → 轻量控件；accent 只用在主行动上 */
+/* ZeroZen 浅色主题 —— 苹果系统风：白卡片、浅灰底、细边框、克制的蓝色 accent
+   层次：浅灰背景 → 白色平面卡片 → 轻量控件；间距宽松，留白优先 */
 :root {
-  --zz-bg: #0b0e14;
-  --zz-panel: rgba(22, 26, 37, 0.72);
-  --zz-panel-2: rgba(255, 255, 255, 0.04);
-  --zz-glass-2: rgba(255, 255, 255, 0.04);
-  --zz-border: rgba(255, 255, 255, 0.07);
-  --zz-border-strong: rgba(255, 255, 255, 0.14);
-  --zz-text: #f0f2f8;
-  --zz-muted: #8b93a7;
-  --zz-accent: #5b9dff;
-  --zz-accent-2: #3d7bfd;
-  --zz-ok: #3ddc97;
-  --zz-warn: #fbbf24;
-  --zz-danger: #f66a6a;
+  --zz-bg: #f5f6f8;
+  --zz-panel: #ffffff;
+  --zz-panel-2: #f6f7fa;
+  --zz-glass-2: #f7f8fb;
+  --zz-border: rgba(17, 24, 39, 0.08);
+  --zz-border-strong: rgba(17, 24, 39, 0.16);
+  --zz-text: #1c2230;
+  --zz-muted: #79808f;
+  --zz-accent: #2f6bff;
+  --zz-accent-2: #2f6bff;
+  --zz-ok: #1fa971;
+  --zz-warn: #d97706;
+  --zz-danger: #e5484d;
   --zz-radius: 14px;
   --zz-radius-sm: 10px;
-  --zz-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
-  --zz-shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.32);
+  --zz-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --zz-shadow-hover: 0 6px 20px rgba(16, 24, 40, 0.1);
 }
 
 * {
@@ -26,11 +26,9 @@
 
 body {
   margin: 0;
-  background:
-    radial-gradient(60rem 28rem at 50% -12%, rgba(76, 116, 220, 0.07), transparent 62%),
-    var(--zz-bg);
+  background: var(--zz-bg);
   color: var(--zz-text);
-  font: 13px/1.5 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  font: 13.5px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -47,17 +45,15 @@ button {
   font-family: inherit;
 }
 
-/* ---------- 布局骨架：单层平面卡片 ---------- */
+/* ---------- 布局骨架 ---------- */
 
 .zz-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin: 12px 12px 0;
-  padding: 10px 6px 10px 12px;
-  background: transparent;
-  border-bottom: 0;
+  gap: 12px;
+  margin: 14px 14px 2px;
+  padding: 4px 2px;
 }
 
 .zz-brand {
@@ -65,27 +61,27 @@ button {
   align-items: center;
   gap: 9px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: 0.1px;
 }
 
 .zz-brand img {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
 }
 
 .zz-brand-sub {
   color: var(--zz-muted);
   font-weight: 500;
-  font-size: 11px;
+  font-size: 12px;
   margin-left: 2px;
 }
 
 .zz-switch {
   position: relative;
-  width: 40px;
-  height: 24px;
+  width: 42px;
+  height: 25px;
   flex: 0 0 auto;
 }
 
@@ -101,7 +97,7 @@ button {
 .zz-switch span {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(17, 24, 39, 0.14);
   border-radius: 999px;
   transition: background 0.18s ease;
   pointer-events: none;
@@ -110,27 +106,27 @@ button {
 .zz-switch span::after {
   content: "";
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
   top: 2px;
   left: 2px;
   transition: transform 0.2s cubic-bezier(0.3, 1.2, 0.6, 1);
 }
 
 .zz-switch input:checked + span {
-  background: var(--zz-accent-2);
+  background: #34c759;
 }
 
 .zz-switch input:checked + span::after {
-  transform: translateX(16px);
+  transform: translateX(17px);
 }
 
 .zz-section {
-  margin: 8px 12px 0;
-  padding: 13px 14px;
+  margin: 10px 14px 0;
+  padding: 15px 16px;
   background: var(--zz-panel);
   border: 1px solid var(--zz-border);
   border-radius: var(--zz-radius);
@@ -141,7 +137,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .zz-muted {
@@ -153,20 +149,20 @@ button {
 }
 
 .zz-host {
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 650;
+  font-size: 14.5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ---------- 统计：大数字排版，无渐变 ---------- */
+/* ---------- 统计 ---------- */
 
 .zz-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 8px 12px 0;
+  gap: 10px;
+  margin: 10px 14px 0;
 }
 
 .zz-stat {
@@ -174,14 +170,14 @@ button {
   border: 1px solid var(--zz-border);
   border-radius: var(--zz-radius-sm);
   box-shadow: var(--zz-shadow);
-  padding: 10px 8px 8px;
+  padding: 11px 8px 9px;
   text-align: center;
 }
 
 .zz-stat b {
   display: block;
-  font-size: 21px;
-  line-height: 1.25;
+  font-size: 22px;
+  line-height: 1.3;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--zz-text);
@@ -189,10 +185,9 @@ button {
 
 .zz-stat span {
   color: var(--zz-muted);
-  font-size: 11px;
+  font-size: 11.5px;
 }
 
-/* 数字变化弹跳反馈 */
 .zz-stat b.zz-bump {
   animation: zzBump 0.4s cubic-bezier(0.3, 1.4, 0.6, 1);
 }
@@ -209,12 +204,12 @@ button {
   }
 }
 
-/* ---------- 按钮：纯色主行动 + 轻量次行动 ---------- */
+/* ---------- 按钮 ---------- */
 
 .zz-actions {
   display: grid;
-  gap: 8px;
-  padding: 12px 14px;
+  gap: 9px;
+  padding: 12px 0 0;
 }
 
 .zz-btn {
@@ -222,16 +217,16 @@ button {
   color: var(--zz-text);
   border: 1px solid var(--zz-border);
   border-radius: var(--zz-radius-sm);
-  padding: 8px 13px;
+  padding: 9px 14px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 13.5px;
   text-align: center;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
 }
 
 .zz-btn:hover {
   border-color: var(--zz-border-strong);
-  background: rgba(255, 255, 255, 0.08);
+  background: #f0f1f5;
 }
 
 .zz-btn:active {
@@ -251,7 +246,7 @@ button {
 }
 
 .zz-btn-primary:hover {
-  background: #4f88f6;
+  background: #265df0;
 }
 
 .zz-btn-ghost {
@@ -261,7 +256,7 @@ button {
 
 .zz-btn-ghost:hover {
   border-color: var(--zz-border);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(17, 24, 39, 0.04);
 }
 
 .zz-btn-danger {
@@ -269,13 +264,13 @@ button {
 }
 
 .zz-btn-danger:hover {
-  border-color: rgba(246, 106, 106, 0.35);
-  background: rgba(246, 106, 106, 0.08);
+  border-color: rgba(229, 72, 77, 0.35);
+  background: rgba(229, 72, 77, 0.06);
 }
 
 .zz-btn-sm {
-  padding: 4px 10px;
-  font-size: 12px;
+  padding: 5px 11px;
+  font-size: 12.5px;
   border-radius: 8px;
 }
 
@@ -285,10 +280,10 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2px;
-  background: rgba(0, 0, 0, 0.28);
+  background: rgba(17, 24, 39, 0.06);
   border-radius: 9px;
   padding: 2px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 .zz-seg-btn {
   appearance: none;
@@ -296,8 +291,8 @@ button {
   background: transparent;
   color: var(--zz-muted);
   font: inherit;
-  font-size: 12px;
-  padding: 5px 4px;
+  font-size: 12.5px;
+  padding: 6px 4px;
   border-radius: 7px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
@@ -306,9 +301,10 @@ button {
   color: inherit;
 }
 .zz-seg-btn.active {
-  background: rgba(255, 255, 255, 0.12);
+  background: #fff;
   color: var(--zz-text);
   font-weight: 600;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
 }
 .zz-seg-btn:disabled {
   opacity: 0.5;
@@ -320,95 +316,96 @@ button {
 .zz-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 7px;
+  margin-top: 10px;
 }
 .zz-chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
-  padding: 4px 10px;
+  font-size: 12.5px;
+  padding: 5px 11px;
   border: 1px solid var(--zz-border);
   border-radius: 999px;
   cursor: pointer;
   user-select: none;
-  background: transparent;
+  background: #fff;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 .zz-chip input {
   margin: 0;
 }
 .zz-chip:has(input:checked) {
-  border-color: rgba(91, 157, 255, 0.55);
+  border-color: rgba(47, 107, 255, 0.5);
   color: var(--zz-accent);
-  background: rgba(61, 123, 253, 0.1);
+  background: rgba(47, 107, 255, 0.06);
 }
 .zz-tag {
   display: inline-block;
-  padding: 1px 7px;
+  padding: 1px 8px;
   border-radius: 6px;
   border: 1px solid var(--zz-border);
   color: var(--zz-muted);
   font-size: 11px;
   white-space: nowrap;
+  background: #fff;
 }
 
 .zz-tag-ai {
-  color: #a5b4fc;
-  border-color: rgba(99, 102, 241, 0.5);
+  color: #5b5bd6;
+  border-color: rgba(91, 91, 214, 0.35);
 }
 
 .zz-tag-user {
-  color: #7dd3fc;
-  border-color: rgba(3, 105, 161, 0.6);
+  color: #0369a1;
+  border-color: rgba(3, 105, 161, 0.35);
 }
 
 .zz-tag-builtin {
-  color: #94a3b8;
+  color: #6b7280;
 }
 
 .zz-tag-scan {
-  color: #fcd34d;
-  border-color: rgba(180, 83, 9, 0.6);
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.35);
 }
 
 /* ---------- 列表 / 卡片 / 代码 ---------- */
 
 .zz-list {
   display: grid;
-  gap: 8px;
+  gap: 9px;
 }
 
 .zz-card {
   background: var(--zz-panel-2);
   border: 1px solid var(--zz-border);
   border-radius: var(--zz-radius-sm);
-  padding: 10px 12px;
+  padding: 11px 13px;
 }
 
 .zz-code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11.5px;
   word-break: break-all;
-  background: rgba(0, 0, 0, 0.3);
+  background: #f2f3f7;
   border: 1px solid var(--zz-border);
   border-radius: 8px;
-  padding: 6px 8px;
-  margin-top: 6px;
-  color: #b9c4dd;
+  padding: 6px 9px;
+  margin-top: 7px;
+  color: #3f4757;
 }
 
 /* ---------- Toast / 进度 ---------- */
 
 .zz-toast-inline {
-  padding: 9px 13px;
+  padding: 10px 14px;
   border-radius: var(--zz-radius-sm);
   border: 1px solid var(--zz-border);
-  background: #161a25;
+  background: #fff;
   box-shadow: var(--zz-shadow-hover);
-  margin: 8px 12px;
-  font-size: 12px;
+  margin: 10px 14px;
+  font-size: 12.5px;
   animation: zzToastIn 0.28s cubic-bezier(0.3, 1.2, 0.6, 1);
 }
 
@@ -424,21 +421,21 @@ button {
 }
 
 .zz-toast-inline.ok {
-  border-color: rgba(61, 220, 151, 0.35);
-  color: #a7f3d0;
+  border-color: rgba(31, 169, 113, 0.4);
+  color: #157347;
 }
 
 .zz-toast-inline.err {
-  border-color: rgba(246, 106, 106, 0.35);
-  color: #fecaca;
+  border-color: rgba(229, 72, 77, 0.4);
+  color: #c62a2f;
 }
 
 .zz-progress {
   height: 4px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(17, 24, 39, 0.08);
   border-radius: 999px;
   overflow: hidden;
-  margin-top: 8px;
+  margin-top: 9px;
 }
 
 .zz-progress > i {
@@ -454,16 +451,16 @@ button {
 
 .zz-select {
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--zz-text);
-  background: var(--zz-panel-2);
+  background: #fff;
   border: 1px solid var(--zz-border);
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 4px 9px;
   cursor: pointer;
 }
 
 .zz-select option {
-  background: #161a25;
+  background: #fff;
   color: var(--zz-text);
 }
