@@ -20,7 +20,7 @@
 | 简介（132 字符内） | 规则引擎 + AI 识别的广告与弹窗屏蔽器，内置 7270+ 条规则，支持订阅开源列表、点选屏蔽与批量扫描。 |
 | 类别 | 生产工具 / Privacy & Security |
 | 语言 | 简体中文 + English（界面跟随浏览器语言，`default_locale` 为 en） |
-| 单一用途声明 | 屏蔽网页广告与打扰性元素（Block advertisements and intrusive page elements） |
+| 单一用途声明 | 网页净化：屏蔽网页广告与打扰性元素，并提供配套的网页媒体保存工具（Block ads and intrusive page elements, with a companion web media saver）——下载工具箱与净化同属「网页内容治理」用途，审核问询按此口径 |
 
 ## 2. 详细描述（可直接粘贴）
 
