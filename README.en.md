@@ -141,12 +141,54 @@ graph LR
 
 </details>
 
+## 🗺 Roadmap
+
+- [x] Resumable downloads & background task queue (v0.8.0)
+- [x] Create download tasks from popup + categorized task center (v0.8.0)
+- [x] Default-off for intranet / online docs (v0.8.1)
+- [ ] Chrome Web Store listing (materials ready, under review)
+- [ ] Cloud rule subscription feeds (self-hosted)
+- [ ] More site adapters & community rule sharing
+
+### Usage polish (in progress)
+
+**False-positive protection**
+
+- [x] Login/signup dialog protection: removed "hide anything with an email input" broad rules and real-login-dialog hiding on X/Taobao/JD/Weibo/Instagram/Douyu; overlay sweep now skips dialogs containing forms or captchas
+- [x] Whitelist domain inheritance: disabling a parent domain covers all subdomains (`www`/`m.`/deep), single subdomain can opt back in
+- [ ] In-page false-positive report: toolbox button that drafts an exemption rule
+- [ ] Quick undo: popup lists recently hidden elements for one-click restore
+- [ ] Golden-sample regression set (login boxes, players, carts, comment sections) run before merging new rules
+
+**Whitelist & site management**
+
+- [ ] Whitelist manager in the console: list / search / bulk delete / import & export
+- [ ] Popup shows whitelist source (this site / inherited from example.org / temporary time left)
+- [ ] One-click promote temporary pause to whitelist
+
+**UI & task details**
+
+- [ ] Per-page hit details: which packs/rules fired, disable a single rule
+- [ ] Toolbar badge with daily blocked count (optional)
+- [ ] Localized download failure reasons + one-click retry; completion notifications (optional)
+- [ ] Toolbox remembers the last active tab
+
+**Onboarding**
+
+- [ ] First-run guide: permission explanations, recommended preset subscriptions, profile picker
+- [ ] Changelog overlay after major updates
+
+**Performance & stability**
+
+- [ ] Time budget for rule application on huge pages, automatic downgrade
+- [ ] Frame-budgeted MutationObserver scheduling
+
 ## 🧑‍💻 Development
 
 Zero-dependency plain JavaScript:
 
 ```bash
-npm test             # 146 checks · rule validation · 185 assertions
+npm test             # 148 checks · rule validation · 215 assertions
 npm run build        # dist/{chrome,firefox,safari} + zip/xpi
 npm run import:lists # rebuild merged OSS rules
 ```
