@@ -1,92 +1,184 @@
-# ZeroZen Ad Cleaner
+<div align="center">
 
-[中文文档](README.md)
+# ZeroZen · 零真
 
-A cross-browser (Chrome / Firefox / Safari) ad and popup blocker: **rule engine + AI detection + bulk bookmark scanning**, with custom rule import/export.
+**Cross-browser ad & popup cleaner — rule engine + AI detection + resumable download toolbox**
 
-Ships with 35 rule packs and 7100+ rules (deduplicated and merged from EasyList / AdGuard / uBlock and other open lists), covering search engines, video and live-streaming sites, social platforms, forums, developer communities, marketplaces, download sites, adult sites, and regional sites across Japan, Korea, Russia, Europe, South-East Asia, India, Latin America and Greater China.
+[![Version](https://img.shields.io/badge/version-0.8.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
+[![Rules](https://img.shields.io/badge/rules-39%20packs%20·%207270-1fa971)](#-rules)
+[![Chrome](https://img.shields.io/badge/Chrome%20%2F%20Edge%20%2F%20Arc-MV3-4285F4)](#-install)
+[![Firefox](https://img.shields.io/badge/Firefox-128%2B-FF7139)](#-install)
+[![Safari](https://img.shields.io/badge/Safari-macOS%2013%2B-0FB5EE)](#-install)
+[![License](https://img.shields.io/badge/license-MIT-grey)](#-licence)
 
-## Features
+100% local · no backend · never collects or uploads any browsing data
 
-| Capability | What it does |
-| --- | --- |
-| Network blocking | Dynamic `declarativeNetRequest` rules block ad networks, tracking domains and ad endpoints |
-| Cosmetic cleaning | CSS hiding plus DOM removal for ad slots, feed ads and sticky overlays |
-| Popup guard | Hijacks gesture-less `window.open` and notification prompts in the page world; stops pop-unders and redirect hijacks |
-| YouTube | Hides home/watch ad slots, skips in-video ads, suppresses anti-adblock dialogs |
-| AI detection | Sends a **structured description** of page elements to your own OpenAI-compatible endpoint to catch native ads, fake download buttons and site-specific popups, then writes CSS rules |
-| Element picker | `Alt+Z` or the context menu to click an element and turn it into a rule (hide / remove / allow, this site or everywhere) |
-| Rule subscriptions | Subscribe to EasyList, anti-AD, AdGuard and any other http(s) filter list; refreshed on a schedule with conditional requests and mirror fallback |
-| Bulk scan | Read your bookmarks or paste a site list, then fast-scan (raw HTML) or rendered-scan (silent background tabs) to generate per-site rules, optionally reviewed by AI |
-| Rule management | Toggle each built-in pack; import custom rules as JSON, a subset of Adblock syntax or a plain domain list; export as JSON or Adblock text |
-| Protection levels | Compatible / Standard / Strict, per site from the popup |
-| Temporary pause | Allow the current site for N minutes (30 by default), restored automatically |
-| Anti-adblock fallback | Detects multilingual anti-adblock walls and drops to Compatible, then to a temporary pause, so pages keep working |
-| Autopilot | Finds frequently visited sites in your history and optimises rules for them; **local models only** (Ollama / LM Studio) — nothing leaves your machine |
-| Auto-learning | Learns selector patterns from manual blocks, confirmed AI findings and scan results; promotes a pattern to a generic rule once it shows up on several sites |
-| Clean view & reader | Strip navigation, sidebars and overlays, or extract the article into a distraction-free view and save it as Markdown |
-| Download toolbox | Sniffs m3u8/mpd streams, finds page images, collects file-host links and access codes, and includes a download manager with multi-threaded ranged downloads |
-| Statistics | Per-site counts of hidden elements, blocked requests and blocked popups, with a per-page badge |
+[Install](#-install) · [Features](#-features) · [Rules](#-rules) · [AI detection](#-ai-detection) · [Download toolbox](#-download-toolbox) · [Development](#-development)
 
-## Install
+中文说明：[README.md](README.md)
+
+</div>
+
+---
+
+## ✨ Features
+
+**🛡 Full-stack cleaning** — network-level `declarativeNetRequest` blocking + cosmetic CSS hide/remove + popup guard (hijacks gesture-less `window.open`) + feed gap auto-repair, four layers working together
+
+**🧠 AI detection** — send structured element descriptions to **your own** OpenAI-compatible endpoint (OpenAI / DeepSeek / GLM / Qwen / SiliconFlow / local Ollama) to catch native ads and fake download buttons; off by default, cached and rate-limited
+
+**🎯 Pick & block** — `Alt+Z` any element to create a hide/remove/allow rule; learns selector patterns from AI results and bulk scans, generalizes them across sites
+
+**📡 Filter subscriptions** — 10 presets including EasyList / EasyPrivacy / anti-AD / AdGuard / uBlock / CJX, with conditional auto-update, mirror failover, and Adblock / hosts / domain-list / JSON support
+
+**⬇️ Download toolbox** — video sniffing (finds streams without pressing play) → m3u8 decryption & merge → **chunk-level resumable downloads** → auto file categorization; runs in the background, survives popup close
+
+**📖 Reader mode** — one-click article extraction with a page-settle animation; Clean View hides nav/sidebar/comments in one tap
+
+**⚡ LAN-friendly** — disabled by default on private networks / NAS / router consoles / online docs (Feishu, Tencent Docs, Notion…), so admin panels and document editing just work
+
+**🌍 39 rule packs · 7,270 rules** — covering CN/JP/KR/RU/EU/SEA/IN/LATAM sites, each pack individually switchable
+
+## 🚀 Install
 
 ### Chrome / Edge / Brave / Arc
 
-1. Open `chrome://extensions` and turn on Developer mode
-2. "Load unpacked" → pick this folder (or `dist/chrome`)
-3. Click the toolbar icon → "Open the console"
+> Chrome 105+
 
-Requires Chrome 105+.
+1. Clone or download this repo
+2. Open `chrome://extensions` → enable **Developer mode**
+3. **Load unpacked** → select **`dist/chrome`** (or the repo root)
 
 ### Firefox
 
-1. Open `about:debugging#/runtime/this-firefox`
-2. "Load Temporary Add-on" → pick `manifest.json` (or `dist/firefox/manifest.json`)
-3. For everyday use install `dist/zerozen-firefox-0.6.0.xpi` from `about:addons`
+> Firefox 128+
 
-Requires Firefox 128+.
+Load `dist/firefox/manifest.json` via about:debugging, or install `dist/zerozen-firefox-0.8.1.xpi` for long-term use.
 
 ### Safari (macOS 13+ / iOS 16.4+)
 
 ```bash
-npm run build          # produces dist/safari
-npm run build:safari   # converts it with xcrun safari-web-extension-converter
+npm run build && npm run build:safari
 ```
 
-## Language
+Run once in Xcode, then enable ZeroZen in Safari settings.
 
-The interface follows your browser's UI language: Chinese browsers get Chinese, everything else gets English. You can pin it under **Rules → Interface language** (Follow the browser / 简体中文 / English).
+## 🛡 Privacy
 
-Translations live in `i18n/dict-en.js` (extension pages and background) and `i18n/dict-en-content.js` (content scripts). The key of every entry is the Chinese source string, so adding a new string means adding one line to the dictionary; `npm run check` fails when a Chinese string has no translation or when the `$1` placeholders don't line up. Strings that must not be translated (ad-detection keywords, download folder names, brand names) are listed in `i18n/not-translated.json`.
+| Promise | Detail |
+| --- | --- |
+| 🚫 No backend | No servers, no analytics, never uploads browsing data |
+| 🔒 Blind to network traffic | Blocking runs on the browser's `declarativeNetRequest` engine |
+| 🔑 Opt-in permissions | `bookmarks` / `history` / `downloads` / `webRequest` requested on first use, revocable anytime |
+| 🤖 Your AI, your data | AI requests go straight to the endpoint you configure; element descriptions only, never page text or screenshots |
 
-## AI detection
+Full policy: [docs/privacy-policy.md](docs/privacy-policy.md)
 
-Console → "AI detection": tick "Enable AI detection", then point it at any OpenAI-compatible endpoint (OpenAI, DeepSeek, Zhipu GLM, Qwen, SiliconFlow, or a local Ollama on `http://127.0.0.1:11434/v1`).
+## 🧩 Rules
 
-**Privacy**: only a structured description of each element is sent (tag name, class, id, size, position, and up to 140 characters of text) plus the page URL and title. Page content, screenshots and cookies are never uploaded, and the short text and attributes can be turned off. Requests go straight to the endpoint you configured — there is no relay.
+**39 rule packs, 7,270 rules**, individually switchable, with word-boundary selector hygiene to avoid false positives. Conflict order: custom rules > built-in packs > subscriptions.
 
-## Permissions
+<details>
+<summary><b>All rule packs</b></summary>
 
-Requested at install time: `storage`, `unlimitedStorage`, `declarativeNetRequest`, `scripting`, `tabs`, `webNavigation`, `contextMenus`, `alarms`, `activeTab`, and http(s) host access.
+| Group | Packs | Coverage |
+| --- | --- | --- |
+| Common | Core / Ad networks / Annoyances / Long-tail / OSS merge | Generic slots + 49 ad networks; Taboola/Outbrain/Baidu Union/Adsterra; cookie walls, paywalls, app nagging; merged EasyList/AdGuard/uBlock/CJX/1Hosts |
+| Search & social | Search / CN social / Global social / Forums / Zhihu / Reddit / LinkedIn | Google/Baidu/Bing ads; Weibo/Xiaohongshu/Douban; X/Facebook/TikTok; Discuz/Hupu/NGA |
+| Video | YouTube / CN video / Live | In-video ad skipping; Bilibili/iQiyi/Youku/Douyin; Douyu/Huya/Twitch |
+| News & shopping | Native ads / Tech communities / E-commerce / Portal overlays / AI tool sites | CSDN/Juejin; Taobao/JD/Amazon; hao123/2345/360 overlays; AI directories |
+| Media | Music / Gaming / Sports | Spotify/NetEase Music; IGN/3DM; ESPN/LiveScore |
+| Life | Finance / Travel / Education / Tools & drives / Local life / Cloud-drive promos | Eastmoney/Xueqiu; Ctrip/Booking; CNKI; Meituan/Ele.me popups; Baidu Netdisk/Quark promos |
+| Regions | JP / KR / RU / EU / SEA / IN / LATAM / HK-TW | Yahoo!JAPAN, Naver, Yandex, Bild/Le Monde, VnExpress, Times of India, UOL, Bahamut/HK01 and regional ad networks |
+| Vertical | Warez / Adult | Fake download buttons; ExoClick/JuicyAds networks |
 
-Requested on demand, revocable at any time from **Stats & diagnostics → Optional permissions**: `bookmarks` (bulk scan), `history` (autopilot), `downloads` (reader saving, video, images, downloader), `webRequest` (blocking counters and video sniffing).
+</details>
 
-There is no backend server and no browsing data is ever collected or uploaded. See [docs/privacy-policy.en.md](docs/privacy-policy.en.md).
+Custom rules via element picker, AI detection, bulk scan, or manual import (Adblock / hosts / domain list / JSON). Shortcuts: <kbd>Alt+Z</kbd> pick & block · <kbd>Alt+A</kbd> AI scan page.
 
-## Development
+## 🤖 AI detection
 
-Plain JavaScript, no build step — load the source folder directly.
+Point it at any OpenAI-compatible endpoint in the console — OpenAI, DeepSeek, GLM, Qwen, SiliconFlow, or local Ollama. Only structured element descriptions are sent (never page text or screenshots), with per-run limits and a 14-day cache. Results land in a review queue, or auto-apply above your confidence threshold.
+
+## ⬇️ Download toolbox
+
+Sniff → download → merge → categorize → manage:
+
+- Chunk-level resumable downloads (IndexedDB persisted), 1–12 threads, best-quality auto-selection, AES-128 decryption, expired-URL auto-refresh
+- Integrity-checked merge to `.mp4`/`.ts`, cache auto-cleanup on success
+- Task center in the popup with category/state filters, five sort modes, live speed; failure reasons in plain language with one-click GitHub diagnostics
+
+<details>
+<summary><b>Architecture</b></summary>
+
+```mermaid
+graph LR
+    subgraph Page
+        CS[Content scripts<br/>CSS cleaning · popup guard · detection · sniffing · flow repair · FX]
+    end
+    subgraph Background SW
+        RI[Rule index<br/>CSS/DNR compile] --> DNR[declarativeNetRequest]
+        AI[AI client]
+        SUB[Subscriptions]
+        SNIFF[Sniffer store]
+        MSG[Message router]
+    end
+    subgraph Extension pages
+        POP[Popup<br/>cleaning · media · tasks]
+        TBX[Toolbox<br/>queue runner · resume engine]
+        OPT[Console<br/>rules/AI/scan/stats]
+    end
+    subgraph Local
+        IDB[(IndexedDB<br/>chunk cache)]
+        STORE[(chrome.storage)]
+    end
+    CS <--> MSG
+    POP & TBX & OPT <--> MSG
+    TBX --> IDB
+    RI --> STORE
+    DNR --> NET[(network layer)]
+```
+
+</details>
+
+## 🧑‍💻 Development
+
+Zero-dependency plain JavaScript:
 
 ```bash
-npm run check       # syntax, manifest references, rule pack ids, i18n completeness
-npm run validate    # rule pack contents + engine compilation (selector safety, DNR budget)
-npm run selftest    # sandboxed self-test of parsing, import/export, DNR, profiles, subscriptions, AI, learning, i18n
-npm test            # all three
-npm run build       # produces dist/{chrome,firefox,safari} plus the zip/xpi
+npm test             # 146 checks · rule validation · 185 assertions
+npm run build        # dist/{chrome,firefox,safari} + zip/xpi
+npm run import:lists # rebuild merged OSS rules
 ```
 
-Run `npm test` after changing any rule pack or user-facing string.
+Directories: `background/` engine · `content/` page scripts · `ui/` three surfaces · `rules/` 39 packs · `i18n/` dictionaries
 
-## Licence
+## ⚠️ Known limitations
 
-The built-in rule packs are original work. The "Merged open-source lists" pack is generated by `npm run import:lists` from EasyList, EasyPrivacy, AdGuard, uBlock Origin, CJX, 1Hosts and Peter Lowe's list; see [docs/oss-sources.md](docs/oss-sources.md) for each list's licence.
+<details>
+<summary><b>Expand</b></summary>
+
+- YouTube in-video ads use mute+skip; rare live/long ads may flash for a moment
+- Quick scan can't see JS-injected ads; render scan is bounded by a 20s timeout
+- Large subscriptions are bounded by the dynamic-rule budget (4,500 default, ~30,000 on Chrome 121+)
+- m3u8 AES-128 supported; SAMPLE-AES/DRM is not
+- Multi-threaded downloads need server `Range` support, 2GB cap; background tasks run in the toolbox tab
+- Safari lacks the bookmarks API; use the custom site list for bulk scans
+
+</details>
+
+## 💛 Pay-what-you-want
+
+Reader save, video sniffing, image discovery and netdisk collection are free — a support link sits in the console if you find them useful.
+
+## 📄 Licence
+
+[MIT](LICENSE) · OSS merge rules generated from EasyList / EasyPrivacy / AdGuard / uBlock Origin / CJX / 1Hosts / Peter Lowe, see [docs/oss-sources.md](docs/oss-sources.md)
+
+---
+
+<div align="center">
+
+**If ZeroZen helps you, consider starring ⭐ the repo**
+
+</div>
