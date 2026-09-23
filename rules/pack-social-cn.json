@@ -56,15 +56,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": ".login-layer",
-      "note": "微博登录浮层",
-      "domains": [
-        "weibo.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": ".login-wrap",
       "note": "微博登录浮层",
       "domains": [

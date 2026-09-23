@@ -276,35 +276,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": "[data-testid='loginModal']",
-      "note": "X 登录弹窗",
-      "domains": [
-        "twitter.com",
-        "x.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[data-testid='sheetDialog']:has([data-testid='loginButton'])",
-      "note": "X 登录引导弹层",
-      "domains": [
-        "twitter.com",
-        "x.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='LoginModal']",
-      "note": "Instagram 登录弹窗",
-      "domains": [
-        "instagram.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": "div[role='dialog']:has([name='username'])",
       "note": "Instagram 登录弹窗",
       "domains": [

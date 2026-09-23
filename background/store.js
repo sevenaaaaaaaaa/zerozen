@@ -434,13 +434,32 @@
     siteEnabled(host) {
       const s = Store.settings();
       if (!s.enabled) return false;
-      const site = s.sites && s.sites[host];
-      if (!site && Store.defaultOffHost(host)) return false; // 内网/NAS/在线文档等默认不启用
-      if (!site) return true;
+      const sites = s.sites || {};
+      const chain = Store.siteChain(host);
+      const site = sites[chain[0]];
+      if (!site) {
+        for (let i = 1; i < chain.length; i++) {
+          const anc = sites[chain[i]];
+          if (anc && anc.enabled === false) return false;
+        }
+        if (Store.defaultOffHost(host)) return false; // 内网/NAS/在线文档等默认不启用
+        return true;
+      }
       if (site.enabled === false) return false;
       if (site.until && site.until > Date.now()) return false;
       if (site.profile === "off") return false;
       return true;
+    },
+
+    // host → [自身, 父域, ..., 基础域（两段）]，IP/单段主机只返回自身。
+    // 用于白名单继承：在父域加入白名单时覆盖全部子域
+    siteChain(host) {
+      const h = String(host || "").toLowerCase().replace(/\.$/, "");
+      if (!h || !h.includes(".") || /^\d{1,3}(\.\d{1,3}){3}$/.test(h) || h.includes(":")) return [h];
+      const parts = h.split(".");
+      const out = [];
+      for (let i = 0; i < parts.length - 1; i++) out.push(parts.slice(i).join("."));
+      return out;
     },
 
     // 内网/本地服务/在线文档默认关闭拦截，避免管理后台与文档编辑功能异常。
@@ -470,9 +489,17 @@
     profileFor(host) {
       const s = Store.settings();
       if (!s.enabled) return { profile: "off", source: "global-disabled", until: 0 };
-      const site = (s.sites || {})[host] || null;
-      if (!site && Store.defaultOffHost(host)) {
-        return { profile: "off", source: "default-off", until: 0 };
+      const sites = s.sites || {};
+      const chain = Store.siteChain(host);
+      const site = sites[chain[0]] || null;
+      if (!site) {
+        for (let i = 1; i < chain.length; i++) {
+          const anc = sites[chain[i]];
+          if (anc && anc.enabled === false) return { profile: "off", source: "site-disabled", until: 0 };
+        }
+        if (Store.defaultOffHost(host)) {
+          return { profile: "off", source: "default-off", until: 0 };
+        }
       }
       const now = Date.now();
       if (site) {
@@ -504,8 +531,7 @@
       const cur = Object.assign({}, sites[host] || {});
       const p = patch || {};
       if (p.enabled !== undefined) {
-        if (p.enabled === true) delete cur.enabled;
-        else cur.enabled = false;
+        cur.enabled = !!p.enabled;
       }
       if (p.profile !== undefined) {
         if (p.profile === null || p.profile === "default") delete cur.profile;

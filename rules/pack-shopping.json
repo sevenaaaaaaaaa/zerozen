@@ -86,26 +86,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": ".login-box",
-      "note": "淘宝登录弹窗",
-      "domains": [
-        "taobao.com",
-        "tmall.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='login-panel']",
-      "note": "淘宝登录面板",
-      "domains": [
-        "taobao.com",
-        "tmall.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": "[class*='coupon-float']",
       "note": "优惠券浮层",
       "domains": [
@@ -192,26 +172,6 @@
       "action": "hide",
       "selector": "[class*=' ad-container']",
       "note": "京东广告容器",
-      "domains": [
-        "jd.com",
-        "jd.hk"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": ".login-box",
-      "note": "京东登录弹窗",
-      "domains": [
-        "jd.com",
-        "jd.hk"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='login-dialog']",
-      "note": "京东登录弹窗",
       "domains": [
         "jd.com",
         "jd.hk"

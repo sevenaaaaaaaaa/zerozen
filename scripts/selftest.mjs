@@ -225,6 +225,22 @@ await S.updateSite("site.example.com", { clearAuto: true });
 assert(S.profileFor("site.example.com").profile === "standard", "clearAuto restores global profile");
 assert(S.profileFor("other.example.com").profile === "standard", "unrelated host uses global profile");
 
+console.log("\n白名单子域继承");
+
+await S.updateSite("example.org", { enabled: false });
+assert(S.siteEnabled("example.org") === false, "whitelist disables base host");
+assert(S.siteEnabled("www.example.org") === false, "whitelist covers www subdomain");
+assert(S.siteEnabled("m.www.example.org") === false, "whitelist covers deep subdomains");
+assert(S.profileFor("www.example.org").profile === "off", "profileFor inherits whitelist off");
+assert(S.profileFor("www.example.org").source === "site-disabled", "inherited whitelist source");
+assert(S.siteEnabled("93.184.216.34") === true, "ip hosts have no chain inheritance");
+await S.updateSite("vip.example.org", { enabled: true });
+assert(S.siteEnabled("vip.example.org") === true, "explicit site enable beats inherited whitelist");
+await S.updateSite("vip.example.org", { clear: true });
+assert(S.siteEnabled("vip.example.org") === false, "removing explicit enable restores inherited whitelist");
+await S.updateSite("example.org", { enabled: true });
+assert(S.siteEnabled("www.example.org") === true, "base host re-enable clears inheritance");
+
 console.log("\n规则订阅");
 
 const subSandbox = makeSandbox();

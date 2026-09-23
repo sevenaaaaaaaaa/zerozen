@@ -17,7 +17,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | 名称 | ZeroZen 广告净化器（英文：ZeroZen Ad Cleaner，由 `_locales` 按浏览器语言切换） |
-| 简介（132 字符内） | 规则引擎 + AI 识别的广告与弹窗屏蔽器，内置 7295+ 条规则，支持订阅开源列表、点选屏蔽与批量扫描。 |
+| 简介（132 字符内） | 规则引擎 + AI 识别的广告与弹窗屏蔽器，内置 7283+ 条规则，支持订阅开源列表、点选屏蔽与批量扫描。 |
 | 类别 | 生产工具 / Privacy & Security |
 | 语言 | 简体中文 + English（界面跟随浏览器语言，`default_locale` 为 en） |
 | 单一用途声明 | 网页净化：屏蔽网页广告与打扰性元素，并提供配套的网页媒体保存工具（Block ads and intrusive page elements, with a companion web media saver）——下载工具箱与净化同属「网页内容治理」用途，审核问询按此口径 |
@@ -27,7 +27,7 @@
 ```
 ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 
-• 内置 41 个规则包、7295+ 条规则，覆盖搜索、视频、社交、论坛、电商、资讯与多语区站点
+• 内置 41 个规则包、7283+ 条规则，覆盖搜索、视频、社交、论坛、电商、资讯与多语区站点
 • 订阅 EasyList / EasyPrivacy / anti-AD / AdGuard 等开源过滤列表，按周期自动更新
 • 网络拦截由浏览器的 declarativeNetRequest 完成，扩展看不到任何请求内容
 • Alt+Z 点选页面元素直接生成规则，支持隐藏 / 移除 / 放行三种处理
@@ -45,7 +45,7 @@ ZeroZen 是一个纯本地运行的广告与弹窗净化扩展。
 ```
 ZeroZen is a fully local ad and popup cleaner.
 
-• 41 built-in rule packs, 7295+ rules covering search, video, social, forums, shopping, news and sites across Japan, Korea, Russia, Europe, South-East Asia, India, Latin America and Greater China
+• 41 built-in rule packs, 7283+ rules covering search, video, social, forums, shopping, news and sites across Japan, Korea, Russia, Europe, South-East Asia, India, Latin America and Greater China
 • Subscribe to EasyList / EasyPrivacy / anti-AD / AdGuard and any other filter list, refreshed automatically
 • Network blocking runs on the browser's declarativeNetRequest engine — the extension never sees request contents
 • Press Alt+Z to click any element and turn it into a rule (hide / remove / allow)

@@ -5,7 +5,7 @@
 **跨浏览器广告与弹窗净化扩展 —— 规则引擎 + AI 识别 + 断点续传下载工具箱**
 
 [![Version](https://img.shields.io/badge/version-0.8.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
-[![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207295-1fa971)](#-规则)
+[![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207283-1fa971)](#-规则)
 [![Chrome](https://img.shields.io/badge/Chrome%20%2F%20Edge%20%2F%20Arc-MV3-4285F4)](#-安装)
 [![Firefox](https://img.shields.io/badge/Firefox-128%2B-FF7139)](#-安装)
 [![Safari](https://img.shields.io/badge/Safari-macOS%2013%2B-0FB5EE)](#-安装)
@@ -38,7 +38,7 @@ English: [README.en.md](README.en.md)
 
 **⚡ 内网友好** — 私网 / NAS / 路由器后台 / 在线文档（飞书、腾讯文档、Notion…）**默认不启用**，管理后台与文档编辑零干扰
 
-**🌍 41 个规则包 · 7295 条规则** — 覆盖中/日/韩/俄/欧/东南亚/印度/拉美/港澳台站点，全部可独立开关
+**🌍 41 个规则包 · 7283 条规则** — 覆盖中/日/韩/俄/欧/东南亚/印度/拉美/港澳台站点，全部可独立开关
 
 <div align="center">
 
@@ -88,7 +88,7 @@ Xcode 中 Run 一次后，Safari → 设置 → 扩展 → 勾选零真并允许
 
 ## 🧩 规则
 
-内置 **41 个规则包、7295 条规则**，按分组独立开关；选择器一律做词边界处理（`[class^='ad-slot']` 而非 `[class*='ad-slot']`），不会误伤 `download-slot` 这类正常类名。冲突时：自定义规则 > 内置包 > 订阅规则。
+内置 **41 个规则包、7283 条规则**，按分组独立开关；选择器一律做词边界处理（`[class^='ad-slot']` 而非 `[class*='ad-slot']`），不会误伤 `download-slot` 这类正常类名。冲突时：自定义规则 > 内置包 > 订阅规则。
 
 <details>
 <summary><b>📋 全部规则包一览（点击展开）</b></summary>

@@ -215,6 +215,11 @@
       const emptyFull = fullish && el.childElementCount === 0 && (cs.cursor === "pointer" || z >= 9999);
       const clickjack = fullish && z >= 100 && (parseFloat(cs.opacity || "1") < 0.2 || cs.backgroundColor === "transparent" || cs.backgroundColor === "rgba(0, 0, 0, 0)");
       if (!(iframeAd || (fullish && (adName || iframe)) || emptyFull || clickjack || (stickyBar && (adName || iframe)))) continue;
+      let interactive = false;
+      try {
+        interactive = !!el.querySelector("input, textarea, select, form, iframe[src*='captcha'], iframe[src*='recaptcha']");
+      } catch (e) {}
+      if (interactive) continue;
       try {
         el.style.setProperty("display", "none", "important");
         el.setAttribute("data-zz-overlay", "1");

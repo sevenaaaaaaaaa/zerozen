@@ -51,15 +51,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": "[class*='login-dialog']",
-      "note": "斗鱼登录弹窗",
-      "domains": [
-        "douyu.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": ".ad-wrap",
       "note": "虎牙广告容器",
       "domains": [
