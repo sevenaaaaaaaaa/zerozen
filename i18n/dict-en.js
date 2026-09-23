@@ -782,6 +782,15 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "uAssets 官方补充规则": "Official uAssets supplementary rules",
   "广告与追踪服务器域名列表": "A list of ad and tracking server domains",
   "免费个人使用（见 pgl.yoyo.org）": "Free for personal use (see pgl.yoyo.org)",
+  "见 phishing.army 条款（商用前确认）": "See phishing.army terms (confirm before commercial use)",
+  "非商业免费（见 abuse.ch 条款）": "Free for non-commercial use (see abuse.ch terms)",
+  "反钓鱼域名聚合列表（体量大，按订阅上限截断）": "Aggregated anti-phishing domain list (large; truncated to the subscription limit)",
+  "反钓鱼域名列表（体量大，按订阅上限截断）": "Anti-phishing domain list (large; truncated to the subscription limit)",
+  "abuse.ch 恶意软件分发域名，拦假 App 下载链": "abuse.ch malware distribution domains; blocks fake app download chains",
+  "仿冒 / 反诈": "Impersonation / Anti-fraud",
+  "已证实的仿冒站与假 App 下载页；钓鱼站寿命短，请配合订阅页的反钓鱼源使用": "Confirmed impersonation sites and fake app download pages; phishing domains are short-lived, pair them with the anti-phishing sources on the subscriptions page",
+  "盗版站广告基建": "Piracy-site ad infrastructure",
+  "影视/资源盗版站共用的弹窗联盟、TDS 中转与 DGA 注入源，跨站生效": "Popup networks, TDS relays and DGA injection sources shared by streaming/download piracy sites; effective cross-site",
   "纯域名拦截，误杀率低": "Domain-only blocking with few false positives",
 
   // 下载目录默认值：首次安装时按界面语言生成，之后以用户保存的值为准

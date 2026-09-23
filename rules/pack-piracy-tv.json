@@ -1,0 +1,115 @@
+{
+  "id": "piracy-tv",
+  "name": "盗版站广告基建",
+  "desc": "影视/资源盗版站共用的弹窗联盟、TDS 中转与 DGA 注入源，跨站生效",
+  "rules": [
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||omnatuor.com^",
+      "note": "PropellerAds 系 TDS（盗版站恶意广告主力，Infoblox 2025-09）"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||propeller-tracking.com^",
+      "note": "PropellerAds 跟踪"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||in-page-push.com^",
+      "note": "PropellerAds 网页推送"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||inpagepush.com^",
+      "note": "PropellerAds 网页推送"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||pushimg.com^",
+      "note": "PropellerAds 推送素材"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||propu.sh^",
+      "note": "PropellerAds 点击中转"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||onclkds.com^",
+      "note": "PropellerAds clickunder（Master134 战役）"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||effectivegatecpm.com^",
+      "note": "CPM 弹窗网关（Aeza 抗封托管，2026-02 被制裁）"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||highperformancecpmgate.com^",
+      "note": "CPM 弹窗网关"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||highrevenuenetwork.com^",
+      "note": "CPM 弹窗网关"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||variouscreativeformats.com^",
+      "note": "CPM 弹窗网关"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||topdisplaynetwork.com^",
+      "note": "CPM 弹窗网关"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||sourshaped.com^",
+      "note": "弹窗 TDS"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||skinnycrawlinglax.com^",
+      "note": "弹窗 TDS"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||professionaltrafficmonitor.com^",
+      "note": "弹窗 TDS"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||agitatechampionship.com^",
+      "note": "弹窗 TDS"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||clipzag.com^",
+      "note": "弹窗诱饵站"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||stream.sanction.tv^",
+      "note": "盗版站 DGA 广告注入源（下游每 3 小时轮换 .cfd/.rest/.cyou）"
+    }
+  ]
+}

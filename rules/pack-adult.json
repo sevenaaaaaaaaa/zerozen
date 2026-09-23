@@ -96,6 +96,12 @@
     {
       "kind": "network",
       "action": "block",
+      "filter": "||clickadu.net^",
+      "note": "Clickadu 投放域"
+    },
+    {
+      "kind": "network",
+      "action": "block",
       "filter": "||adcash.com^",
       "note": "Adcash"
     },

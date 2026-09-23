@@ -1,0 +1,43 @@
+{
+  "id": "antifraud",
+  "name": "仿冒 / 反诈",
+  "desc": "已证实的仿冒站与假 App 下载页；钓鱼站寿命短，请配合订阅页的反钓鱼源使用",
+  "rules": [
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||deepseek-app.org^",
+      "note": "假 DeepSeek 官网下载站（伪备案号，2026-08 曝光）"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||www-movie.gitlab.io^",
+      "note": "假「人人影视回归」站"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||app.chabh.com.cn^",
+      "note": "假「茶杯狐官网」聚合站"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||hanjuju.com.cn^",
+      "note": "假「韩剧tv」App 下载页"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||gov.swcko.cn^",
+      "note": "伪装政府域的假币安下载站"
+    },
+    {
+      "kind": "network",
+      "action": "block",
+      "filter": "||news.vgmsw.cn^",
+      "note": "假「欧易下载中心」SEO 站"
+    }
+  ]
+}

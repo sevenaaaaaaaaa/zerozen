@@ -92,6 +92,30 @@
       url: "https://cdn.jsdelivr.net/gh/badmojr/1Hosts@master/Lite/adblock.txt",
       mirror: "https://raw.githubusercontent.com/badmojr/1Hosts/master/Lite/adblock.txt",
     },
+    {
+      id: "phishing-army",
+      name: "Phishing Army",
+      desc: "反钓鱼域名聚合列表（体量大，按订阅上限截断）",
+      license: "见 phishing.army 条款（商用前确认）",
+      url: "https://phishing.army/download/phishing_army_blocklist_extended.txt",
+      mirror: "",
+    },
+    {
+      id: "blocklist-phishing",
+      name: "Blocklist Project (Phishing)",
+      desc: "反钓鱼域名列表（体量大，按订阅上限截断）",
+      license: "MIT",
+      url: "https://blocklistproject.github.io/Lists/phishing.txt",
+      mirror: "https://raw.githubusercontent.com/blocklistproject/Lists/master/phishing.txt",
+    },
+    {
+      id: "urlhaus",
+      name: "URLhaus",
+      desc: "abuse.ch 恶意软件分发域名，拦假 App 下载链",
+      license: "非商业免费（见 abuse.ch 条款）",
+      url: "https://urlhaus.abuse.ch/downloads/hostfile/",
+      mirror: "",
+    },
   ];
 
   let alarmBound = false;
