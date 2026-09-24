@@ -10,7 +10,7 @@
 
   function bucket(tabId) {
     if (!tabs.has(tabId)) {
-      tabs.set(tabId, { network: 0, cosmetic: 0, removed: 0, popups: 0, texts: 0, hosts: new Set() });
+      tabs.set(tabId, { network: 0, cosmetic: 0, removed: 0, popups: 0, texts: 0, hosts: new Set(), hits: {} });
     }
     return tabs.get(tabId);
   }
@@ -64,7 +64,7 @@
 
     get(tabId) {
       const b = tabs.get(tabId);
-      if (!b) return { network: 0, cosmetic: 0, removed: 0, popups: 0, texts: 0, total: 0 };
+      if (!b) return { network: 0, cosmetic: 0, removed: 0, popups: 0, texts: 0, total: 0, packs: [] };
       return {
         network: b.network,
         cosmetic: b.cosmetic,
@@ -72,7 +72,33 @@
         popups: b.popups,
         texts: b.texts,
         total: b.network + b.cosmetic + b.removed + b.popups + b.texts,
+        packs: Counts.hitsByPack(tabId),
       };
+    },
+
+    addHits(tabId, host, hits) {
+      const b = bucket(tabId);
+      b.hits = b.hits || {};
+      for (const [sel, n] of Object.entries(hits || {})) {
+        if (typeof n !== "number" || n <= 0) continue;
+        b.hits[sel] = (b.hits[sel] || 0) + Math.min(n, 500);
+      }
+    },
+
+    // 本页命中按来源归因：@user=自定义规则，@other=未匹配（订阅/已更新），否则规则包 id
+    hitsByPack(tabId) {
+      const b = tabs.get(tabId);
+      const hits = (b && b.hits) || {};
+      const agg = new Map();
+      for (const [sel, n] of Object.entries(hits)) {
+        let owner = null;
+        try {
+          owner = ZZ.RuleIndex ? ZZ.RuleIndex.selectorOwner(sel) : null;
+        } catch (e) {}
+        const key = owner ? (owner.source === "user" ? "@user" : owner.pack || "@other") : "@other";
+        agg.set(key, (agg.get(key) || 0) + n);
+      }
+      return Array.from(agg, ([key, n]) => ({ key, n })).sort((a, b2) => b2.n - a.n);
     },
 
     reset(tabId) {

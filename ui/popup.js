@@ -79,6 +79,29 @@
     const dnr = state.dnr || {};
     $("#engineInfo").textContent =
       T("网络规则 $1 条 · 外观规则 $2 条", dnr.applied || 0, (state.index && state.index.cosmetic) || 0);
+    const hitList = (state.counts && state.counts.packs) || [];
+    const hitSection = $("#hitSection");
+    if (hitList.length) {
+      const nameOf = (key) => {
+        if (key === "@user") return T("自定义规则");
+        if (key === "@other") return T("其他来源");
+        const pack = (state.packs || []).find((p) => p.id === key);
+        return pack ? pack.name : key;
+      };
+      $("#hitDetail").innerHTML = hitList
+        .map(
+          (h) =>
+            "<div class='zz-small' style='display:flex;justify-content:space-between;gap:10px'><span>" +
+            escapeHtml(nameOf(h.key)) +
+            "</span><span>" +
+            h.n +
+            "</span></div>"
+        )
+        .join("");
+      hitSection.hidden = false;
+    } else {
+      hitSection.hidden = true;
+    }
     $("#pendingCount").textContent = state.findingsPending || 0;
     $("#btnAi").title = state.aiConfigured ? "" : T("请先在控制台配置 AI 接口");
   }

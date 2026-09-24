@@ -249,6 +249,17 @@
       return F.ruleDomainMatch(host, domain);
     },
 
+    // 命中归因：查该外观选择器归属哪条规则（用户规则优先），用于「本页拦截明细」与误拦反馈
+    selectorOwner(selector) {
+      const rules = this.current().rules || [];
+      let best = null;
+      for (const r of rules) {
+        if (r.kind !== "cosmetic" || r.action === "allow" || r.selector !== selector) continue;
+        if (!best || ruleWeight(r) < ruleWeight(best)) best = r;
+      }
+      return best ? { pack: best.pack || "", source: best.source } : null;
+    },
+
     extractHosts(filter) {
       const out = [];
       const s = String(filter || "");

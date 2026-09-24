@@ -140,6 +140,7 @@
           for (const key of ["cosmetic", "removed", "texts", "popups"]) {
             if (p[key]) ZZ.Counts.inc(tabId, key === "texts" ? "texts" : key, host, p[key]);
           }
+          if (p.hits) ZZ.Counts.addHits(tabId, host, p.hits);
           return { ok: true, counts: ZZ.Counts.get(tabId) };
         }
 
@@ -177,7 +178,7 @@
               selector: p.selector,
               domains: p.scope === "global" ? [] : [p.host || host],
               source: "user",
-              note: ZZ.T("手动放行"),
+              note: p.note || ZZ.T("手动放行"),
             },
             "user"
           );

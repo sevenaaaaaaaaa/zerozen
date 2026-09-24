@@ -400,8 +400,71 @@
     );
   }
 
-  $("#btnNetdisk").addEventListener("click", async () => {
-    const res = await proxy("zz:toolbox:netdisk");
+  // ---------- 误拦反馈 ----------
+  function escapeToolHtml(text) {
+    return String(text == null ? "" : text).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[c]);
+  }
+
+  function renderMisfires() {
+    const box = $("#misfireList");
+    const list = state.misfires || [];
+    if (!list.length) {
+      box.innerHTML = '<div class="zz-small zz-muted">' + T("没有扫描到被隐藏的元素。") + "</div>";
+      return;
+    }
+    box.innerHTML = list
+      .map(
+        (m, i) =>
+          '<div class="zz-tool-item"><span class="zz-tag">' + T("隐藏规则") + "</span>" +
+          '<span class="url">' + escapeToolHtml(m.summary) + '<br /><span class="zz-small zz-muted">' + escapeToolHtml(m.selector) + "</span></span>" +
+          '<button class="zz-btn zz-btn-sm" data-misallow="' + i + '">' + T("放行") + "</button></div>"
+      )
+      .join("");
+    box.querySelectorAll("button[data-misallow]").forEach((btn) =>
+      btn.addEventListener("click", async () => {
+        const m = state.misfires[Number(btn.getAttribute("data-misallow"))];
+        if (!m) return;
+        const host = (state.url && new URL(state.url).hostname) || m.host || "";
+        const res = await UI.send({
+          type: "zz:picker:allow",
+          payload: { selector: m.selector, scope: "site", host, note: T("误拦反馈放行") },
+        });
+        if (res && res.ok) {
+          btn.textContent = T("已放行");
+          btn.disabled = true;
+          setLog("misfireLog", T("已放行：$1（稍候页面自动恢复显示）", m.summary));
+          setTimeout(loadMisfires, 1200);
+        } else {
+          setLog("misfireLog", T("放行失败：$1", (res && res.error) || T("未知错误")));
+        }
+      })
+    );
+  }
+
+  async function loadMisfires() {
+    if (!state.tabId) {
+      setLog("misfireLog", T("找不到网页，请在网页上打开工具箱"));
+      return;
+    }
+    const res = await proxy("zz:toolbox:misfires");
+    if (!res || !res.ok) {
+      setLog("misfireLog", T("扫描失败：$1", (res && res.error) || T("无法连接页面")));
+      return;
+    }
+    state.misfires = (res.misfires || []).map((m) => Object.assign({ host: res.host }, m));
+    renderMisfires();
+    setLog("misfireLog", T("命中 $1 条隐藏规则", state.misfires.length));
+  }
+
+  $("#btnMisfireScan").addEventListener("click", loadMisfires);
+
+  $("#btnNetdisk").addEventListener("click", async () => {    const res = await proxy("zz:toolbox:netdisk");
     if (!res || !res.ok) {
       setLog("netdiskLog", T("扫描失败：$1", (res && res.error) || T("无法连接页面")));
       return;

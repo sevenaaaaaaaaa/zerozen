@@ -140,10 +140,14 @@ assert(payloadHost.css.includes(".side-ad") === false, "domain scoped remove rul
 
 const payloadNews = ZZ.RuleIndex.payload("news.example.com");
 assert(payloadNews.css.includes(".ad-banner"), "generic selector present on other host");
-assert(payloadNews.css.includes(".side-ad"), "scoped remove rule present on its host");
+assert(payloadNews.css.includes(".side-ad"), "domain scoped remove rule present on its host");
 assertEqual(payloadNews.remove.length, 1, "remove rule surfaced for host");
 assertEqual(payloadNews.texts.length, 1, "text rule surfaced for host");
 assert(payloadNews.texts[0].text === "高速下载", "text rule content");
+
+const ownerAd = ZZ.RuleIndex.selectorOwner(".ad-banner");
+assert(ownerAd && ownerAd.source === "user", "selectorOwner attributes selector to user rule");
+assertEqual(ZZ.RuleIndex.selectorOwner("#nope-not-a-rule"), null, "selectorOwner null for unknown selector");
 
 const budgetCompiled = ZZ.RuleIndex.compileDNR(1);
 assertEqual(budgetCompiled.rules.length, 1, "budget honored");

@@ -156,6 +156,7 @@
       <button class="zz-tool-tab active" data-view="video" data-i18n="视频（m3u8）">视频（m3u8）</button>
       <button class="zz-tool-tab" data-view="image" data-i18n="图片发现">图片发现</button>
       <button class="zz-tool-tab" data-view="netdisk" data-i18n="网盘资源">网盘资源</button>
+      <button class="zz-tool-tab" data-view="misfire" data-i18n="误拦反馈">误拦反馈</button>
       <button class="zz-tool-tab" data-view="downloader" data-i18n="下载器">下载器</button>
     </div>
 
@@ -200,6 +201,15 @@
       </div>
       <div class="zz-tool-list" id="netdiskList"></div>
       <div class="zz-tool-log" id="netdiskLog" style="margin-top: 10px"></div>
+    </div>
+
+    <div class="zz-tool-panel" id="view-misfire">
+      <div class="zz-tool-row">
+        <button class="zz-btn zz-btn-sm" id="btnMisfireScan" data-i18n="扫描误拦">扫描误拦</button>
+        <span class="zz-small zz-muted" data-i18n="列出被净化规则隐藏的元素；确属误拦时点「放行」，本站恢复显示。网站自己隐藏的元素也会出现在列表里。">列出被净化规则隐藏的元素；确属误拦时点「放行」，本站恢复显示。网站自己隐藏的元素也会出现在列表里。</span>
+      </div>
+      <div class="zz-tool-list" id="misfireList"></div>
+      <div class="zz-tool-log" id="misfireLog" style="margin-top: 10px"></div>
     </div>
 
     <div class="zz-tool-panel" id="view-downloader">

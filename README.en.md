@@ -156,21 +156,22 @@ graph LR
 
 - [x] Login/signup dialog protection: removed "hide anything with an email input" broad rules and real-login-dialog hiding on X/Taobao/JD/Weibo/Instagram/Douyu; overlay sweep now skips dialogs containing forms or captchas
 - [x] Whitelist domain inheritance: disabling a parent domain covers all subdomains (`www`/`m.`/deep), single subdomain can opt back in
-- [ ] In-page false-positive report: toolbox button that drafts an exemption rule
+- [x] In-page false-positive report: toolbox "Misfire report" tab scans hidden elements, one click generates a site-scoped exemption rule
 - [ ] Quick undo: popup lists recently hidden elements for one-click restore
 - [ ] Golden-sample regression set (login boxes, players, carts, comment sections) run before merging new rules
 
 **Whitelist & site management**
 
-- [ ] Whitelist manager in the console: list / search / bulk delete / import & export
-- [ ] Popup shows whitelist source (this site / inherited from example.org / temporary time left)
+- [x] Whitelist manager in the console: list / search / bulk delete / import & export
+- [x] Popup shows whitelist source (this site / inherited from example.org / temporary time left)
 - [ ] One-click promote temporary pause to whitelist
 
 **UI & task details**
 
-- [ ] Per-page hit details: which packs/rules fired, disable a single rule
+- [x] Per-page hit details: popup aggregates this page's hits by pack (custom rules listed separately; disable a single rule later)
 - [ ] Toolbar badge with daily blocked count (optional)
-- [ ] Localized download failure reasons + one-click retry; completion notifications (optional)
+- [x] Localized download failure reasons + one-click retry
+- [ ] Completion notifications (optional)
 - [ ] Toolbox remembers the last active tab
 
 **Onboarding**
@@ -188,7 +189,7 @@ graph LR
 Zero-dependency plain JavaScript:
 
 ```bash
-npm test             # 148 checks · rule validation · 215 assertions
+npm test             # 148 checks · rule validation · 217 assertions
 npm run build        # dist/{chrome,firefox,safari} + zip/xpi
 npm run import:lists # rebuild merged OSS rules
 ```

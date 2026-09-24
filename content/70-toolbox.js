@@ -90,8 +90,50 @@
     return parts.join("\n").slice(0, 600);
   }
 
-  function collectNetdisk() {
-    const found = new Map();
+  // 误拦排查：列出被 ZeroZen 隐藏规则命中的元素（候选，含站点自身隐藏的），供一键放行
+  function collectMisfires() {
+    const css = ZZ.Css && ZZ.Css.state;
+    const selectors = (css && css.hide ? css.hide : []).slice(0, 3000);
+    const out = [];
+    const seenEls = new Set();
+    for (const sel of selectors) {
+      if (!sel || out.length >= 40) break;
+      let nodes = [];
+      try {
+        nodes = document.querySelectorAll(sel);
+      } catch (e) {
+        continue;
+      }
+      for (const el of nodes) {
+        if (out.length >= 40) break;
+        if (!el || el === document.body || el === document.documentElement) continue;
+        if (el.hasAttribute && el.hasAttribute("data-zz-ui")) continue;
+        let root = el;
+        for (let i = 0; i < 5 && root; i++) {
+          if (seenEls.has(root)) break;
+          root = root.parentElement;
+        }
+        if (root) continue;
+        let style;
+        try {
+          style = window.getComputedStyle(el);
+        } catch (e) {}
+        if (!style || (style.display !== "none" && style.visibility !== "hidden")) continue;
+        seenEls.add(el);
+        const tag = el.tagName.toLowerCase();
+        const id = el.id ? "#" + el.id : "";
+        const cls = typeof el.className === "string" && el.className.trim() ? "." + el.className.trim().split(/\s+/).slice(0, 3).join(".") : "";
+        const text = (el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 42);
+        out.push({
+          selector: sel,
+          summary: tag + id + cls + (text ? " 「" + text + "」" : ""),
+        });
+      }
+    }
+    return out;
+  }
+
+  function collectNetdisk() {    const found = new Map();
     const anchors = Array.from(document.querySelectorAll("a[href]"));
     for (const a of anchors) {
       const href = a.href || "";
@@ -443,6 +485,10 @@
     if (msg.type === "zz:toolbox:article") {
       const art = extractArticle();
       sendResponse(art.ok ? { ok: true, article: { title: art.title, html: art.html, text: art.text, length: art.length, url: art.url } } : art);
+      return false;
+    }
+    if (msg.type === "zz:toolbox:misfires") {
+      sendResponse({ ok: true, misfires: collectMisfires(), host: location.hostname });
       return false;
     }
     if (msg.type === "zz:reader:toggle") {

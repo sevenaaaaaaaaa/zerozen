@@ -32,8 +32,16 @@
 
   function report(delta) {
     if (!delta) return;
-    state.pending = state.pending || { cosmetic: 0, removed: 0, texts: 0, popups: 0 };
+    state.pending = state.pending || { cosmetic: 0, removed: 0, texts: 0, popups: 0, hits: null };
     for (const key of Object.keys(delta)) {
+      if (key === "hits") {
+        const cur = state.pending.hits || {};
+        for (const [sel, n] of Object.entries(delta.hits || {})) {
+          if (typeof n === "number" && n > 0) cur[sel] = (cur[sel] || 0) + n;
+        }
+        state.pending.hits = cur;
+        continue;
+      }
       state.pending[key] = (state.pending[key] || 0) + (delta[key] || 0);
     }
     if (reportTimer) return;
@@ -54,24 +62,43 @@
     const chunks = [];
     for (let i = 0; i < state.hide.length; i += 25) chunks.push(state.hide.slice(i, i + 25));
     let total = 0;
+    const hits = {};
     const t0 = performance.now();
     for (const chunk of chunks) {
       const selector = chunk.join(",");
+      let chunkTotal = 0;
       try {
-        total += document.querySelectorAll(selector).length;
+        chunkTotal = document.querySelectorAll(selector).length;
       } catch (e) {
         for (const sel of chunk) {
           try {
-            total += document.querySelectorAll(sel).length;
+            chunkTotal += document.querySelectorAll(sel).length;
           } catch (e2) {}
         }
       }
+      if (chunkTotal > 0 && chunk.length > 1) {
+        for (const sel of chunk) {
+          let n = 0;
+          try {
+            n = document.querySelectorAll(sel).length;
+          } catch (e3) {}
+          if (n) hits[sel] = n;
+        }
+      } else if (chunkTotal > 0 && chunk.length === 1) {
+        hits[chunk[0]] = chunkTotal;
+      }
+      total += chunkTotal;
     }
     passCost = performance.now() - t0;
     if (total > state.counted) {
       const delta = total - state.counted;
       state.counted = total;
-      report({ cosmetic: delta });
+      const keys = Object.keys(hits);
+      const top = {};
+      for (const sel of Object.keys(hits)
+        .sort((a, b) => hits[b] - hits[a])
+        .slice(0, 40)) top[sel] = hits[sel];
+      report({ cosmetic: delta, hits: top });
     }
   }
 
