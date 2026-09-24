@@ -64,6 +64,7 @@
       loadPerms();
     }
     if (name === "subs") loadSubs();
+    if (name === "sites") loadSites();
     if (name === "findings") renderFindings();
     if (name === "autopilot") {
       refreshAutopilot();
@@ -852,6 +853,87 @@
     loadStats();
   }
 
+  let sitesRows = [];
+
+  function parseSiteList(text) {
+    const out = [];
+    const seen = new Set();
+    for (let line of String(text || "").split(/\r?\n/)) {
+      line = line.trim();
+      if (!line || line.startsWith("#") || line.startsWith("!")) continue;
+      const hosts = /^(?:0\.0\.0\.0|127\.0\.0\.1)\s+(\S+)/.exec(line);
+      if (hosts) line = hosts[1];
+      let h = line.replace(/^\|\|/, "").replace(/\^$/, "").replace(/\.$/, "").toLowerCase();
+      if (!/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/.test(h) || /^localhost/.test(h)) continue;
+      if (seen.has(h)) continue;
+      seen.add(h);
+      out.push(h);
+    }
+    return out;
+  }
+
+  function siteStatusText(rec) {
+    const parts = [];
+    if (rec.enabled === false) parts.push(T("白名单"));
+    if (rec.until && rec.until > Date.now()) parts.push(T("临时放行") + " · " + UI.fmtTime(rec.until));
+    if (rec.profile === "off") parts.push(T("已停用"));
+    else if (rec.profile) parts.push(T("档位") + ": " + rec.profile);
+    if (rec.autoCompat) parts.push(T("自动回落"));
+    return parts.length ? parts.join(" / ") : T("其他设置");
+  }
+
+  async function loadSites() {
+    const res = await UI.send({ type: "zz:sites:list" });
+    const sites = (res && res.sites) || {};
+    sitesRows = Object.keys(sites)
+      .sort()
+      .map((host) => ({ host, rec: sites[host] || {}, selected: false }));
+    renderSites();
+  }
+
+  function renderSites() {
+    const table = $("#sitesTable");
+    const kw = ($("#siteSearch").value || "").trim().toLowerCase();
+    const rows = sitesRows.filter((r) => !kw || r.host.includes(kw));
+    if (!rows.length) {
+      table.innerHTML =
+        '<tr><td class="zz-muted">' +
+        T(sitesRows.length ? "没有匹配的站点" : "暂无白名单站点。在弹窗里把站点开关关掉，或点「加入白名单」即可添加。") +
+        "</td></tr>";
+      return;
+    }
+    table.innerHTML =
+      "<tr><th></th><th>" +
+      T("站点") +
+      "</th><th>" +
+      T("状态") +
+      "</th><th>" +
+      T("更新时间") +
+      "</th><th>" +
+      T("操作") +
+      "</th></tr>" +
+      rows
+        .map(
+          (r) =>
+            '<tr><td><input type="checkbox" data-site-host="' +
+            esc(r.host) +
+            '" ' +
+            (r.selected ? "checked" : "") +
+            ' /></td><td>' +
+            esc(r.host) +
+            '</td><td class="zz-small">' +
+            siteStatusText(r.rec) +
+            '</td><td class="zz-small zz-muted">' +
+            (r.rec.at ? esc(UI.fmtTime(r.rec.at)) : "—") +
+            '</td><td><button class="zz-btn zz-btn-sm zz-btn-danger" data-site-del="' +
+            esc(r.host) +
+            '">' +
+            T("删除") +
+            "</button></td></tr>"
+        )
+        .join("");
+  }
+
   async function loadStats() {
     const res = await UI.send({ type: "zz:stats:get" });
     const rows = (res && res.stats) || [];
@@ -1447,6 +1529,66 @@
         setTimeout(() => location.reload(), 600);
       } else {
         toast(T("重置失败：$1", (res && res.error) || T("未知错误")), "err");
+      }
+    });
+
+    $("#siteSearch").addEventListener("input", () => renderSites());
+    $("#btnSitesRefresh").addEventListener("click", () => loadSites());
+    $("#btnSitesExport").addEventListener("click", () => {
+      const hosts = sitesRows.filter((r) => r.rec.enabled === false).map((r) => r.host);
+      if (!hosts.length) {
+        toast(T("暂无白名单站点"), "err");
+        return;
+      }
+      UI.download("zerozen-whitelist-" + Date.now() + ".txt", hosts.join("\n") + "\n");
+      toast(T("已导出 $1 个白名单站点", hosts.length), "ok");
+    });
+    $("#btnSitesImport").addEventListener("click", async () => {
+      const file = await UI.pickFile(".txt,.list,.json");
+      if (!file) return;
+      const hosts = parseSiteList(file.text);
+      if (!hosts.length) {
+        toast(T("导入文件里没有可识别的域名"), "err");
+        return;
+      }
+      const res = await UI.send({ type: "zz:sites:import", payload: { hosts } });
+      if (res && res.ok) {
+        toast(T("已导入 $1 个白名单站点", res.added), "ok");
+        await loadSites();
+      } else {
+        toast(T("导入失败：$1", (res && res.error) || T("未知错误")), "err");
+      }
+    });
+    $("#btnSitesRemove").addEventListener("click", async () => {
+      const hosts = sitesRows.filter((r) => r.selected).map((r) => r.host);
+      if (!hosts.length) {
+        toast(T("先勾选要删除的站点"), "err");
+        return;
+      }
+      if (!confirm(T("确认删除选中的 $1 个站点记录？删除后恢复拦截。", hosts.length))) return;
+      const res = await UI.send({ type: "zz:sites:remove", payload: { hosts } });
+      if (res && res.ok) {
+        toast(T("已删除 $1 个站点记录", res.removed), "ok");
+        await loadSites();
+      } else {
+        toast(T("删除失败：$1", (res && res.error) || T("未知错误")), "err");
+      }
+    });
+    $("#sitesTable").addEventListener("change", (event) => {
+      const box = event.target.closest("input[data-site-host]");
+      if (!box) return;
+      const row = sitesRows.find((r) => r.host === box.getAttribute("data-site-host"));
+      if (row) row.selected = box.checked;
+    });
+    $("#sitesTable").addEventListener("click", async (event) => {
+      const del = event.target.closest("[data-site-del]");
+      if (!del) return;
+      const target = del.getAttribute("data-site-del");
+      if (!confirm(T("确认删除 $1 的站点记录？删除后恢复拦截。", target))) return;
+      const res = await UI.send({ type: "zz:sites:remove", payload: { hosts: [target] } });
+      if (res && res.ok) {
+        toast(T("已删除 $1 个站点记录", res.removed), "ok");
+        await loadSites();
       }
     });
 

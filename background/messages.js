@@ -105,6 +105,19 @@
     return ZZ.Store.siteEnabled(host);
   }
 
+  // 停用是否来自父域白名单继承；返回继承来源域，非继承返回空串
+  function whitelistSourceOf(host, eff) {
+    if (!host || !eff || eff.profile !== "off" || eff.source !== "site-disabled") return "";
+    const sites = ZZ.Store.settings().sites || {};
+    if (sites[host] && sites[host].enabled === false) return "";
+    const chain = ZZ.Store.siteChain(host);
+    for (let i = 1; i < chain.length; i++) {
+      const rec = sites[chain[i]];
+      if (rec && rec.enabled === false) return chain[i];
+    }
+    return "";
+  }
+
   const Messages = {
     async handle(msg, sender) {
       if (!msg || typeof msg !== "object" || !msg.type) return { ok: false, error: "bad message" };
@@ -190,6 +203,7 @@
             enabled: settings.enabled,
             siteEnabled: eff.profile !== "off",
             host: stateHost,
+            whitelistSource: whitelistSourceOf(stateHost, eff),
             counts,
             profile: eff.profile,
             profileSource: eff.source,
@@ -305,6 +319,40 @@
             await ZZ.Main.refreshAllTabs();
           }
           return { ok: true, until, minutes: until ? Math.round((until - Date.now()) / 60000) : 0 };
+        }
+
+        case "zz:sites:list": {
+          return { ok: true, sites: ZZ.Store.settings().sites || {} };
+        }
+
+        case "zz:sites:remove": {
+          const p = msg.payload || {};
+          const hosts = (Array.isArray(p.hosts) ? p.hosts : []).filter((h) => typeof h === "string" && h.trim());
+          for (const h of hosts) await ZZ.Store.updateSite(h.trim(), { clear: true });
+          ZZ.RuleIndex.build(ZZ.Store.activeRules(), ZZ.Store.settings().packs);
+          await ZZ.Main.refreshAllTabs();
+          return { ok: true, removed: hosts.length };
+        }
+
+        case "zz:sites:import": {
+          const p = msg.payload || {};
+          const raw = Array.isArray(p.hosts) ? p.hosts : [];
+          const seen = new Set();
+          const hosts = [];
+          for (const item of raw) {
+            let h = String(item || "").trim().toLowerCase();
+            const m = /^(?:0\.0\.0\.0|127\.0\.0\.1)\s+(\S+)$/.exec(h);
+            if (m) h = m[1];
+            h = h.replace(/^\|\|/, "").replace(/\^$/, "").replace(/\.$/, "");
+            if (!/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/.test(h) || /^localhost/.test(h)) continue;
+            if (seen.has(h)) continue;
+            seen.add(h);
+            hosts.push(h);
+          }
+          for (const h of hosts) await ZZ.Store.updateSite(h, { enabled: false, clearAuto: true });
+          ZZ.RuleIndex.build(ZZ.Store.activeRules(), ZZ.Store.settings().packs);
+          await ZZ.Main.refreshAllTabs();
+          return { ok: true, added: hosts.length };
         }
 
         case "zz:antiadblock": {

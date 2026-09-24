@@ -224,6 +224,7 @@
         <div class="zz-tabs">
           <button class="zz-tab active" data-tab="rules" data-i18n="规则">规则</button>
           <button class="zz-tab" data-tab="subs" data-i18n="订阅">订阅</button>
+          <button class="zz-tab" data-tab="sites" data-i18n="白名单">白名单</button>
           <button class="zz-tab" data-tab="ai" data-i18n="AI 识别">AI 识别</button>
           <button class="zz-tab" data-tab="scan" data-i18n="批量扫描">批量扫描</button>
           <button class="zz-tab" data-tab="autopilot" data-i18n="自主增强">自主增强</button>
@@ -344,6 +345,20 @@
 
         <h3><span data-i18n="已订阅">已订阅</span> <span class="zz-small zz-muted" id="subsCount"></span></h3>
         <div id="subsList"></div>
+      </section>
+
+      <section class="zz-panel" id="panel-sites">
+        <h2 data-i18n="白名单">白名单</h2>
+        <div class="zz-small zz-muted" style="margin-bottom: 10px" data-i18n="加入白名单的站点不做任何拦截或隐藏；父域条目会覆盖其全部子域，单个子域可单独启用。">加入白名单的站点不做任何拦截或隐藏；父域条目会覆盖其全部子域，单个子域可单独启用。</div>
+        <div class="zz-inline" style="margin-bottom: 10px; flex-wrap: wrap; gap: 8px">
+          <input type="search" id="siteSearch" data-i18n-ph="搜索域名" placeholder="搜索域名" style="width: 220px" />
+          <button class="zz-btn zz-btn-sm" id="btnSitesRefresh" data-i18n="刷新">刷新</button>
+          <button class="zz-btn zz-btn-sm" id="btnSitesExport" data-i18n="导出">导出</button>
+          <button class="zz-btn zz-btn-sm" id="btnSitesImport" data-i18n="导入">导入</button>
+          <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnSitesRemove" data-i18n="删除选中">删除选中</button>
+          <input type="file" id="siteFile" accept=".txt,.list,.json" hidden />
+        </div>
+        <div class="zz-scroll"><table id="sitesTable"></table></div>
       </section>
 
       <section class="zz-panel" id="panel-ai">

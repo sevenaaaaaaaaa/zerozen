@@ -73,6 +73,8 @@
     }
     $("#siteHint").textContent = state.siteEnabled
       ? T("本站已启用") + (state.index && state.index.invalid ? T("（$1 条规则无效已跳过）", state.index.invalid) : "")
+      : state.whitelistSource
+      ? T("已随 $1 加入白名单，本站及其子域不再拦截", state.whitelistSource)
       : T("本站已停用，不会隐藏或拦截任何内容");
     const dnr = state.dnr || {};
     $("#engineInfo").textContent =
