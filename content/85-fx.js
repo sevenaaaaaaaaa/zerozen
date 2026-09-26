@@ -4,6 +4,7 @@
   const ZZ = globalThis.ZZ;
   const u = ZZ.u;
   if (!u || !u.isTop()) return;
+  const api = ZZ.browser;
 
   const FX_CSS =
     ".zz-fx-layer{position:fixed;inset:0;z-index:2147483646;pointer-events:none}" +
