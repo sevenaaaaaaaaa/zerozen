@@ -62,6 +62,9 @@
       tempBtn.textContent = T("临时解除 $1 分钟", state.tempMinutes || 30);
       tempBtn.classList.remove("zz-btn-danger");
     }
+    // 临时放行期间给出转正入口，方便把「这个站临时关掉挺好用」沉淀为长期白名单
+    const promote = $("#btnTempPromote");
+    if (promote) promote.hidden = !(until > Date.now());
     const types = state.types || {};
     for (const input of document.querySelectorAll(".zz-chip input[data-type]")) {
       input.checked = !!types[input.getAttribute("data-type")];
@@ -642,6 +645,20 @@
       const minutes = (lastState && lastState.tempMinutes) || 30;
       await UI.send({ type: "zz:site:temp", payload: { host, minutes, tabId: tab && tab.id } });
       UI.toast($("#msg"), T("已临时放行本站 $1 分钟", minutes), "ok");
+    }
+    setTimeout(refresh, 300);
+  });
+
+  $("#btnTempPromote").addEventListener("click", async () => {
+    // enabled:false 落为白名单；until:0 清掉临时到期时间，clearAuto 顺带清掉自动回落标记
+    const res = await UI.send({
+      type: "zz:site:set",
+      payload: { host, enabled: false, until: 0, clearAuto: true, tabId: tab && tab.id },
+    });
+    if (res && res.ok) {
+      UI.toast($("#msg"), T("已转正为白名单，本站长期不再拦截"), "ok");
+    } else {
+      UI.toast($("#msg"), T("操作失败：$1", (res && res.error) || T("后台无响应")), "err");
     }
     setTimeout(refresh, 300);
   });

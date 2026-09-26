@@ -164,7 +164,7 @@ graph LR
 
 - [x] Whitelist manager in the console: list / search / bulk delete / import & export
 - [x] Popup shows whitelist source (this site / inherited from example.org / temporary time left)
-- [ ] One-click promote temporary pause to whitelist
+- [x] One-click promote temporary pause to whitelist
 
 **UI & task details**
 

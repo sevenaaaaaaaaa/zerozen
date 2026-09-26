@@ -902,6 +902,8 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "移出白名单": "Remove from whitelist",
   "已移出白名单，恢复正常拦截": "Removed from whitelist — blocking restored",
   "已加入白名单，本站不再拦截": "Whitelisted — no blocking on this site",
+  "临时放行合用？转正为白名单（长期放行）": "Pause working well? Make it permanent (whitelist)",
+  "已转正为白名单，本站长期不再拦截": "Promoted to whitelist — this site stays unblocked",
   "刷新页面（应用新规则）": "Reload page (apply rules)",
   "页面已刷新": "Page reloaded",
 
