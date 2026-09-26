@@ -436,6 +436,10 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "手动粘贴 m3u8 地址": "Paste an m3u8 URL",
   "网络请求": "network request",
   "共 $1 个流": "$1 streams",
+  "提示：网络嗅探未开启（未授予「请求观察」权限），当前仅显示页面内发现的流。点「刷新嗅探」可立即授权。":
+    "Network sniffing is off (the \"Request observation\" permission is not granted); only streams found in the page are shown. Click \"Refresh sniffer\" to grant it now.",
+  "未授予「请求观察」权限，无法嗅探网络请求；也可到控制台「权限管理」里开启。":
+    "Without the \"Request observation\" permission network requests cannot be sniffed; you can also enable it under Permissions in the console.",
   "后台抓取失败": "the background fetch failed",
   "主播放列表为空": "The master playlist is empty",
   "选择清晰度：$1": "Picked quality: $1",

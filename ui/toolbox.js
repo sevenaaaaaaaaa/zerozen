@@ -195,9 +195,21 @@
     if (!state.selected.size && state.streams.length) state.selected.add(state.streams[0].url);
     renderStreams();
     log("videoLog", T("共 $1 个流", state.streams.length));
+    // 网络嗅探依赖可选的 webRequest 权限；缺失时静默失效，这里必须给出可见提示
+    if (!(await UI.hasPermission("webRequest"))) {
+      log("videoLog", T("提示：网络嗅探未开启（未授予「请求观察」权限），当前仅显示页面内发现的流。点「刷新嗅探」可立即授权。"));
+    }
   }
 
-  $("#btnStreams").addEventListener("click", refreshStreams);
+  $("#btnStreams").addEventListener("click", async () => {
+    // 按钮点击是用户手势，此时申请可选权限才会弹出确认框
+    const granted = await UI.ensurePermission("webRequest");
+    if (!granted) {
+      setLog("videoLog", T("未授予「请求观察」权限，无法嗅探网络请求；也可到控制台「权限管理」里开启。"));
+      return;
+    }
+    await refreshStreams();
+  });
 
 
 
