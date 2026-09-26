@@ -102,12 +102,27 @@
   }
 
   // ---------- tabs ----------
-  $$(".zz-tool-tab").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      $$(".zz-tool-tab").forEach((b) => b.classList.toggle("active", b === btn));
-      $$(".zz-tool-panel").forEach((p) => p.classList.toggle("active", p.id === "view-" + btn.getAttribute("data-view")));
-    })
-  );
+  // 记住上次停留的页签：切页时写入 storage.local，下次打开工具箱恢复
+  const TAB_KEY = "zz.toolbox.tab";
+  function activateTab(btn) {
+    $$(".zz-tool-tab").forEach((b) => b.classList.toggle("active", b === btn));
+    $$(".zz-tool-panel").forEach((p) => p.classList.toggle("active", p.id === "view-" + btn.getAttribute("data-view")));
+    try {
+      api.storage.local.set({ [TAB_KEY]: btn.getAttribute("data-view") });
+    } catch (e) {}
+  }
+  $$(".zz-tool-tab").forEach((btn) => btn.addEventListener("click", () => activateTab(btn)));
+
+  async function restoreTab() {
+    let last = "";
+    try {
+      const res = await api.storage.local.get(TAB_KEY);
+      last = (res && res[TAB_KEY]) || "";
+    } catch (e) {}
+    if (!last) return;
+    const btn = $$('.zz-tool-tab[data-view="' + last + '"]')[0];
+    if (btn && !btn.classList.contains("active")) activateTab(btn);
+  }
 
   // ---------- video ----------
   function renderStreams() {
@@ -1012,6 +1027,7 @@
   UI.initLocale()
     .then(() => loadContext())
     .then(() => {
+      restoreTab();
       refreshStreams();
       $("#dlDir").value = (state.settings && state.settings.toolbox && state.settings.toolbox.downloadDir) || T("ZeroZen/下载");
       bindDownloadEvents();

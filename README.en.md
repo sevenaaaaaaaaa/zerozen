@@ -172,7 +172,7 @@ graph LR
 - [ ] Toolbar badge with daily blocked count (optional)
 - [x] Localized download failure reasons + one-click retry
 - [ ] Completion notifications (optional)
-- [ ] Toolbox remembers the last active tab
+- [x] Toolbox remembers the last active tab
 
 **Onboarding**
 
