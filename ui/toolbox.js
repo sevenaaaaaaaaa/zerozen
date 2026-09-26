@@ -32,6 +32,22 @@
     if (el) el.textContent = text;
   }
 
+  // 任务完成系统通知：控制台开了开关且已授予「通知」权限才会发；实时读设置，开关后无需重开工具箱
+  async function notifyDone(ok, what) {
+    try {
+      const res = await UI.send({ type: "zz:settings:get" });
+      const tb = res && res.ok && res.settings && res.settings.toolbox;
+      if (!tb || !tb.notifyDone) return;
+      if (!(await UI.hasPermission("notifications"))) return;
+      await api.notifications.create({
+        type: "basic",
+        iconUrl: api.runtime.getURL("icons/icon128.png"),
+        title: ok ? T("ZeroZen 任务完成") : T("ZeroZen 任务失败"),
+        message: what,
+      });
+    } catch (e) {}
+  }
+
   function ctxTabId() {
     const m = /[?&]tab=(\d+)/.exec(location.search);
     return m ? Number(m[1]) : null;
@@ -982,11 +998,13 @@
       if (record.queued) await ZZDLStore.removeTask(id);
       if (!res || !res.cancelled) {
         log("dlLog", T("任务完成：$1", (res && res.saved) || record.name || id));
+        notifyDone(true, String((res && res.saved) || record.name || id));
         refreshDownloader();
       }
       return { ok: true, cancelled: !!(res && res.cancelled) };
     } catch (e) {
       log("dlLog", "× " + T("失败：$1", (e && e.message) || e) + (record.queued ? "" : "") + "（" + T("进度已保留，可稍后继续") + "）");
+      notifyDone(false, (record.nameBase || record.name || id) + " — " + String((e && e.message) || e));
       if (record.queued) {
         // 队列条目转为 error 留在「未完成任务」列表，可继续/删除
         record.status = "error";

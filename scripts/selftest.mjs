@@ -736,7 +736,7 @@ const permStatus = await Perms.status();
 assert(permStatus.supported, "permissions api detected");
 assertEqual(permStatus.granted.bookmarks, true, "granted permission reported");
 assertEqual(permStatus.granted.history, false, "missing permission reported");
-assertEqual(permStatus.items.length, 4, "four optional permissions described");
+assertEqual(permStatus.items.length, 5, "five optional permissions described");
 assert(
   permStatus.items.every((p) => p.name && p.why && (p.features || []).length),
   "every optional permission carries a user-facing reason"

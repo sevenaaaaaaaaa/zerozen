@@ -171,7 +171,7 @@ graph LR
 - [x] Per-page hit details: popup aggregates this page's hits by pack (custom rules listed separately; disable a single rule later)
 - [ ] Toolbar badge with daily blocked count (optional)
 - [x] Localized download failure reasons + one-click retry
-- [ ] Completion notifications (optional)
+- [x] Completion notifications (optional)
 - [x] Toolbox remembers the last active tab
 
 **Onboarding**
@@ -189,7 +189,7 @@ graph LR
 Zero-dependency plain JavaScript:
 
 ```bash
-npm test             # 148 checks · rule validation · 217 assertions
+npm test             # 149 checks · rule validation · 217 assertions
 npm run build        # dist/{chrome,firefox,safari} + zip/xpi
 npm run import:lists # rebuild merged OSS rules
 ```

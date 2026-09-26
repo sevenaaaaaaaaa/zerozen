@@ -286,6 +286,17 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "连接成功（$1ms）": "Connected ($1ms)",
   "读取收藏夹需要「收藏夹」权限，可在统计与诊断页随时收回":
     "Reading bookmarks needs the Bookmarks permission; you can revoke it on the Stats & diagnostics page",
+  "通知": "Notifications",
+  "下载任务完成或失败时发一条系统通知；只发通知，不读取任何数据。":
+    "Shows a system notification when a download task finishes or fails; sends notifications only, reads nothing.",
+  "任务完成通知": "Task completion notifications",
+  "下载任务完成或失败时弹系统通知": "System notification when a download task finishes or fails",
+  "开启时会申请「通知」权限；适合大视频挂机下载时使用，随时可关闭或收回权限。":
+    "Turning this on asks for the Notifications permission; handy for long video downloads. Toggle off or revoke anytime.",
+  "需要「通知」权限才能弹系统通知，可在可选权限里重新开启":
+    "The Notifications permission is required for system notifications; you can grant it again under Optional permissions",
+  "ZeroZen 任务完成": "ZeroZen download finished",
+  "ZeroZen 任务失败": "ZeroZen download failed",
   "已请求停止": "Stop requested",
   "请先勾选条目": "Tick some entries first",
   "已删除 $1 条记录": "$1 records deleted",

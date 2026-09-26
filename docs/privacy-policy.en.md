@@ -50,6 +50,7 @@ Requested on demand, not at install time, and revocable at any time in the conso
 | `history` | Autopilot | Aggregates visit counts per domain locally |
 | `downloads` | Reader saving / video / images / downloader | Writes files into the `ZeroZen/` subfolder of your downloads directory |
 | `webRequest` | Blocking counters / video sniffing | Observes request URLs only, to count blocks and spot m3u8/mpd streams; request contents are never read |
+| `notifications` | Task completion notifications | Shows a system notification when a download task finishes or fails; sends notifications only |
 
 ## Retention and deletion
 

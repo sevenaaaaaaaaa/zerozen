@@ -213,6 +213,7 @@
     $("#imageDir").value = tb.imageDir || T("ZeroZen/图片");
     $("#articleDir").value = tb.articleDir || T("ZeroZen/阅读");
     $("#dlConcurrency").value = tb.concurrency || 4;
+    $("#notifyDone").checked = !!tb.notifyDone;
     $("#honestUrl").value = (s.honest && s.honest.url) || "";
     renderPresets();
   }
@@ -1281,6 +1282,16 @@
       const v = Math.max(1, Math.min(8, Number(event.target.value) || 4));
       event.target.value = v;
       saveSettings({ toolbox: { concurrency: v } });
+    });
+    $("#notifyDone").addEventListener("change", async (event) => {
+      const on = event.target.checked;
+      if (on && !(await UI.ensurePermission("notifications"))) {
+        // 权限被拒绝就回弹开关，避免设置显示为开但实际不生效
+        event.target.checked = false;
+        toast(T("需要「通知」权限才能弹系统通知，可在可选权限里重新开启"), "err");
+        return;
+      }
+      saveSettings({ toolbox: { notifyDone: on } });
     });
     $("#honestUrl").addEventListener("change", (event) => {
       saveSettings({ honest: { url: event.target.value.trim() } });

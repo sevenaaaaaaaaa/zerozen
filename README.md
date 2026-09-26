@@ -202,7 +202,7 @@ graph LR
 - [x] 本页拦截明细：popup 按规则包聚合显示本页命中（自定义规则单列；单条停用待后续）
 - [ ] 工具栏徽章显示当日拦截数（可关闭）
 - [x] 下载失败原因中文化 + 一键重试
-- [ ] 任务完成系统通知（可关）
+- [x] 任务完成系统通知（可关）
 - [x] 工具箱记住上次停留的页签
 
 **新手引导**
@@ -222,7 +222,7 @@ graph LR
 纯 JavaScript 零依赖，源码目录可直接加载调试：
 
 ```bash
-npm test             # check + validate + selftest（148 项检查 · 规则校验 · 217 条断言）
+npm test             # check + validate + selftest（149 项检查 · 规则校验 · 217 条断言）
 npm run check        # 语法 + manifest 引用完整性 + 中英文案完整性
 npm run validate     # 规则包校验（选择器安全性、DNR 预算）
 npm run selftest     # 沙箱自测

@@ -157,6 +157,7 @@
       downloadDir: ZZ.T("ZeroZen/下载"),
       concurrency: 4,
       tsAsMp4: false,
+      notifyDone: false,
     },
     ui: { ruleFilter: "", tab: "rules" },
   };

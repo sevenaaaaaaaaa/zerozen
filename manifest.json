@@ -20,7 +20,8 @@
     "bookmarks",
     "history",
     "downloads",
-    "webRequest"
+    "webRequest",
+    "notifications"
   ],
   "host_permissions": [
     "http://*/*",
