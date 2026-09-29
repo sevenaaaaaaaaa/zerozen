@@ -12,7 +12,8 @@
     "import:lists": "node scripts/import-lists.mjs",
     "test": "node scripts/check.mjs && node scripts/validate-rules.mjs && node scripts/selftest.mjs",
     "build": "node scripts/gen-icons.mjs && node scripts/build.mjs",
-    "build:safari": "bash scripts/build-safari.sh"
+    "build:safari": "bash scripts/build-safari.sh",
+    "e2e": "node scripts/e2e.mjs"
   },
   "engines": {
     "node": ">=18"
