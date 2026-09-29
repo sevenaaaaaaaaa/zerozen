@@ -170,6 +170,16 @@
         <button class="zz-btn zz-btn-sm" id="btnVideoCancel" data-i18n="取消（保留进度）" disabled>取消（保留进度）</button>
       </div>
       <div class="zz-tool-list" id="streamList"></div>
+      <div class="zz-card" id="videoProgress" hidden style="margin-top: 10px">
+        <div class="zz-tool-row" style="justify-content: space-between">
+          <b class="zz-small" id="vpName" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"></b>
+          <span class="zz-small zz-muted" id="vpMeta"></span>
+        </div>
+        <div style="height: 6px; border-radius: 3px; background: rgba(127, 127, 127, .25); margin-top: 6px">
+          <i id="vpBar" style="display: block; height: 100%; width: 0; border-radius: 3px; background: #3b82f6"></i>
+        </div>
+        <div class="zz-small zz-muted" id="vpInfo" style="margin-top: 6px"></div>
+      </div>
       <div class="zz-tool-row">
         <label class="zz-check"><input type="checkbox" id="tsAsMp4" /> <span data-i18n="TS 流直接命名为 .mp4（不做转码）">TS 流直接命名为 .mp4（不做转码）</span></label>
         <span class="zz-small zz-muted" data-i18n="fMP4 流会自动保存为 .mp4；TS 流默认 .ts，可用 ffmpeg 转封装。">fMP4 流会自动保存为 .mp4；TS 流默认 .ts，可用 ffmpeg 转封装。</span>
@@ -230,7 +240,8 @@
 
       <div class="zz-tool-row" style="justify-content: space-between">
         <span class="zz-small" style="font-weight: 600" data-i18n="未完成任务（断点续传）">未完成任务（断点续传）</span>
-        <span class="zz-small zz-muted" data-i18n="取消或失败的任务会保留进度，随时可继续。">取消或失败的任务会保留进度，随时可继续。</span>
+        <span class="zz-small zz-muted" id="resumeCache"></span>
+        <button class="zz-btn zz-btn-sm zz-btn-danger" id="btnCacheClear" data-i18n="清空全部缓存">清空全部缓存</button>
       </div>
       <div class="zz-tool-list" id="resumeList"></div>
 

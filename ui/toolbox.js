@@ -12,6 +12,8 @@
     url: "",
     streams: [],
     selected: new Set(),
+    // 画质覆盖：m3u8 地址 → 选中的媒体列表地址（"" = 自动选最高）
+    quality: {},
     images: [],
     imageSelected: new Set(),
     formats: new Set(),
@@ -46,6 +48,63 @@
         message: what,
       });
     } catch (e) {}
+  }
+
+  // ---------- 视频下载进度卡片 ----------
+  const vp = { active: null }; // { url, name, last: {bytes, at}, speed }
+  function fmtDur(sec) {
+    if (!isFinite(sec) || sec <= 0) return "—";
+    const m = Math.floor(sec / 60);
+    const s = Math.round(sec % 60);
+    if (m >= 60) return Math.floor(m / 60) + T("小时") + (m % 60) + T("分");
+    if (m > 0) return m + T("分") + s + T("秒");
+    return s + T("秒");
+  }
+  function vpStart(url, name) {
+    vp.active = { url, name, last: null, speed: 0 };
+    $("#videoProgress").hidden = false;
+    $("#vpName").textContent = name;
+    const bar = $("#vpBar");
+    bar.style.background = "#3b82f6";
+    bar.style.width = "0%";
+    $("#vpMeta").textContent = "";
+    $("#vpInfo").textContent = T("准备中…");
+  }
+  function vpStats(st) {
+    if (!vp.active) return;
+    const now = Date.now();
+    if (vp.active.last && st.bytes >= vp.active.last.bytes) {
+      const dt = (now - vp.active.last.at) / 1000;
+      if (dt > 0.4) {
+        const inst = (st.bytes - vp.active.last.bytes) / dt;
+        vp.active.speed = vp.active.speed ? vp.active.speed * 0.7 + inst * 0.3 : inst;
+        vp.active.last = { bytes: st.bytes, at: now };
+      }
+    } else {
+      vp.active.last = { bytes: st.bytes, at: now };
+    }
+    const pct = st.total ? Math.min(100, Math.round((st.done / st.total) * 100)) : 0;
+    $("#vpBar").style.width = pct + "%";
+    $("#vpMeta").textContent = [st.fmp4 ? "fMP4" : "TS", st.live ? T("直播流") : "", st.total ? pct + "%" : ""].filter(Boolean).join(" · ");
+    let info = T("分片 $1/$2", st.done || 0, st.total || 0) + " · " + ZZDLEngine.bytes(st.bytes || 0);
+    if (vp.active.speed) info += " · " + ZZDLEngine.bytes(vp.active.speed) + "/s";
+    if (st.total && vp.active.speed && st.done > 0 && st.done < st.total) {
+      const eta = Math.round(((st.total - st.done) * (st.bytes / st.done)) / vp.active.speed);
+      info += " · " + T("剩余约 $1", fmtDur(eta));
+    }
+    $("#vpInfo").textContent = info;
+  }
+  function vpFail(err) {
+    if (!vp.active) return;
+    $("#vpBar").style.background = "#dc2626";
+    $("#vpInfo").textContent = T("失败：$1", err);
+  }
+  function vpDone() {
+    if (!vp.active) return;
+    $("#vpBar").style.background = "#16a34a";
+    $("#vpBar").style.width = "100%";
+    $("#vpMeta").textContent = T("已完成");
+    vp.active = null;
   }
 
   function ctxTabId() {
@@ -174,11 +233,17 @@
       .map((s, i) => {
         const checked = state.selected.has(s.url) ? " checked" : "";
         return (
-          '<label class="zz-tool-item"><input type="checkbox" data-stream="' + i + '"' + checked + " />" +
+          '<div class="zz-tool-item">' +
+          '<label style="flex:1;min-width:0;display:flex;gap:8px;align-items:center;cursor:pointer;overflow:hidden">' +
+          '<input type="checkbox" data-stream="' + i + '"' + checked + " />" +
           '<span class="zz-tag">' + s.kind.toUpperCase() + "</span>" +
-          '<span class="url">' + (s.url.length > 140 ? s.url.slice(0, 140) + "…" : s.url) + "</span>" +
+          '<span class="url" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+          (s.url.length > 140 ? s.url.slice(0, 140) + "…" : s.url) +
+          "</span>" +
+          "</label>" +
+          '<select class="zz-select" data-qsrc="' + s.url + '" hidden></select>' +
           (s.note ? '<span class="zz-small zz-muted">' + s.note + "</span>" : "") +
-          "</label>"
+          "</div>"
         );
       })
       .join("") +
@@ -195,6 +260,30 @@
         else state.selected.delete(s.url);
       })
     );
+    // 画质下拉：探测 m3u8（限前 4 条，避免请求风暴）；主清单才显示变体选择
+    box.querySelectorAll("select[data-qsrc]").forEach((sel) => {
+      sel.addEventListener("change", () => {
+        state.quality[sel.getAttribute("data-qsrc")] = sel.value;
+      });
+    });
+    const probeTargets = state.streams.filter((s) => s.kind === "m3u8" && s.url).slice(0, 4);
+    for (const s of probeTargets) {
+      ZZDLEngine.probeM3u8(s.url)
+        .then((info) => {
+          if (!info.master || !info.variants || info.variants.length < 2) return;
+          const sel = box.querySelector('select[data-qsrc="' + CSS.escape(s.url) + '"]');
+          if (!sel) return;
+          sel.innerHTML =
+            '<option value="">' + T("画质：自动（选最高）") + "</option>" +
+            info.variants
+              .slice(0, 8)
+              .map((v) => '<option value="' + escapeHtmlAttr(v.url) + '">' + escapeHtmlAttr(ZZDLEngine.qualityLabel(v)) + "</option>")
+              .join("");
+          sel.value = state.quality[s.url] || "";
+          sel.hidden = false;
+        })
+        .catch(() => {});
+    }
     const add = box.querySelector("#btnAddUrl");
     if (add) {
       add.addEventListener("click", async () => {
@@ -261,22 +350,27 @@
       for (let i = 0; i < urls.length; i++) {
         const url = urls[i];
         const nameBase = title + (urls.length > 1 ? " (" + (i + 1) + ")" : "");
+        vpStart(url, nameBase);
         try {
           const res = await ZZDLEngine.downloadM3u8(url, {
             concurrency: Math.max(1, Math.min(12, Number($("#videoThreads").value) || 6)),
             onProgress: (t) => log("videoLog", t),
+            onStats: (st) => vpStats(st),
             isCancelled: () => state.cancel,
             nameBase,
             dir,
             tsAsMp4,
+            mediaUrl: state.quality[url] || "",
           });
           if (res.cancelled) {
             log("videoLog", T("已取消，进度已保留，可在「下载器」里继续"));
             break;
           }
+          vpDone();
           log("videoLog", T("已保存 $1（$2 MB）", res.saved, Math.round((res.size / 1048576) * 10) / 10));
         } catch (e) {
           // 单个流失败（进度已保留）不阻断后面的流
+          vpFail((e && e.message) || e);
           log("videoLog", "× " + T("失败：$1", (e && e.message) || e));
           log("videoLog", T("进度已保留，可在「下载器」里继续"));
         }
@@ -284,6 +378,7 @@
     } finally {
       $("#btnM3u8").disabled = false;
       $("#btnVideoCancel").disabled = true;
+      vp.active = null;
       refreshResumes();
     }
   });
@@ -843,12 +938,13 @@
   }
 
   // ---------- 断点续传任务列表 ----------
-  const resumes = { items: [], busy: new Set() };
+  const resumes = { items: [], busy: new Set(), cache: { byTask: {}, total: 0, count: 0 } };
 
   async function refreshResumes() {
     if (!globalThis.ZZDLStore) return;
     try {
       resumes.items = await ZZDLStore.listTasks();
+      resumes.cache = await ZZDLStore.cacheSummary();
     } catch (e) {
       return;
     }
@@ -876,6 +972,12 @@
   function renderResumes() {
     const box = $("#resumeList");
     if (!box) return;
+    const totalEl = $("#resumeCache");
+    if (totalEl) {
+      totalEl.textContent = resumes.cache.total
+        ? T("本地缓存：$1（$2 个分片）", bytes(resumes.cache.total), resumes.cache.count)
+        : T("暂无本地缓存。");
+    }
     if (!resumes.items.length) {
       box.innerHTML = '<div class="zz-small zz-muted">' + T("暂无未完成任务。") + "</div>";
       return;
@@ -884,6 +986,7 @@
       .map((task) => {
         const m = resumeMeta(task);
         const busy = resumes.busy.has(task.id);
+        const cacheBytes = resumes.cache.byTask[task.id] || 0;
         const buttons = busy
           ? '<span class="zz-small zz-muted">' + T("下载中") + "</span>"
           : '<button class="zz-btn zz-btn-sm zz-btn-primary" data-ract="resume">' + T("继续") + "</button>";
@@ -893,7 +996,9 @@
           '<div class="zz-small" style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
           m.name +
           "</div>" +
-          '<div class="zz-small zz-muted">' + [m.kindLabel, m.progressText, m.status].filter(Boolean).join(" · ") + "</div>" +
+          '<div class="zz-small zz-muted">' +
+          [m.kindLabel, m.progressText, cacheBytes ? T("缓存 $1", bytes(cacheBytes)) : "", m.status].filter(Boolean).join(" · ") +
+          "</div>" +
           '<div style="height:4px;border-radius:2px;background:rgba(127,127,127,.25);margin-top:4px">' +
           '<i style="display:block;height:100%;width:' + m.pct + "%;border-radius:2px;background:" + (task.status === "error" ? "#dc2626" : "#3b82f6") + '"></i></div>' +
           "</div>" +
@@ -904,6 +1009,19 @@
       })
       .join("");
   }
+
+  $("#btnCacheClear").addEventListener("click", async () => {
+    if (!resumes.items.length && !resumes.cache.total) return;
+    if (!confirm(T("清除所有未完成任务的缓存分片？进度将丢失。"))) return;
+    for (const task of resumes.items) {
+      if (resumes.busy.has(task.id)) continue;
+      try {
+        await ZZDLStore.removeTask(task.id);
+      } catch (e) {}
+    }
+    await refreshResumes();
+    log("dlLog", T("已清空下载缓存"));
+  });
 
   $("#resumeList").addEventListener("click", async (event) => {
     const btn = event.target.closest("button[data-ract]");

@@ -94,6 +94,19 @@
     return { sizes, total };
   }
 
+  // 全库缓存概览：按任务统计分片字节数（下载器缓存面板用）
+  async function cacheSummary() {
+    const db = await open();
+    const rows = await req2p(store(db, "chunks", "readonly").getAll());
+    const byTask = {};
+    let total = 0;
+    for (const r of rows) {
+      byTask[r.taskId] = (byTask[r.taskId] || 0) + (r.size || 0);
+      total += r.size || 0;
+    }
+    return { byTask, total, count: rows.length };
+  }
+
   // 按给定 key 顺序读出分片 Blob（IDB 里的 Blob 是磁盘引用，读取不会整体载入内存）
   async function readChunks(taskId, keys) {
     const out = [];
@@ -114,5 +127,5 @@
     return h.toString(16).padStart(8, "0") + "-" + s.length.toString(36);
   }
 
-  globalThis.ZZDLStore = { putTask, getTask, listTasks, removeTask, saveChunk, getChunk, chunkKeys, chunkSizes, readChunks, taskId };
+  globalThis.ZZDLStore = { putTask, getTask, listTasks, removeTask, saveChunk, getChunk, chunkKeys, chunkSizes, cacheSummary, readChunks, taskId };
 })();

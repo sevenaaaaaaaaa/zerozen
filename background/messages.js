@@ -8,6 +8,91 @@
     return ZZ.hostOf(url);
   }
 
+  // —— 后台抓取的 Referer/Origin 伪装 ——
+  // Referer/Origin 是 fetch 禁止首部，只能在 DNR 会话规则里改。分片是并发抓的，
+  // 规则必须按 host 复用（引用计数 + 空闲 10s 再移除），否则并发 worker 会互相拆掉规则。
+  const fetchSpoof = (() => {
+    const active = new Map(); // host -> { ruleId, referrer, count, timer }
+    let seq = 0x5a5a0000;
+    async function install(host, referrer) {
+      const dnr = api.declarativeNetRequest;
+      if (!dnr || !dnr.updateSessionRules) return null;
+      let origin = "";
+      try {
+        origin = new URL(referrer).origin;
+      } catch (e) {}
+      const ruleId = ++seq > 0x5a5affff ? (seq = 0x5a5a0001) : seq;
+      try {
+        await dnr.updateSessionRules({
+          removeRuleIds: [ruleId],
+          addRules: [
+            {
+              id: ruleId,
+              priority: 1,
+              action: {
+                type: "modifyHeaders",
+                requestHeaders: [
+                  { header: "Referer", operation: "set", value: referrer },
+                  { header: "Origin", operation: "set", value: origin },
+                ],
+              },
+              // 只改 XHR：分片抓取走 fetch；页面自己对该 CDN 的请求本来就带同样的值
+              condition: { requestDomains: [host], resourceTypes: ["xmlhttprequest"] },
+            },
+          ],
+        });
+      } catch (e) {
+        return null;
+      }
+      return ruleId;
+    }
+    return {
+      async acquire(url, referrer) {
+        if (!referrer || !/^https?:/i.test(referrer)) return null;
+        let host = "";
+        try {
+          host = new URL(url).hostname;
+        } catch (e) {
+          return null;
+        }
+        const prev = active.get(host);
+        if (prev) {
+          clearTimeout(prev.timer);
+          prev.timer = null;
+          if (prev.referrer === referrer) {
+            prev.count++;
+            return host;
+          }
+          // 同一 CDN 换了来源页：换掉旧规则
+          active.delete(host);
+          try {
+            await api.declarativeNetRequest.updateSessionRules({ removeRuleIds: [prev.ruleId] });
+          } catch (e) {}
+        }
+        const ruleId = await install(host, referrer);
+        if (!ruleId) return null;
+        active.set(host, { ruleId, referrer, count: 1, timer: null });
+        return host;
+      },
+      release(host) {
+        if (!host) return;
+        const entry = active.get(host);
+        if (!entry) return;
+        entry.count--;
+        if (entry.count > 0) return;
+        // 空闲留 10 秒：连续分片请求避免反复增删规则
+        entry.timer = setTimeout(async () => {
+          const cur = active.get(host);
+          if (!cur || cur.count > 0) return;
+          active.delete(host);
+          try {
+            await api.declarativeNetRequest.updateSessionRules({ removeRuleIds: [cur.ruleId] });
+          } catch (e) {}
+        }, 10000);
+      },
+    };
+  })();
+
   async function importRules(text, opts) {
     const source = (opts && opts.source) || "import";
     const trimmed = String(text || "").trim();
@@ -761,17 +846,18 @@
           const p = msg.payload || {};
           const url = String(p.url || "");
           if (!/^https?:/i.test(url) || url.length > 4000) return { ok: false, error: ZZ.T("无效地址") };
+          const spoofHost = await fetchSpoof.acquire(url, p.referrer || "");
           try {
-            const headers = {};
-            if (p.referrer && /^https?:/i.test(p.referrer)) {
-              headers.Referer = p.referrer;
-              try {
-                headers.Origin = new URL(p.referrer).origin;
-              } catch (e) {}
-            }
-            const res = await fetch(url, { headers, redirect: "follow" });
+            // credentials：跨域 CDN 常要求会话 Cookie；扩展持有 host 权限时 SameSite 不拦截
+            const res = await fetch(url, {
+              redirect: "follow",
+              credentials: "include",
+              signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(90000) : undefined,
+            });
+            // 403/404 错误页绝不能当成功数据返回，否则下游报「没有解析到分片」这类误导错误
+            if (!res.ok) return { ok: false, error: ZZ.T("HTTP $1", res.status) };
             const buf = await res.arrayBuffer();
-            if (buf.byteLength > 12 * 1024 * 1024) return { ok: false, error: ZZ.T("分片超过 12MB") };
+            if (buf.byteLength > 32 * 1024 * 1024) return { ok: false, error: ZZ.T("分片超过 32MB") };
             if (p.as === "text") {
               return { ok: true, status: res.status, text: new TextDecoder().decode(buf) };
             }
@@ -784,6 +870,8 @@
             return { ok: true, status: res.status, base64: btoa(bin) };
           } catch (e) {
             return { ok: false, error: (e && e.message) || ZZ.T("后台抓取失败") };
+          } finally {
+            fetchSpoof.release(spoofHost);
           }
         }
 

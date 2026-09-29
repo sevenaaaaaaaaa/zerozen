@@ -176,24 +176,41 @@
   }
 
   async function fetchText(url) {
+    // 直连优先：HLS CDN 普遍开 CORS，直连免 base64 往返；403（防盗链）再走后台伪装代理
     try {
-      const proxied = await fetchViaBg(url, "text");
-      return proxied.text || "";
-    } catch (e) {
-      const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) throw new Error((e && e.message) || "HTTP " + res.status);
-      return await res.text();
-    }
+      const res = await fetch(url, { credentials: "omit" });
+      if (res.ok) return await res.text();
+    } catch (e) {}
+    const proxied = await fetchViaBg(url, "text");
+    return proxied.text || "";
   }
 
   async function fetchBuf(url) {
     try {
-      const proxied = await fetchViaBg(url, "bin");
-      if (proxied.base64) return decodeBase64(proxied.base64);
+      const res = await fetch(url, { credentials: "omit" });
+      if (res.ok) return new Uint8Array(await res.arrayBuffer());
     } catch (e) {}
-    const res = await fetch(url, { credentials: "include" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return new Uint8Array(await res.arrayBuffer());
+    const proxied = await fetchViaBg(url, "bin");
+    if (proxied.base64) return decodeBase64(proxied.base64);
+    throw new Error((proxied && proxied.error) || T("后台抓取失败"));
+  }
+
+  // 探测 m3u8 类型与画质列表（工具箱 UI 用，供下载前选画质）
+  async function probeM3u8(url) {
+    const text = await fetchText(url);
+    if (/#EXT-X-STREAM-INF/.test(text)) {
+      return { master: true, variants: parseMaster(text, url), url };
+    }
+    const media = parseMedia(text, url);
+    return {
+      master: false,
+      live: !media.endList,
+      fmp4: !!media.map || /\.(m4s|mp4)(\?|#|$)/i.test((media.segments[0] || {}).url || ""),
+      aes: media.segments.some((s) => s.key && s.key.method === "AES-128"),
+      drm: media.segments.some((s) => s.key && s.key.method && s.key.method !== "NONE" && s.key.method !== "AES-128"),
+      segments: media.segments.length,
+      url,
+    };
   }
 
   function parseMaster(text, base) {
@@ -241,9 +258,10 @@
       } else if (l.startsWith("#EXT-X-KEY")) {
         if (/METHOD=NONE/.test(l)) key = null;
         else {
+          const method = (l.match(/METHOD=([A-Z0-9-]+)/) || [])[1] || "AES-128";
           const uri = (l.match(/URI="([^"]+)"/) || [])[1];
           const iv = (l.match(/IV=0x([0-9A-Fa-f]+)/) || [])[1];
-          key = { uri: uri ? new URL(uri, base).href : "", iv };
+          key = { uri: uri ? new URL(uri, base).href : "", iv, method };
         }
       } else if (!l.startsWith("#")) {
         out.segments.push({ url: new URL(l, base).href, key });
@@ -288,21 +306,23 @@
     const {
       concurrency = 4,
       onProgress = () => {},
+      onStats = null,
       isCancelled = () => false,
       nameBase = "video",
       dir = "ZeroZen/视频",
       tsAsMp4 = false,
+      mediaUrl: mediaUrlOverride = "",
     } = opts || {};
     const Store = globalThis.ZZDLStore;
-    const tid = Store ? Store.taskId("m3u8", url) : null;
-    // 续传：按 url 找到旧任务；直播流（无 ENDLIST）内容会变，不做续传
+    // 续传键用媒体列表地址：同一视频选不同画质互不干扰
+    let tid = Store ? Store.taskId("m3u8", mediaUrlOverride || url) : null;
     let task = tid ? await Store.getTask(tid) : null;
     if (task && task.status === "done") task = null;
 
-    let mediaUrl = task ? task.mediaUrl : url;
+    let mediaUrl = task ? task.mediaUrl : mediaUrlOverride || url;
     let text = await fetchText(mediaUrl);
     if (!task && /#EXT-X-STREAM-INF/.test(text)) {
-      const variants = parseMaster(text, url);
+      const variants = parseMaster(text, mediaUrl);
       if (!variants.length) throw new Error(T("主播放列表为空"));
       const top = variants[0];
       const topQ = top.height || top.bandwidth || 0;
@@ -329,6 +349,9 @@
     const media = parseMedia(text, mediaUrl);
     if (!media.segments.length) throw new Error(T("没有解析到分片"));
     const isFmp4 = !!media.map || /\.(m4s|mp4)(\?|#|$)/i.test(media.segments[0].url);
+    if (media.segments.some((s) => s.key && s.key.method && s.key.method !== "AES-128")) {
+      throw new Error(T("该流使用 SAMPLE-AES/DRM 加密，无法离线下载"));
+    }
     const resumable = media.endList && !!Store;
     if (resumable && task && (task.total !== media.segments.length || task.mapUrl !== (media.map || "") || !!media.map !== !!task.hasMap)) {
       onProgress(T("播放列表已变化，重新下载"));
@@ -347,7 +370,20 @@
     const hasMapChunk = have.has("map");
     const segHave = new Set(Array.from(have).filter((k) => k !== "map"));
     let done = total - media.segments.map((_, i) => i).filter((i) => !segHave.has(String(i))).length;
+    // 已下载字节数：续传时从存储统计，运行中累加分片长度；UI 据此算速度/剩余时间
+    let bytesDone = 0;
+    if (resumable) {
+      const sizes = await Store.chunkSizes(tid);
+      for (const k of Object.keys(sizes.sizes)) bytesDone += sizes.sizes[k] || 0;
+    }
+    const reportStats = () => {
+      if (!onStats) return;
+      try {
+        onStats({ done, total, bytes: bytesDone, fmp4: isFmp4, live: !media.endList });
+      } catch (e) {}
+    };
     if (resumable && done > 0) onProgress(T("发现未完成任务（$1），继续下载", T("分片 $1/$2", done, total)));
+    reportStats();
     const meta = {
       id: tid,
       kind: "m3u8",
@@ -371,7 +407,9 @@
     if (media.map && !hasMapChunk) {
       onProgress(T("下载初始化分片…"));
       const mapBuf = await fetchBuf(media.map);
+      bytesDone += mapBuf.length;
       if (resumable) await Store.saveChunk(tid, "map", mapBuf);
+      reportStats();
     }
 
     let failed = null;
@@ -411,14 +449,20 @@
             } catch (e) {
               rawKey = await fetchBuf(seg.key.uri);
             }
-            const cryptoKey = await crypto.subtle.importKey("raw", rawKey, { name: "AES-CBC" }, false, ["decrypt"]);
-            buf = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-CBC", iv: ivFor(seg.key, seg.i, media.seq) }, cryptoKey, buf));
+            try {
+              const cryptoKey = await crypto.subtle.importKey("raw", rawKey, { name: "AES-CBC" }, false, ["decrypt"]);
+              buf = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-CBC", iv: ivFor(seg.key, seg.i, media.seq) }, cryptoKey, buf));
+            } catch (e) {
+              throw new Error(T("分片解密失败（AES-128）") + ": " + ((e && e.message) || e));
+            }
           }
           if (resumable) await Store.saveChunk(tid, String(seg.i), buf);
           else memParts[seg.i + (media.map ? 1 : 0)] = buf;
           done++;
+          bytesDone += buf.length;
           if (done % 5 === 0 || done === total) onProgress(T("分片 $1/$2", done, total));
           if (saveMeta) saveMeta(done);
+          reportStats();
         } catch (e) {
           failed = failed || e;
         }
@@ -603,6 +647,7 @@
     throttle,
     parseMaster,
     parseMedia,
+    probeM3u8,
     qualityLabel,
     fetchText,
     fetchBuf,
