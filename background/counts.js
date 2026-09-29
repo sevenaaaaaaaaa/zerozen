@@ -8,6 +8,35 @@
   let counterInstalled = false;
   const badgeTimers = new Map();
 
+  // 当日累计（跨标签页）：storage.session 持久化——SW 重启不丢，浏览器重启自然清零（「当日」语义）
+  let daily = { day: "", n: 0 };
+  let dailyTimer = null;
+  function today() {
+    const d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+  async function loadDaily() {
+    try {
+      const res = await api.storage.session.get("zz.daily");
+      const v = res && res["zz.daily"];
+      daily = v && v.day === today() && typeof v.n === "number" ? v : { day: today(), n: 0 };
+    } catch (e) {
+      daily = { day: today(), n: 0 };
+    }
+  }
+  function bumpDaily(n) {
+    if (daily.day !== today()) daily = { day: today(), n: 0 };
+    daily.n += n;
+    if (dailyTimer) return;
+    dailyTimer = setTimeout(() => {
+      dailyTimer = null;
+      try {
+        api.storage.session.set({ "zz.daily": daily });
+      } catch (e) {}
+    }, 5000);
+  }
+  loadDaily();
+
   function bucket(tabId) {
     if (!tabs.has(tabId)) {
       tabs.set(tabId, { network: 0, cosmetic: 0, removed: 0, popups: 0, texts: 0, hosts: new Set(), hits: {} });
@@ -47,6 +76,7 @@
       const b = bucket(tabId);
       b[type] = (b[type] || 0) + (n || 1);
       if (host) b.hosts.add(host);
+      bumpDaily(n || 1);
       scheduleBadge(tabId);
       if (host) Counts.bumpHost(host, type, n || 1);
     },
@@ -118,17 +148,24 @@
         ZZ.call(api.action, "setBadgeText", { tabId, text: "" }).catch(() => {});
         return;
       }
-      const c = Counts.get(tabId);
-      const text = c.total > 0 ? String(c.total > 999 ? "999+" : c.total) : "";
+      let text = "";
+      let title = ZZ.T("ZeroZen 广告净化器");
+      if (settings.badgeMode === "daily") {
+        // 当日模式：所有标签页显示同一个累计数；只有发起标签页实时刷新，其余在事件到来时更新
+        const n = daily.day === today() ? daily.n : 0;
+        text = n > 0 ? String(n > 999 ? "999+" : n) : "";
+        if (text) title = ZZ.T("ZeroZen：今日已净化 $1 项", n);
+      } else {
+        const c = Counts.get(tabId);
+        text = c.total > 0 ? String(c.total > 999 ? "999+" : c.total) : "";
+        if (text) title = ZZ.T("ZeroZen：本页已净化 $1 项", c.total);
+      }
       ZZ.call(api.action, "setBadgeText", { tabId, text }).catch(() => {});
       if (api.action.setBadgeBackgroundColor) {
         ZZ.call(api.action, "setBadgeBackgroundColor", { tabId, color: "#3b82f6" }).catch(() => {});
       }
       if (api.action.setTitle) {
-        ZZ.call(api.action, "setTitle", {
-          tabId,
-          title: text ? ZZ.T("ZeroZen：本页已净化 $1 项", c.total) : ZZ.T("ZeroZen 广告净化器"),
-        }).catch(() => {});
+        ZZ.call(api.action, "setTitle", { tabId, title }).catch(() => {});
       }
     },
 

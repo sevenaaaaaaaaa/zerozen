@@ -701,8 +701,10 @@
   });
 
   $("#btnReader").addEventListener("click", async () => {
+    // 用户手势里预授权下载权限：保存 Markdown/HTML 才能进 ZeroZen/阅读 目录（未授权也有页面级兜底）
+    UI.ensurePermission("downloads");
     const res = await UI.send({ type: "zz:reader:toggle", payload: { tabId: tab && tab.id } });
-    if (res && res.ok) UI.toast($("#msg"), T(res.active ? "已进入阅读模式（可保存 Markdown）" : "已退出阅读模式"), "ok");
+    if (res && res.ok) UI.toast($("#msg"), T(res.active ? "已进入阅读模式（可保存 Markdown / HTML，可翻译）" : "已退出阅读模式"), "ok");
     else UI.toast($("#msg"), T("阅读模式失败：$1", (res && res.error) || T("无法提取正文")), "err");
   });
 

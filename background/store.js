@@ -54,6 +54,7 @@
     youtubeAuto: true,
     countMatches: true,
     badge: true,
+    badgeMode: "page",
     profile: "standard",
     lang: "auto",
     autoFallback: true,

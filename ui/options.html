@@ -255,6 +255,13 @@
                 <option value="en">English</option>
               </select>
             </label>
+            <label class="zz-check"><input type="checkbox" id="badgeEnabled" /> <span data-i18n="显示工具栏徽章">显示工具栏徽章</span></label>
+            <label class="zz-small"><span data-i18n="徽章内容">徽章内容</span>
+              <select id="badgeMode" style="margin-left: 6px">
+                <option value="page" data-i18n="本页拦截数">本页拦截数</option>
+                <option value="daily" data-i18n="当日拦截总数">当日拦截总数</option>
+              </select>
+            </label>
             <label class="zz-small"><span data-i18n="临时解除默认时长">临时解除默认时长</span>
               <input type="number" id="tempMinutes" min="5" max="720" step="5" style="width: 72px; margin-left: 6px" /> <span data-i18n="分钟">分钟</span>
             </label>

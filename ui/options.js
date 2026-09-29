@@ -176,6 +176,8 @@
     $("#autoFallback").checked = s.autoFallback !== false;
     $("#langSelect").value = s.lang || "auto";
     $("#tempMinutes").value = s.tempMinutes || 30;
+    $("#badgeEnabled").checked = s.badge !== false;
+    $("#badgeMode").value = s.badgeMode === "daily" ? "daily" : "page";
     $("#aiEnabled").checked = !!s.ai.enabled;
     $("#aiAutoApply").checked = !!s.ai.autoApply;
     $("#aiSendText").checked = s.ai.sendText !== false;
@@ -1206,6 +1208,12 @@
       const v = Math.max(5, Math.min(720, Number(event.target.value) || 30));
       event.target.value = v;
       saveSettings({ tempMinutes: v });
+    });
+    $("#badgeEnabled").addEventListener("change", (event) => {
+      saveSettings({ badge: event.target.checked });
+    });
+    $("#badgeMode").addEventListener("change", (event) => {
+      saveSettings({ badgeMode: event.target.value === "daily" ? "daily" : "page" });
     });
 
     $("#autoEnabled").addEventListener("change", (event) => {
