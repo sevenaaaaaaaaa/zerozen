@@ -503,7 +503,17 @@
     } else {
       blob = new Blob(memParts.filter(Boolean), { type: mime });
     }
-    await saveBlob(blob, dir + "/" + name);
+    try {
+      await saveBlob(blob, dir + "/" + name);
+    } catch (e) {
+      // 分片已全部就绪，保存失败（多为 downloads 权限）时把真实进度写回：
+      // 「未完成任务」列表显示 total/total，授权后点「继续」直接合并落盘
+      if (resumable) {
+        saveMeta.cancel();
+        await Store.putTask({ ...meta, done: total, status: "paused" });
+      }
+      throw e;
+    }
     if (resumable) {
       saveMeta.cancel();
       await Store.removeTask(tid);

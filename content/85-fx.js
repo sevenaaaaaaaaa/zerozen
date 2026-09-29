@@ -86,6 +86,11 @@
       done = true;
       if (typeof mount === "function") mount();
     };
+    // 后台标签页的 setTimeout 会被强节流（最长 1 分钟），动画会让阅读层迟迟不挂载——不可见时直接挂
+    if (document.hidden) {
+      finish();
+      return;
+    }
     try {
       const kids = Array.from((document.body || document.documentElement).children).filter(
         (el) => !el.hasAttribute("data-zz-ui") && el.tagName !== "SCRIPT" && el.tagName !== "STYLE"
