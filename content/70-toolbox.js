@@ -329,6 +329,7 @@
     return { active: clean.active };
   }
 
+  // ---------- 阅读模式 ----------
   const reader = { host: null };
 
   function exitReader() {
@@ -340,71 +341,352 @@
     document.documentElement.style.removeProperty("overflow");
   }
 
+  const READER_THEMES = ["light", "sepia", "dark", "gray"];
+
+  function safeName(name) {
+    return String(name || "article")
+      .replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 100) || "article";
+  }
+
+  // 深度净化正文：只保留语义标签与白名单属性。
+  // 页面 CSS 进不来 shadow DOM，但 inline style 属性能进来——这是「样式去不干净」的根源，全部剥离。
+  function sanitizeArticleHtml(html) {
+    const tpl = document.createElement("template");
+    tpl.innerHTML = String(html || "");
+    tpl.content
+      .querySelectorAll(
+        "script,style,noscript,iframe,frame,object,embed,svg,form,button,input,select,textarea,video,audio,canvas,map,area,link,meta"
+      )
+      .forEach((el) => el.remove());
+    const KEEP = new Set([
+      "P","H1","H2","H3","H4","H5","H6","UL","OL","LI","BLOCKQUOTE","PRE","CODE","TABLE","THEAD","TBODY","TFOOT",
+      "TR","TD","TH","A","IMG","STRONG","B","EM","I","U","S","DEL","BR","HR","FIGURE","FIGCAPTION","SUP","SUB",
+      "DL","DT","DD","CITE","Q","MARK","SMALL",
+    ]);
+    const unwrapChildren = (node) => {
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (const child of Array.from(node.children)) {
+          if (!KEEP.has(child.tagName)) {
+            const frag = document.createDocumentFragment();
+            while (child.firstChild) frag.appendChild(child.firstChild);
+            child.replaceWith(frag);
+            changed = true;
+            break;
+          }
+        }
+      }
+    };
+    const roots = [tpl.content];
+    while (roots.length) {
+      const node = roots.pop();
+      unwrapChildren(node);
+      for (const child of Array.from(node.children)) {
+        const tag = child.tagName;
+        for (const a of Array.from(child.attributes)) {
+          const n = a.name.toLowerCase();
+          const ok =
+            (tag === "A" && n === "href") ||
+            (tag === "IMG" && (n === "src" || n === "alt")) ||
+            ((tag === "TD" || tag === "TH") && (n === "colspan" || n === "rowspan"));
+          if (!ok) child.removeAttribute(a.name);
+        }
+        if (tag === "IMG") {
+          if (!/^https?:/i.test(child.getAttribute("src") || "")) {
+            const lazy =
+              child.getAttribute("data-src") ||
+              child.getAttribute("data-original") ||
+              child.getAttribute("data-lazy-src") ||
+              "";
+            if (lazy) {
+              try {
+                child.setAttribute("src", new URL(lazy, location.href).href);
+              } catch (e) {}
+            }
+          }
+          try {
+            const s = child.getAttribute("src");
+            if (s) child.setAttribute("src", new URL(s, location.href).href);
+          } catch (e) {}
+          if (!/^https?:/i.test(child.getAttribute("src") || "")) {
+            child.remove();
+            continue;
+          }
+        } else if (tag === "A") {
+          try {
+            const h = child.getAttribute("href");
+            if (h && !h.startsWith("#")) child.setAttribute("href", new URL(h, location.href).href);
+          } catch (e) {}
+          child.setAttribute("target", "_blank");
+          child.setAttribute("rel", "noreferrer");
+        }
+        roots.push(child);
+      }
+    }
+    tpl.content.querySelectorAll("p").forEach((p) => {
+      if (!p.textContent.trim() && !p.querySelector("img")) p.remove();
+    });
+    return tpl.innerHTML;
+  }
+
+  const READER_THEME_STYLE = {
+    light: "background:#ffffff;color:#1f2328",
+    sepia: "background:#f4ecd8;color:#433422",
+    dark: "background:#0d1117;color:#c9d1d9",
+    gray: "background:#e7e8ea;color:#2b2f33",
+  };
+
+  // 独立 HTML 导出：自带主题样式，双击即可阅读
+  function standaloneHtml(title, cleanHtml, theme) {
+    const bodyStyle = READER_THEME_STYLE[theme] || READER_THEME_STYLE.light;
+    const esc = (s) => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return (
+      "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>" +
+      esc(title) +
+      "</title><style>body{" + bodyStyle +
+      ";max-width:760px;margin:0 auto;padding:40px 20px;font:17px/1.85 -apple-system,'PingFang SC','Microsoft YaHei',sans-serif}" +
+      "img{max-width:100%;height:auto}pre{background:rgba(127,127,127,.12);padding:12px;border-radius:8px;overflow:auto}" +
+      "blockquote{border-left:3px solid rgba(127,127,127,.4);margin:12px 0;padding:4px 12px;opacity:.85}a{color:#3b82f6}" +
+      "table{border-collapse:collapse}td,th{border:1px solid rgba(127,127,127,.35);padding:4px 8px}h1{font-size:26px;line-height:1.35}</style></head><body><h1>" +
+      esc(title) +
+      "</h1><p><small>" +
+      esc(location.hostname) + " · " + esc(location.href) +
+      "</small></p>" + cleanHtml + "</body></html>"
+    );
+  }
+
+  // 页面级下载兜底：不依赖 downloads 权限（存到浏览器默认下载目录，无 ZeroZen/ 子目录）
+  function pageDownload(text, mime, filename) {
+    try {
+      const blob = new Blob([text], { type: mime + ";charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.style.display = "none";
+      (document.body || document.documentElement).appendChild(a);
+      a.click();
+      setTimeout(() => {
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 60000);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function saveArticle(payload, fallback) {
+    const res = await ZZ.send({ type: "zz:toolbox:save-article", payload });
+    if (res && res.ok) return { ok: true, filename: res.filename };
+    if (fallback && pageDownload(fallback.text, fallback.mime, fallback.filename)) {
+      return { ok: true, filename: fallback.filename + "（" + ZZ.T("浏览器下载目录") + "）" };
+    }
+    return { ok: false, error: (res && res.error) || ZZ.T("保存失败") };
+  }
+
   function enterReader(article) {
     exitReader();
-    const mount = () => {
+    const cleanHtml = sanitizeArticleHtml(article.html);
+    const mdText =
+      "# " + (article.title || document.title) + "\n\n> " + ZZ.T("来源：$1", location.href) + "\n\n" + htmlToMarkdown(cleanHtml);
+    const htmlText = () => standaloneHtml(article.title || document.title, cleanHtml, reader.theme || "light");
+    const mount = async () => {
       const host = document.createElement("div");
-    host.setAttribute("data-zz-ui", "1");
-    host.style.cssText = "position:fixed;inset:0;z-index:2147483600;background:#fff;color:#1f2328;overflow:auto;";
-    const root = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
-    const styles = document.createElement("style");
-    styles.textContent =
-      ":host{all:initial}*{box-sizing:border-box}" +
-      ".wrap{max-width:760px;margin:0 auto;padding:36px 20px 80px;font:17px/1.85 -apple-system,'PingFang SC','Microsoft YaHei',sans-serif;color:#1f2328}" +
-      "h1{font-size:26px;line-height:1.35;margin:0 0 8px}.meta{color:#8b949e;font-size:12px;margin-bottom:18px}" +
-      ".bar{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;justify-content:flex-end;padding:10px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-bottom:1px solid #eaeef2;z-index:2}" +
-      "button{font:inherit;font-size:13px;padding:5px 12px;border-radius:8px;border:1px solid #d0d7de;background:#fff;cursor:pointer}" +
-      "button.primary{background:#3b82f6;border-color:#3b82f6;color:#fff}" +
-      ".pay{font-size:12px;color:#8b949e;margin-right:auto;align-self:center}.pay a{color:#3b82f6}" +
-      "img{max-width:100%;height:auto}pre{background:#f6f8fa;padding:12px;border-radius:8px;overflow:auto}blockquote{border-left:3px solid #d0d7de;margin:12px 0;padding:4px 12px;color:#57606a}";
-    root.appendChild(styles);
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    const pay = document.createElement("span");
-    pay.className = "pay";
-    pay.innerHTML = ZZ.T("阅读模式采用<b>诚实付费</b>：觉得好用请支持作者");
-    bar.appendChild(pay);
-    const saveBtn = document.createElement("button");
-    saveBtn.className = "primary";
-    saveBtn.textContent = ZZ.T("保存到本地");
-    const exitBtn = document.createElement("button");
-    exitBtn.textContent = ZZ.T("退出阅读模式");
-    bar.appendChild(saveBtn);
-    bar.appendChild(exitBtn);
-    root.appendChild(bar);
-    const wrap = document.createElement("div");
-    wrap.className = "wrap";
-    const h1 = document.createElement("h1");
-    h1.textContent = article.title || document.title;
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    meta.textContent = location.hostname + " · " + ZZ.T("已提取 $1 字", article.length);
-    const body = document.createElement("div");
-    body.innerHTML = article.html;
-    wrap.appendChild(h1);
-    wrap.appendChild(meta);
-    wrap.appendChild(body);
-    root.appendChild(wrap);
-    (document.body || document.documentElement).appendChild(host);
-    document.documentElement.style.setProperty("overflow", "hidden");
-    reader.host = host;
+      host.setAttribute("data-zz-ui", "1");
+      host.style.cssText = "position:fixed;inset:0;z-index:2147483600;overflow:auto;";
+      const root = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
+      const styles = document.createElement("style");
+      styles.textContent =
+        ":host{all:initial}*{box-sizing:border-box}" +
+        ".t{min-height:100%;background:var(--bg);color:var(--fg)}" +
+        ".t-light{--bg:#ffffff;--fg:#1f2328;--muted:#8b949e;--line:#eaeef2;--pre:#f6f8fa;--bq:#57606a;--bd:#d0d7de;--accent:#3b82f6;--btnbg:#ffffff}" +
+        ".t-sepia{--bg:#f4ecd8;--fg:#433422;--muted:#8a7a5f;--line:#e0d5b8;--pre:#ece1c4;--bq:#6b5a3e;--bd:#c9b98f;--accent:#b4690e;--btnbg:#faf3e0}" +
+        ".t-dark{--bg:#0d1117;--fg:#c9d1d9;--muted:#8b949e;--line:#21262d;--pre:#161b22;--bq:#8b949e;--bd:#30363d;--accent:#58a6ff;--btnbg:#161b22}" +
+        ".t-gray{--bg:#e7e8ea;--fg:#2b2f33;--muted:#6c757d;--line:#d5d7da;--pre:#dfe1e4;--bq:#495057;--bd:#b9bdc2;--accent:#0b6bcb;--btnbg:#f3f4f6}" +
+        ".wrap{max-width:760px;margin:0 auto;padding:64px 20px 80px;font:var(--fs,17px)/1.85 -apple-system,'PingFang SC','Microsoft YaHei',sans-serif}" +
+        "h1{font-size:1.55em;line-height:1.35;margin:0 0 8px}.meta{color:var(--muted);font-size:12px;margin-bottom:18px}" +
+        ".bar{position:sticky;top:0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 14px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:2}" +
+        "button{font:inherit;font-size:13px;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--btnbg);color:var(--fg);cursor:pointer}" +
+        "button.primary{background:var(--accent);border-color:var(--accent);color:#fff}" +
+        "button:disabled{opacity:.55;cursor:default}" +
+        ".pay{font-size:12px;color:var(--muted);margin-right:auto;align-self:center}.pay a{color:var(--accent)}" +
+        ".body{font-size:var(--fs,17px)}" +
+        "img{max-width:100%;height:auto;border-radius:4px}pre{background:var(--pre);padding:12px;border-radius:8px;overflow:auto}" +
+        "blockquote{border-left:3px solid var(--bd);margin:12px 0;padding:4px 12px;color:var(--bq)}" +
+        "a{color:var(--accent)}table{border-collapse:collapse;max-width:100%}td,th{border:1px solid var(--bd);padding:4px 8px}" +
+        "h2,h3,h4{line-height:1.4;margin:1.4em 0 .5em}";
+      root.appendChild(styles);
+      const themeWrap = document.createElement("div");
+      themeWrap.className = "t t-light";
+      root.appendChild(themeWrap);
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      const pay = document.createElement("span");
+      pay.className = "pay";
+      pay.innerHTML = ZZ.T("阅读模式采用<b>诚实付费</b>：觉得好用请支持作者");
+      bar.appendChild(pay);
 
-    exitBtn.addEventListener("click", exitReader);
-    saveBtn.addEventListener("click", async () => {
-      saveBtn.disabled = true;
-      saveBtn.textContent = ZZ.T("保存中…");
-      const md =
-        "# " + (article.title || document.title) + "\n\n> " + ZZ.T("来源：$1", location.href) + "\n\n" + htmlToMarkdown(article.html);
-      const res = await ZZ.send({
-        type: "zz:toolbox:save-article",
-        payload: { title: article.title || document.title, markdown: md, url: location.href },
+      // 主题与字号：从设置恢复，切换时写回
+      let theme = "light";
+      let font = 17;
+      try {
+        const s = await ZZ.send({ type: "zz:settings:get" });
+        const r = s && s.ok && s.settings && s.settings.toolbox && s.settings.toolbox.reader;
+        if (r) {
+          if (READER_THEMES.indexOf(r.theme) >= 0) theme = r.theme;
+          if (r.font >= 13 && r.font <= 26) font = r.font;
+        }
+      } catch (e) {}
+      reader.theme = theme;
+      const persistReader = () => {
+        ZZ.send({ type: "zz:settings:set", payload: { settings: { toolbox: { reader: { theme, font } } }, rebuild: false } });
+      };
+      const applyLook = () => {
+        themeWrap.className = "t t-" + theme;
+        themeWrap.style.setProperty("--fs", font + "px");
+      };
+      applyLook();
+
+      const themeBtn = document.createElement("button");
+      const themeNames = { light: ZZ.T("浅色"), sepia: ZZ.T("羊皮纸"), dark: ZZ.T("深色"), gray: ZZ.T("灰色") };
+      const themeLabel = () => ZZ.T("主题：$1", themeNames[theme]);
+      themeBtn.textContent = themeLabel();
+      themeBtn.addEventListener("click", () => {
+        theme = READER_THEMES[(READER_THEMES.indexOf(theme) + 1) % READER_THEMES.length];
+        reader.theme = theme;
+        applyLook();
+        themeBtn.textContent = themeLabel();
+        persistReader();
       });
-      saveBtn.disabled = false;
-      saveBtn.textContent = ZZ.T("保存到本地");
-      ZZ.notice(
-        res && res.ok ? ZZ.T("已保存：$1", res.filename || "") : ZZ.T("保存失败：$1", (res && res.error) || ZZ.T("未知错误"))
-      );
-    });
+      const fontMinus = document.createElement("button");
+      fontMinus.textContent = "A−";
+      const fontPlus = document.createElement("button");
+      fontPlus.textContent = "A+";
+      const bumpFont = (d) => {
+        font = Math.max(13, Math.min(26, font + d));
+        applyLook();
+        persistReader();
+      };
+      fontMinus.addEventListener("click", () => bumpFont(-1));
+      fontPlus.addEventListener("click", () => bumpFont(1));
+      bar.appendChild(themeBtn);
+      bar.appendChild(fontMinus);
+      bar.appendChild(fontPlus);
+
+      // 翻译：按块送后台机翻，可一键译回原文
+      let translated = false;
+      const transPairs = new Map();
+      const translateBtn = document.createElement("button");
+      translateBtn.textContent = ZZ.T("翻译");
+      const noticeInline = (text) => ZZ.notice(text);
+      translateBtn.addEventListener("click", async () => {
+        if (translated) {
+          for (const [el, text] of transPairs) el.textContent = text;
+          transPairs.clear();
+          translated = false;
+          translateBtn.textContent = ZZ.T("翻译");
+          return;
+        }
+        const BLOCK_SEL = "p,h1,h2,h3,h4,h5,h6,li,blockquote,figcaption,dd,dt,td,th";
+        const blocks = Array.from(body.querySelectorAll(BLOCK_SEL)).filter((el) => {
+          if (el.querySelector(BLOCK_SEL) || el.querySelector("pre")) return false;
+          const t = (el.textContent || "").trim();
+          return t.length >= 2 && t.length <= 4000;
+        });
+        let total = 0;
+        const picked = [];
+        for (const el of blocks) {
+          const t = el.textContent.trim();
+          if (total + t.length > 30000 || picked.length >= 200) break;
+          total += t.length;
+          picked.push({ el, text: t });
+        }
+        if (!picked.length) {
+          noticeInline(ZZ.T("没有可翻译的正文"));
+          return;
+        }
+        const target = ZZ.I18n && ZZ.I18n.lang() === "en" ? "en" : "zh-CN";
+        let cjk = 0;
+        for (const p of picked) cjk += (p.text.match(/[\u4e00-\u9fff]/g) || []).length;
+        if (target === "zh-CN" && cjk / total > 0.25) {
+          noticeInline(ZZ.T("正文已是中文，无需翻译"));
+          return;
+        }
+        translateBtn.disabled = true;
+        translateBtn.textContent = ZZ.T("翻译中…");
+        const res = await ZZ.send({ type: "zz:reader:translate", payload: { texts: picked.map((p) => p.text), target } });
+        translateBtn.disabled = false;
+        if (!res || !res.ok || !res.items) {
+          translateBtn.textContent = ZZ.T("翻译");
+          noticeInline(ZZ.T("翻译失败：$1", (res && res.error) || ZZ.T("无法访问翻译服务")));
+          return;
+        }
+        let applied = 0;
+        for (let i = 0; i < picked.length; i++) {
+          if (res.items[i] && String(res.items[i]).trim()) {
+            transPairs.set(picked[i].el, picked[i].text);
+            picked[i].el.textContent = res.items[i];
+            applied++;
+          }
+        }
+        translated = applied > 0;
+        translateBtn.textContent = translated ? ZZ.T("译回原文") : ZZ.T("翻译");
+        noticeInline(ZZ.T("已翻译 $1 段（机器翻译）", applied));
+      });
+      bar.appendChild(translateBtn);
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className = "primary";
+      saveBtn.textContent = ZZ.T("保存 Markdown");
+      saveBtn.addEventListener("click", async () => {
+        saveBtn.disabled = true;
+        const r = await saveArticle(
+          { title: article.title || document.title, markdown: mdText, url: location.href, ext: "md" },
+          { text: mdText, mime: "text/markdown", filename: safeName(article.title || document.title) + ".md" }
+        );
+        saveBtn.disabled = false;
+        noticeInline(r.ok ? ZZ.T("已保存：$1", r.filename) : ZZ.T("保存失败：$1", r.error || ZZ.T("未知错误")));
+      });
+      const saveHtmlBtn = document.createElement("button");
+      saveHtmlBtn.textContent = ZZ.T("存为 HTML");
+      saveHtmlBtn.addEventListener("click", async () => {
+        saveHtmlBtn.disabled = true;
+        const r = await saveArticle(
+          { title: article.title || document.title, html: htmlText(), url: location.href, ext: "html" },
+          { text: htmlText(), mime: "text/html", filename: safeName(article.title || document.title) + ".html" }
+        );
+        saveHtmlBtn.disabled = false;
+        noticeInline(r.ok ? ZZ.T("已保存：$1", r.filename) : ZZ.T("保存失败：$1", r.error || ZZ.T("未知错误")));
+      });
+      const exitBtn = document.createElement("button");
+      exitBtn.textContent = ZZ.T("退出阅读模式");
+      bar.appendChild(saveBtn);
+      bar.appendChild(saveHtmlBtn);
+      bar.appendChild(exitBtn);
+      themeWrap.appendChild(bar);
+      const wrap = document.createElement("div");
+      wrap.className = "wrap";
+      const h1 = document.createElement("h1");
+      h1.textContent = article.title || document.title;
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = location.hostname + " · " + ZZ.T("已提取 $1 字", article.length);
+      const body = document.createElement("div");
+      body.className = "body";
+      body.innerHTML = cleanHtml;
+      wrap.appendChild(h1);
+      wrap.appendChild(meta);
+      wrap.appendChild(body);
+      themeWrap.appendChild(wrap);
+      (document.body || document.documentElement).appendChild(host);
+      document.documentElement.style.setProperty("overflow", "hidden");
+      reader.host = host;
+      exitBtn.addEventListener("click", exitReader);
     };
     if (ZZ.FX && ZZ.FX.readerIn) {
       ZZ.FX.readerIn(mount);

@@ -884,9 +884,14 @@
             .replace(/\s+/g, " ")
             .trim()
             .slice(0, 100);
-          const filename = dir.replace(/\/+$/, "") + "/" + (safe || "article") + ".md";
-          const text = "# " + (p.title || "") + "\n\n> " + ZZ.T("来源：$1", p.url || "") + "\n\n" + String(p.markdown || "");
-          const dataUrl = "data:text/markdown;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(text)));
+          const ext = p.ext === "html" ? "html" : "md";
+          const filename = dir.replace(/\/+$/, "") + "/" + (safe || "article") + "." + ext;
+          const text =
+            ext === "html"
+              ? String(p.html || "")
+              : "# " + (p.title || "") + "\n\n> " + ZZ.T("来源：$1", p.url || "") + "\n\n" + String(p.markdown || "");
+          const mime = ext === "html" ? "text/html" : "text/markdown";
+          const dataUrl = "data:" + mime + ";charset=utf-8;base64," + btoa(unescape(encodeURIComponent(text)));
           if (!api.downloads || !api.downloads.download) {
             return { ok: false, error: ZZ.T("需要先授予「下载」权限：打开净化控制台 → 统计与诊断 → 可选权限") };
           }
@@ -902,6 +907,59 @@
           } catch (e) {
             return { ok: false, error: (e && e.message) || ZZ.T("保存失败") };
           }
+        }
+
+        case "zz:reader:translate": {
+          // 机器翻译：Google gtx 免费端点优先（host 权限内无 CORS），MyMemory 兜底（480 字符/条）。
+          // 只译纯文本块，不碰任何用户数据；失败的块返回空串，由页面保留原文。
+          const p = msg.payload || {};
+          const texts = (Array.isArray(p.texts) ? p.texts : [])
+            .map((t) => String(t || "").slice(0, 4500))
+            .slice(0, 200);
+          const target = String(p.target || "zh-CN").replace(/[^a-zA-Z-]/g, "").slice(0, 12) || "zh-CN";
+          if (!texts.length) return { ok: true, items: [], failed: 0 };
+          const signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined;
+          const gtx = async (text) => {
+            const url =
+              "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=t&q=" +
+              encodeURIComponent(text.slice(0, 1800));
+            const res = await fetch(url + "&tl=" + encodeURIComponent(target), { signal });
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const data = await res.json();
+            if (!Array.isArray(data) || !Array.isArray(data[0])) throw new Error("bad response");
+            return data[0].map((seg) => (seg && seg[0]) || "").join("");
+          };
+          const mymemory = async (text) => {
+            const url =
+              "https://api.mymemory.translated.net/get?langpair=auto|" +
+              encodeURIComponent(target) +
+              "&q=" +
+              encodeURIComponent(text.slice(0, 470));
+            const res = await fetch(url, { signal });
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const data = await res.json();
+            return ((data && data.responseData && data.responseData.translatedText) || "").trim();
+          };
+          const out = new Array(texts.length).fill("");
+          let failed = 0;
+          let idx = 0;
+          const workers = Array.from({ length: Math.min(4, texts.length) }, async () => {
+            while (idx < texts.length) {
+              const i = idx++;
+              const text = texts[i];
+              if (!text.trim()) continue;
+              try {
+                out[i] = await gtx(text);
+              } catch (e) {
+                try {
+                  out[i] = await mymemory(text);
+                } catch (e2) {}
+                if (!out[i]) failed++;
+              }
+            }
+          });
+          await Promise.all(workers);
+          return { ok: failed < texts.length, items: out, failed };
         }
 
         case "zz:bookmarks:preview": {
