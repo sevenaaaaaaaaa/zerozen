@@ -174,18 +174,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": "[class*='email-popup']",
-      "note": "邮件收集弹窗"
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='email-modal']",
-      "note": "邮件收集弹窗"
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": "[aria-label*='newsletter' i]",
       "note": "订阅弹窗"
     },

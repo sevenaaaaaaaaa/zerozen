@@ -399,17 +399,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": "[class*='login-mask']",
-      "note": "登录遮罩",
-      "domains": [
-        "douyin.com",
-        "ixigua.com",
-        "kuaishou.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": "[class*='app-download-bar']",
       "note": "App 下载条",
       "domains": [

@@ -184,7 +184,10 @@
   const PLAYER_HINT = /(player|plyr|video-js|jwplayer|dplayer|artplayer|html5-video|fp-player|vjs-|mediaelement)/i;
   const AD_HOST_RE =
     /magsrv|pemsrv|wpadmngr|exoclick|exosrv|realsrv|exdynsrv|juicyads|juicycdn|trafficjunky|tsyndicate|trafficstars|popads|popcash|propeller|onclasrv|clickadu|adcash|adsterra|adskeeper|hilltopads|adspyglass|traffichunt|zeropark|plugrush|twinrd|trafficfactory|galaksion|clickaine|ad-maven/i;
-  const AD_NAME_RE = /(^|[^a-z0-9])(ad|ads|adv|sponsor|popunder|popup|interstitial|exo|juicy|tsad|ts_ad|overlay)([^a-z0-9]|$)/i;
+  // 不含 popup/overlay：正常登录框、cookie 提示常用这两个词命名，误伤率远高于命中率
+  const AD_NAME_RE = /(^|[^a-z0-9])(ad|ads|adv|sponsor|sponsored|popunder|interstitial|exo|juicy|tsad|ts_ad)([^a-z0-9]|$)/i;
+  // iframe src 判广告：必须命中明确的广告词边界，"broadcast"/"downloads" 这类词不能中招
+  const AD_SRC_RE = /(^|[./_?#-])(ads?|adsystem|adservice|adserver|advert|banner|popunder|popads|popcash)([./_?#-]|$)/i;
 
   function isPlayerish(el) {
     if (!el || !el.closest) return false;
@@ -238,13 +241,16 @@
         iframe = el.tagName === "IFRAME" ? el : el.querySelector("iframe");
       } catch (e) {}
       const src = iframe ? iframe.src || iframe.getAttribute("src") || "" : "";
-      const iframeAd = !!(iframe && (AD_HOST_RE.test(src) || /ads?|banner|pop/i.test(src)));
+      const iframeAd = !!(iframe && (AD_HOST_RE.test(src) || AD_SRC_RE.test(src)));
+      // 空全屏点击层 / 透明点击劫持层照杀；普通 iframe（嵌入式登录/OAuth/客服）不再当广告依据
       const emptyFull = fullish && el.childElementCount === 0 && (cs.cursor === "pointer" || z >= 9999);
       const clickjack = fullish && z >= 100 && (parseFloat(cs.opacity || "1") < 0.2 || cs.backgroundColor === "transparent" || cs.backgroundColor === "rgba(0, 0, 0, 0)");
-      if (!(iframeAd || (fullish && (adName || iframe)) || emptyFull || clickjack || (stickyBar && (adName || iframe)))) continue;
+      if (!(iframeAd || (fullish && adName) || emptyFull || clickjack || (stickyBar && adName))) continue;
+      // 含表单/输入/验证码/普通 iframe 的浮层可能是登录、注册、客服窗，一律不碰
       let interactive = false;
       try {
         interactive = !!el.querySelector("input, textarea, select, form, iframe[src*='captcha'], iframe[src*='recaptcha']");
+        if (!interactive && iframe && !iframeAd) interactive = true;
       } catch (e) {}
       if (interactive) continue;
       try {

@@ -128,24 +128,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": "[class*='login-modal']",
-      "note": "小红书登录弹窗",
-      "domains": [
-        "xiaohongshu.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='login-container']",
-      "note": "小红书登录弹窗",
-      "domains": [
-        "xiaohongshu.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": "[class*='app-download']",
       "note": "小红书 App 下载引导",
       "domains": [
@@ -282,15 +264,6 @@
       "kind": "cosmetic",
       "action": "hide",
       "selector": ".passport-login-container",
-      "note": "贴吧登录弹窗",
-      "domains": [
-        "tieba.baidu.com"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='login-dialog']",
       "note": "贴吧登录弹窗",
       "domains": [
         "tieba.baidu.com"

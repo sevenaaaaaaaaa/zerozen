@@ -78,24 +78,6 @@
     {
       "kind": "cosmetic",
       "action": "hide",
-      "selector": "[class*='login-mask']",
-      "note": "CSDN 登录遮罩",
-      "domains": [
-        "csdn.net"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='login-box']",
-      "note": "CSDN 登录弹窗",
-      "domains": [
-        "csdn.net"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
       "selector": "[class*='toolbar-ad']",
       "note": "CSDN 侧栏广告",
       "domains": [
@@ -152,15 +134,6 @@
       "action": "hide",
       "selector": "[class*='sidebar-ad']",
       "note": "掘金侧栏广告",
-      "domains": [
-        "juejin.cn"
-      ]
-    },
-    {
-      "kind": "cosmetic",
-      "action": "hide",
-      "selector": "[class*='login-modal']",
-      "note": "掘金登录弹窗",
       "domains": [
         "juejin.cn"
       ]
