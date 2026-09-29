@@ -155,6 +155,7 @@ graph LR
 **False-positive protection**
 
 - [x] Login/signup dialog protection: removed "hide anything with an email input" broad rules and real-login-dialog hiding on X/Taobao/JD/Weibo/Instagram/Douyu; overlay sweep now skips dialogs containing forms or captchas
+- [x] Login dialog misfire purge: removed wildcard `login-*` / `email-*` rules across packs; overlay sweep no longer treats `popup` class names or ordinary iframes (embedded OAuth logins) as ad signals
 - [x] Whitelist domain inheritance: disabling a parent domain covers all subdomains (`www`/`m.`/deep), single subdomain can opt back in
 - [x] In-page false-positive report: toolbox "Misfire report" tab scans hidden elements, one click generates a site-scoped exemption rule
 - [ ] Quick undo: popup lists recently hidden elements for one-click restore
@@ -169,10 +170,24 @@ graph LR
 **UI & task details**
 
 - [x] Per-page hit details: popup aggregates this page's hits by pack (custom rules listed separately; disable a single rule later)
-- [ ] Toolbar badge with daily blocked count (optional)
+- [x] Toolbar badge with daily blocked count (optional)
 - [x] Localized download failure reasons + one-click retry
 - [x] Completion notifications (optional)
 - [x] Toolbox remembers the last active tab
+
+**Downloader overhaul (v0.9)**
+
+- [x] Fixed "m3u8 never succeeds": background fetch now sends cookies, spoofs Referer/Origin via session DNR rules, and surfaces real HTTP errors instead of silent garbage
+- [x] Quality picker for master playlists (auto/highest or manual), SAMPLE-AES/DRM streams detected and explained
+- [x] Live progress card: segments done/total, bytes, speed, ETA per task
+- [x] Cache panel: per-task and total segment cache sizes, one-click clear
+
+**Reader mode 2.0**
+
+- [x] Deep style sanitization: only semantic tags and whitelisted attributes survive (inline styles were leaking through shadow DOM)
+- [x] Four themes (light / sepia / dark / gray) + font size, persisted
+- [x] Save as Markdown **and** standalone themed HTML; in-page download fallback when the downloads permission is missing
+- [x] Machine translation (Google gtx with MyMemory fallback) with one-click show-original
 
 **Onboarding**
 
