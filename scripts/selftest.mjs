@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { makeSandbox, load, loadRuleEngine, assert, assertEqual } from "./harness.mjs";
+import { fileURLToPath } from "node:url";
 
 const sandbox = makeSandbox();
 loadRuleEngine(sandbox);
@@ -736,8 +737,7 @@ const permStatus = await Perms.status();
 assert(permStatus.supported, "permissions api detected");
 assertEqual(permStatus.granted.bookmarks, true, "granted permission reported");
 assertEqual(permStatus.granted.history, false, "missing permission reported");
-assertEqual(permStatus.items.length, 5, "five optional permissions described");
-assert(
+assertEqual(permStatus.items.length, 5, "five optional permissions described");assert(
   permStatus.items.every((p) => p.name && p.why && (p.features || []).length),
   "every optional permission carries a user-facing reason"
 );
@@ -796,6 +796,41 @@ WIdx.build([subRule, builtinRule], {});
 const kept = WIdx.current().rules.filter((r) => r.selector === ".shared-ad");
 assertEqual(kept.length, 1, "identical builtin and subscription rules deduped");
 assertEqual(kept[0].source, "builtin", "builtin rule wins over subscription rule");
+
+// 危险通配模式：内置规则包里永不回填会命中正常登录/邮箱弹窗的宽匹配（历史误拦教训）
+console.log("\n黄金样本·规则静态检查");
+{
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const packsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "rules");
+  // 危险模式：通配命中正常登录框/邮箱弹窗的「弹窗」命名（历史真实误拦）。
+  // login-wall / signup-wall 属强制注册墙语义，正常登录框不会这么命名，不在禁止之列。
+  const DANGEROUS = [
+    { re: /\[class\*='login[-_](modal|dialog|box|mask|container|tip|popup|panel|layer|wrap|form)'/i, why: "通配 login-* 弹窗命名会命中正常登录弹窗" },
+    { re: /\[id\*='login[-_](modal|dialog|box|mask|container|tip|popup|panel|layer|wrap|form)'/i, why: "通配 id*=login-* 弹窗命名会命中正常登录弹窗" },
+    { re: /\[class\*='email[-_](modal|popup|dialog|layer)'/i, why: "通配 email-modal/popup 会命中邮箱登录弹窗" },
+    { re: /^\[class\*='popup'\]$/i, why: "全站通配 .popup 会命中正常弹窗命名" },
+  ];
+  let packCount = 0;
+  for (const f of fs.readdirSync(packsDir).filter((x) => /^pack-.*\.json$/.test(x))) {
+    const data = JSON.parse(fs.readFileSync(path.join(packsDir, f), "utf8"));
+    for (const r of data.rules || []) {
+      packCount++;
+      const sel = String(r.selector || "");
+      const globalRule = !r.domains || !r.domains.length;
+      for (const d of DANGEROUS) {
+        if (d.re.test(sel)) {
+          const scoped = new RegExp(d.re.source, "i").test(sel) && !globalRule;
+          // 站点限定规则（domains 非空）风险可控，跳过；全局规则一律拒绝
+          if (globalRule) assert(!d.re.test(sel), `规则包 ${f} 含危险通配：${sel}（${d.why}）`);
+          void scoped;
+        }
+      }
+    }
+  }
+  assert(packCount > 7000, "规则包已加载（" + packCount + " 条）");
+  console.log("  ok   危险通配模式未回填（扫描 " + packCount + " 条规则）");
+}
 
 if (process.exitCode) {
   console.error("\nselftest: FAILED");

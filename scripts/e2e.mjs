@@ -122,6 +122,24 @@ async function prepareFixtures(dir) {
 <p>Today tea is the second most consumed drink in the world after water, with ceremonies from Japanese matcha to Indian chai.</p>
 </article></body></html>`
   );
+  writeFileSync(
+    join(pages, "golden.html"),
+    `<!doctype html><html><head><meta charset="utf-8"><title>Golden</title><style>
+.modal{display:none}
+.login-modal{display:block;position:relative;width:420px;padding:20px;border:1px solid #ddd;margin:10px}
+.email-modal{position:relative;width:300px;padding:12px;border:1px solid #eee;margin:10px}
+.overlay-panel{position:relative;width:200px;height:80px;background:#f6f6f6;margin:10px}
+</style></head><body>
+<div class="login-modal" id="gLogin"><h3>登录</h3><input type="email"><input type="password"><button>登录</button></div>
+<div class="email-modal" id="gEmail"><input placeholder="邮箱"><button>订阅</button></div>
+<form id="gSearch"><input type="search"><button>搜索</button></form>
+<div class="overlay-panel" id="gOverlay"><button>关闭</button></div>
+<div class="player" id="gPlayer"><video src="about:blank"></video></div>
+<div class="cart" id="gCart"><button>加入购物车</button><span>￥129</span></div>
+<div class="comments" id="gComments"><form><textarea></textarea><button>评论</button></form></div>
+<div class="popup-login" id="gPopupLogin"><form><input><button>登录</button></form></div>
+</body></html>`
+  );
   let hasHls = false;
   try {
     execSync("ffmpeg -version", { stdio: "ignore" });
@@ -233,14 +251,14 @@ async function main() {
         if (!tabs.length) return false;
         const probe = await chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
-          func: () => [...document.querySelectorAll("[data-zz-ui]")].some((el) => el.shadowRoot),
+          func: () => [...document.querySelectorAll("[data-zz-ui]")].some((el) => el.shadowRoot && el.shadowRoot.querySelector(".t")),
         });
         if (!probe[0].result) await chrome.tabs.sendMessage(tabs[0].id, { type: "zz:reader:toggle" });
         await new Promise((r2) => setTimeout(r2, 1500));
         const probe2 = await chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
           func: () => {
-            const host = [...document.querySelectorAll("[data-zz-ui]")].find((el) => el.shadowRoot);
+            const host = [...document.querySelectorAll("[data-zz-ui]")].find((el) => el.shadowRoot && el.shadowRoot.querySelector(".t"));
             if (!host) return null;
             const sr = host.shadowRoot;
             return { junk: sr.querySelectorAll(".body style,.body [style]").length, paras: sr.querySelectorAll(".body p").length };
@@ -248,6 +266,7 @@ async function main() {
         });
         return probe2[0].result;
       })()`);
+      console.log("  reader entered:", JSON.stringify(entered));
       check("阅读模式挂载（后台 tab）", !!entered);
       check("正文样式净化", !!entered && entered.junk === 0 && entered.paras === 3);
 
@@ -255,13 +274,17 @@ async function main() {
       const bws = await fetch(`http://localhost:${PORT}/json/version`).then((r) => r.json());
       const bc = await new Conn(bws.webSocketDebuggerUrl).connect();
       await bc.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: outDir });
-      await p.evaluate(`(() => {
-        const host = [...document.querySelectorAll("[data-zz-ui]")].find((el) => el.shadowRoot);
-        [...host.shadowRoot.querySelectorAll("button")].find((b) => /Markdown/.test(b.textContent)).click();
+      const clicked = await p.evaluate(`(() => {
+        const host = [...document.querySelectorAll("[data-zz-ui]")].find((el) => el.shadowRoot && el.shadowRoot.querySelector(".t"));
+        if (!host) return false;
+        const btn = [...host.shadowRoot.querySelectorAll("button")].find((b) => /Markdown/.test(b.textContent));
+        if (!btn) return false;
+        btn.click();
+        return true;
       })()`);
       await sleep(3000);
       const saved = execSync(`ls "${outDir}" 2>/dev/null || true`).toString().trim();
-      check("Markdown 保存落盘", saved.length > 0);
+      check("Markdown 保存落盘", clicked && saved.length > 0);
       bc.close();
       p.close();
       await closeTab(art.id);
@@ -297,6 +320,28 @@ async function main() {
       check("分片缓存完整（断点续传）", idb.cleaned || (idb.done === idb.total && idb.chunks >= 3));
       p.close();
       await closeTab(tbt.id);
+    }
+
+
+    // —— 黄金样本：正常 UI（登录/订阅/搜索/播放器/购物车/评论区）绝不被隐藏 ——
+    {
+      const g = await newTab(`http://localhost:${HTTP_PORT}/pages/golden.html`);
+      await sleep(7000);
+      const p = await new Conn(g.webSocketDebuggerUrl).connect();
+      const r = await p.evaluate(`({
+        login: document.getElementById("gLogin").offsetWidth > 0,
+        email: document.getElementById("gEmail").offsetWidth > 0,
+        search: document.getElementById("gSearch").offsetWidth > 0,
+        overlay: document.getElementById("gOverlay").offsetWidth > 0,
+        player: document.getElementById("gPlayer").offsetWidth > 0,
+        cart: document.getElementById("gCart").offsetWidth > 0,
+        comments: document.getElementById("gComments").offsetWidth > 0,
+        popupLogin: document.getElementById("gPopupLogin").offsetWidth > 0,
+      })`);
+      const visible = Object.entries(r).filter(([, v]) => v).length;
+      check(`黄金样本可见 ${visible}/8`, visible === 8);
+      p.close();
+      await closeTab(g.id);
     }
 
     c.close();
