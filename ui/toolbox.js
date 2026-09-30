@@ -51,7 +51,7 @@
   }
 
   // ---------- 视频下载进度卡片 ----------
-  const vp = { active: null }; // { url, name, last: {bytes, at}, speed }
+  const vp = { active: null }; // { url, name, last: {bytes, at}, speed, startedAt }
   function fmtDur(sec) {
     if (!isFinite(sec) || sec <= 0) return "—";
     const m = Math.floor(sec / 60);
@@ -60,15 +60,20 @@
     if (m > 0) return m + T("分") + s + T("秒");
     return s + T("秒");
   }
+  function fmtClock(ts) {
+    const d = new Date(ts);
+    const p = (n) => String(n).padStart(2, "0");
+    return p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+  }
   function vpStart(url, name) {
-    vp.active = { url, name, last: null, speed: 0 };
+    vp.active = { url, name, last: null, speed: 0, startedAt: Date.now() };
     $("#videoProgress").hidden = false;
     $("#vpName").textContent = name;
     const bar = $("#vpBar");
     bar.style.background = "#3b82f6";
     bar.style.width = "0%";
     $("#vpMeta").textContent = "";
-    $("#vpInfo").textContent = T("准备中…");
+    $("#vpInfo").textContent = T("开始于 $1 · 准备中…", fmtClock(vp.active.startedAt));
   }
   function vpStats(st) {
     if (!vp.active) return;
@@ -86,7 +91,17 @@
     const pct = st.total ? Math.min(100, Math.round((st.done / st.total) * 100)) : 0;
     $("#vpBar").style.width = pct + "%";
     $("#vpMeta").textContent = [st.fmp4 ? "fMP4" : "TS", st.live ? T("直播流") : "", st.total ? pct + "%" : ""].filter(Boolean).join(" · ");
-    let info = T("分片 $1/$2", st.done || 0, st.total || 0) + " · " + ZZDLEngine.bytes(st.bytes || 0);
+    const elapsed = (now - vp.active.startedAt) / 1000;
+    const avg = elapsed > 0.5 ? st.bytes / elapsed : 0;
+    let info =
+      T("开始于 $1", fmtClock(vp.active.startedAt)) +
+      " · " +
+      T("已用时 $1", fmtDur(elapsed)) +
+      " · " +
+      T("分片 $1/$2", st.done || 0, st.total || 0) +
+      " · " +
+      ZZDLEngine.bytes(st.bytes || 0);
+    if (avg) info += " · " + T("均速 $1/s", ZZDLEngine.bytes(avg));
     if (vp.active.speed) info += " · " + ZZDLEngine.bytes(vp.active.speed) + "/s";
     if (st.total && vp.active.speed && st.done > 0 && st.done < st.total) {
       const eta = Math.round(((st.total - st.done) * (st.bytes / st.done)) / vp.active.speed);
@@ -97,13 +112,24 @@
   function vpFail(err) {
     if (!vp.active) return;
     $("#vpBar").style.background = "#dc2626";
-    $("#vpInfo").textContent = T("失败：$1", err);
+    const elapsed = (Date.now() - vp.active.startedAt) / 1000;
+    $("#vpInfo").textContent =
+      T("失败于 $1（用时 $2）", fmtClock(Date.now()), fmtDur(elapsed)) + " · " + T("失败：$1", err);
   }
   function vpDone() {
     if (!vp.active) return;
+    const endAt = Date.now();
+    const elapsed = (endAt - vp.active.startedAt) / 1000;
     $("#vpBar").style.background = "#16a34a";
     $("#vpBar").style.width = "100%";
     $("#vpMeta").textContent = T("已完成");
+    // 完成摘要保留在卡片上：结束时间/总用时/平均速度
+    const doneBytes = vp.active.last ? vp.active.last.bytes : 0;
+    $("#vpInfo").textContent =
+      T("完成于 $1", fmtClock(endAt)) +
+      " · " +
+      T("总用时 $1", fmtDur(elapsed)) +
+      (doneBytes && elapsed > 0.5 ? " · " + T("平均速度 $1/s", ZZDLEngine.bytes(doneBytes / elapsed)) : "");
     vp.active = null;
   }
 
@@ -746,6 +772,13 @@
         ];
         if (it.state === "in_progress" && speed.speed) meta.push(bytes(speed.speed) + "/s");
         if (it.state === "in_progress" && it.estimatedEndTime) meta.push(T("剩余 $1", it.estimatedEndTime.slice(11, 16)));
+        if (it.state === "complete" && it.endTime && it.startTime) {
+          const dur = (new Date(it.endTime) - new Date(it.startTime)) / 1000;
+          if (dur > 0.5) {
+            meta.push(T("用时 $1", fmtDur(dur)));
+            if (total) meta.push(T("均速 $1/s", bytes(total / dur)));
+          }
+        }
         const buttons = [];
         if (it.state === "in_progress" && !it.paused) buttons.push('<button class="zz-btn zz-btn-sm" data-act="pause">' + T("暂停") + "</button>");
         if (it.state === "in_progress" && it.paused) buttons.push('<button class="zz-btn zz-btn-sm" data-act="resume">' + T("继续") + "</button>");

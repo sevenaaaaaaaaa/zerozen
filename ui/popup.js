@@ -204,6 +204,36 @@
     }
   }
 
+  // 下载命名：页面标题（多为视频标题）优先，URL 末段回退。
+  // 标题按常见分隔符去掉尾部站名，避免「标题 - 某站」直接落成文件名。
+  function taskName(url, pageTitle) {
+    const raw = String(pageTitle || "").trim();
+    if (!raw) return streamName(url);
+    let brand = "";
+    try {
+      brand = new URL(url).hostname.replace(/^www\./, "").split(".")[0];
+    } catch (e) {}
+    const parts = raw.split(/\s*[-–—_|｜]\s*/);
+    if (parts.length > 1) {
+      const last = parts[parts.length - 1].trim();
+      if (
+        last.length <= 16 &&
+        (last.toLowerCase().includes(brand) ||
+          /^(youtube|bilibili|哔哩哔哩|腾讯视频|爱奇艺|优酷|芒果|抖音|快手|微博|知乎|csdn|github|x|twitter|facebook|reddit|twitch|vimeo|netflix)$/i.test(last))
+      ) {
+        return parts.slice(0, -1).join(" - ").trim() || raw;
+      }
+    }
+    return raw;
+  }
+
+  // 直链保留原始扩展名（视频/音频/文档分类内），避免产物变「文稿」
+  function extOf(url) {
+    if (ZZDLEngine.classifyExt(url) === "other") return "";
+    const m = /\.([a-z0-9]{2,5})(?:[?#]|$)/i.exec(url.split(/[?#]/)[0]);
+    return m ? "." + m[1].toLowerCase() : "";
+  }
+
   function renderMedia() {
     const section = $("#mediaSection");
     const box = $("#mediaList");
@@ -276,19 +306,19 @@
       let queued = false;
       if (Store && (/\.m3u8|\/hls\//i.test(url) || /\.(mp4|webm|mkv|avi|mov|flv|m4v|mp3|m4a|zip|rar|7z|apk|pdf|iso|ts)(\?|#|$)/i.test(url))) {
         const isHls = /\.m3u8|\/hls\//i.test(url);
-        const rawName = streamName(url);
         const record = {
-          id: Store.taskId("queue", url, rawName),
+          id: Store.taskId("queue", url, streamName(url)),
           queued: true,
           status: "queued",
           kind: isHls ? "m3u8" : "multi",
           url,
-          name: isHls ? undefined : ZZDLEngine.sanitize(rawName),
-          nameBase: isHls ? ZZDLEngine.sanitize(rawName.replace(/\.(m3u8|mp4|ts)$/i, "")) : undefined,
+          name: isHls ? undefined : ZZDLEngine.sanitize(taskName(url, tab && tab.title)) + extOf(url),
+          nameBase: isHls ? ZZDLEngine.sanitize(taskName(url, tab && tab.title)) : undefined,
           dir: ZZDLEngine.dirForType(isHls ? "video" : ZZDLEngine.classifyExt(url)),
           concurrency: 6,
           threads: 4,
-          tsAsMp4: false,
+          // TS 容器直接命名 .mp4：macOS 对 .ts 无默认应用（Finder 显示「文稿」）
+          tsAsMp4: true,
           createdAt: Date.now(),
         };
         await Store.putTask(record);

@@ -157,7 +157,8 @@
       articleDir: ZZ.T("ZeroZen/阅读"),
       downloadDir: ZZ.T("ZeroZen/下载"),
       concurrency: 4,
-      tsAsMp4: false,
+      // TS 容器直接命名 .mp4：macOS 对 .ts 无默认应用（Finder 显示「文稿」且双击打不开）
+      tsAsMp4: true,
       notifyDone: false,
       // 页面内「净化足迹」浮球（误拦快速撤销入口）
       undoWidget: true,
