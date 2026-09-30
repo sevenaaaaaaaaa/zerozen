@@ -183,7 +183,7 @@
         try {
           if (ZZ.Undo) ZZ.Undo.record(el, { kind: "text" });
           if (state.textRemove || rule.action === "remove") el.remove();
-          else el.style.setProperty("display", "none", "important");
+          else softHide(el);
           hidden++;
         } catch (e) {}
         break;
@@ -228,6 +228,23 @@
       n = n.parentElement;
     }
     return false;
+  }
+
+  // 柔和隐藏：先淡出再 display:none（display 无法过渡），弹层消失不再生硬闪烁
+  function softHide(el) {
+    try {
+      el.style.setProperty("opacity", "0", "important");
+      el.style.setProperty("transition", "opacity .16s ease", "important");
+      setTimeout(() => {
+        try {
+          el.style.setProperty("display", "none", "important");
+        } catch (e) {}
+      }, 170);
+    } catch (e) {
+      try {
+        el.style.setProperty("display", "none", "important");
+      } catch (e2) {}
+    }
   }
 
   function sweepOverlays() {
@@ -285,7 +302,7 @@
       if (interactive) continue;
       try {
         if (ZZ.Undo) ZZ.Undo.record(el, { kind: "sweep" });
-        el.style.setProperty("display", "none", "important");
+        softHide(el);
         el.setAttribute("data-zz-overlay", "1");
         killed++;
       } catch (e) {}

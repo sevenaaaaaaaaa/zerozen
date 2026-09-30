@@ -38,10 +38,12 @@
   }
 
   function localRestore(item) {
-    // sweep/text 是本页内联样式隐藏，直接解除；css 类由豁免重注入生效
+    // sweep/text 是本页内联样式隐藏，直接解除（含淡出残留）；css 类由豁免重注入生效
     try {
       if (item.how !== "css") {
         item.el.style.removeProperty("display");
+        item.el.style.removeProperty("opacity");
+        item.el.style.removeProperty("transition");
         item.el.removeAttribute("data-zz-overlay");
       }
     } catch (e) {}
