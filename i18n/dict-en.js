@@ -70,6 +70,8 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "启用 AI 识别": "Enable AI detection",
   "高置信度自动屏蔽": "Auto-block above the confidence threshold",
   "发送元素短文本": "Send the element's short text",
+  "阅读模式翻译优先用 AI（未配置或失败时用免费机器翻译）": "Reader translation prefers AI (falls back to free machine translation)",
+  "AI 翻译": "AI translation",
   "接口预设": "Provider preset",
   "接口地址（OpenAI 兼容 /v1）": "Endpoint (OpenAI-compatible /v1)",
   "模型": "Model",

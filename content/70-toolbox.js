@@ -636,7 +636,7 @@
         }
         translated = applied > 0;
         translateBtn.textContent = translated ? ZZ.T("译回原文") : ZZ.T("翻译");
-        noticeInline(ZZ.T("已翻译 $1 段（机器翻译）", applied));
+        noticeInline(ZZ.T("已翻译 $1 段（$2）", applied, res.engine === "ai" ? ZZ.T("AI 翻译") : ZZ.T("机器翻译")));
       });
       bar.appendChild(translateBtn);
 

@@ -181,6 +181,7 @@
     $("#aiEnabled").checked = !!s.ai.enabled;
     $("#aiAutoApply").checked = !!s.ai.autoApply;
     $("#aiSendText").checked = s.ai.sendText !== false;
+    $("#aiTranslate").checked = s.ai.translate !== false;
     $("#aiBaseUrl").value = s.ai.baseUrl || "";
     $("#aiModel").value = s.ai.model || "";
     $("#aiApiKey").value = s.ai.apiKey || "";
@@ -255,6 +256,7 @@
         enabled: $("#aiEnabled").checked,
         autoApply: $("#aiAutoApply").checked,
         sendText: $("#aiSendText").checked,
+        translate: $("#aiTranslate").checked,
         baseUrl: $("#aiBaseUrl").value.trim(),
         model: $("#aiModel").value.trim(),
         maxCandidates: Number($("#aiMaxCandidates").value) || 30,

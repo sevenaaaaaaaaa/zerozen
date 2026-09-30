@@ -113,6 +113,9 @@
   const Ai = {
     PRESETS,
 
+    // 通用 LLM 通道（OpenAI 兼容）：阅读模式翻译等模块复用
+    chat,
+
     configured() {
       const ai = ZZ.Store.settings().ai || {};
       if (!ai.enabled) return false;
