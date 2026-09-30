@@ -16,6 +16,7 @@
     textRules: true,
     textRemove: false,
     unlockScroll: false,
+    undoExempt: [],
     counted: 0,
     removed: 0,
     textsHidden: 0,
@@ -25,6 +26,16 @@
     running: false,
     startedAt: 0,
   };
+
+  // 用户「恢复」过的误拦元素：豁免选择器命中的不碰
+  function isUndone(el) {
+    if (!state.undoExempt.length || !el || !el.closest) return false;
+    try {
+      return el.closest(state.undoExempt.join(",")) !== null;
+    } catch (e) {
+      return false;
+    }
+  }
 
   let reportTimer = null;
   let mutationTimer = null;
@@ -82,10 +93,26 @@
           try {
             n = document.querySelectorAll(sel).length;
           } catch (e3) {}
-          if (n) hits[sel] = n;
+          if (n) {
+            hits[sel] = n;
+            if (ZZ.Undo) {
+              try {
+                document.querySelectorAll(sel).forEach((el, i) => {
+                  if (i < 2 && !isUndone(el)) ZZ.Undo.record(el, { kind: "css", sel });
+                });
+              } catch (e4) {}
+            }
+          }
         }
       } else if (chunkTotal > 0 && chunk.length === 1) {
         hits[chunk[0]] = chunkTotal;
+        if (ZZ.Undo) {
+          try {
+            document.querySelectorAll(chunk[0]).forEach((el, i) => {
+              if (i < 2 && !isUndone(el)) ZZ.Undo.record(el, { kind: "css", sel: chunk[0] });
+            });
+          } catch (e5) {}
+        }
       }
       total += chunkTotal;
     }
@@ -141,6 +168,7 @@
     for (let i = 0; i < limit; i++) {
       const el = nodes[i];
       if (el.hasAttribute && el.hasAttribute("data-zz-ui")) continue;
+      if (isUndone(el)) continue;
       const text = u.textOf(el, 30).toLowerCase();
       if (!text) continue;
       for (const rule of state.texts) {
@@ -153,6 +181,7 @@
         } catch (e) {}
         if (alreadyHidden) break;
         try {
+          if (ZZ.Undo) ZZ.Undo.record(el, { kind: "text" });
           if (state.textRemove || rule.action === "remove") el.remove();
           else el.style.setProperty("display", "none", "important");
           hidden++;
@@ -217,6 +246,7 @@
     for (let i = 0; i < limit; i++) {
       const el = nodes[i];
       if (el.getAttribute && (el.getAttribute("data-zz-ui") || el.getAttribute("data-zz-overlay"))) continue;
+      if (isUndone(el)) continue;
       if (isPlayerish(el)) continue;
       let cs;
       try {
@@ -254,6 +284,7 @@
       } catch (e) {}
       if (interactive) continue;
       try {
+        if (ZZ.Undo) ZZ.Undo.record(el, { kind: "sweep" });
         el.style.setProperty("display", "none", "important");
         el.setAttribute("data-zz-overlay", "1");
         killed++;
@@ -349,6 +380,7 @@
     state.flowFix = p.flowFix !== false;
     state.hide = Array.isArray(p.hide) ? p.hide : [];
     state.remove = Array.isArray(p.remove) ? p.remove : [];
+    state.undoExempt = Array.isArray(p.undoExempt) ? p.undoExempt : [];
     state.textRules = p.textRules !== false;
     state.textRemove = !!p.textRemove;
     state.texts = state.textRules && Array.isArray(p.texts) ? p.texts : [];

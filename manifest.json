@@ -48,6 +48,7 @@
         "content/60-bridge.js",
         "content/65-antidodge.js",
         "content/70-toolbox.js",
+        "content/75-undo.js",
         "content/80-flowfix.js",
         "content/85-fx.js"
       ],

@@ -497,6 +497,32 @@
           return { ok: true, until, minutes: until ? Math.round((until - Date.now()) / 60000) : 0 };
         }
 
+        case "zz:site:undo": {
+          // 误拦快速撤销：把选择器写入站点豁免，重注入规则；页面浮球的「恢复」入口
+          const p = msg.payload || {};
+          const target = p.host || host;
+          if (!target) return { ok: false, error: ZZ.T("缺少 host") };
+          if (p.clear) {
+            const info = ZZ.Store.siteInfo(target);
+            await ZZ.Store.updateSite(target, { undoPop: (info && info.undo) || [] });
+          } else {
+            const add = Array.isArray(p.add) ? p.add.filter((s) => typeof s === "string" && s.length < 500) : [];
+            const del = Array.isArray(p.remove) ? p.remove : [];
+            if (add.length) await ZZ.Store.updateSite(target, { undoPush: add });
+            if (del.length) await ZZ.Store.updateSite(target, { undoPop: del });
+          }
+          ZZ.RuleIndex.build(ZZ.Store.activeRules(), ZZ.Store.settings().packs);
+          const tab = await getTab(typeof p.tabId === "number" ? p.tabId : tabId, sender);
+          if (tab && typeof tab.id === "number") {
+            await ZZ.Main.injectForTab(tab.id, tab.url);
+            ZZ.sendToTab(tab.id, { type: "zz:rules-updated", payload: { host: target, reason: "undo-exempt" } });
+          } else {
+            await ZZ.Main.refreshAllTabs();
+          }
+          const info = ZZ.Store.siteInfo(target);
+          return { ok: true, undo: (info && info.undo) || [] };
+        }
+
         case "zz:sites:list": {
           return { ok: true, sites: ZZ.Store.settings().sites || {} };
         }

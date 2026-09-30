@@ -159,6 +159,8 @@
       concurrency: 4,
       tsAsMp4: false,
       notifyDone: false,
+      // 页面内「净化足迹」浮球（误拦快速撤销入口）
+      undoWidget: true,
     },
     ui: { ruleFilter: "", tab: "rules" },
   };
@@ -546,6 +548,16 @@
       if (p.autoCompat !== undefined) {
         if (!p.autoCompat) delete cur.autoCompat;
         else cur.autoCompat = p.autoCompat;
+      }
+      // 误拦快速撤销的站点级豁免选择器（浮球「恢复」写入；至多保留 50 条）
+      if (p.undoPush) {
+        const add = Array.isArray(p.undoPush) ? p.undoPush : [p.undoPush];
+        cur.undo = Array.from(new Set((cur.undo || []).concat(add))).slice(-50);
+      }
+      if (p.undoPop) {
+        const del = Array.isArray(p.undoPop) ? p.undoPop : [p.undoPop];
+        cur.undo = (cur.undo || []).filter((s) => del.indexOf(s) < 0);
+        if (!cur.undo.length) delete cur.undo;
       }
       if (p.clearAuto) {
         delete cur.autoCompat;

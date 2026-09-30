@@ -290,6 +290,18 @@
       for (const [domain, set] of idx.cosmeticExcludes) {
         if (F.ruleDomainMatch(host, domain)) for (const s of set) hide.delete(s);
       }
+      // 用户在页面上「恢复」过的误拦选择器：站点级豁免，CSS 与 JS 双向生效
+      let undoExempt = [];
+      try {
+        const site = ZZ.Store.siteInfo(host);
+        if (site && Array.isArray(site.undo) && site.undo.length) {
+          undoExempt = site.undo;
+          for (const s of undoExempt) {
+            hide.delete(s);
+            remove.delete(s);
+          }
+        }
+      } catch (e) {}
 
       const remove = new Set();
       for (const s of idx.removes.global) if (!exceptions.has(s)) remove.add(s);
@@ -309,6 +321,7 @@
         host: host,
         hide: Array.from(hide),
         remove: Array.from(remove),
+        undoExempt: undoExempt,
         texts: texts.map((t) => t.rule).slice(0, 30),
         unlockScroll: Array.from(hide).some((s) => /cookie|consent|gdpr|onetrust|didomi|sp_message|cmp|age-?gate|paywall/i.test(s)),
         stats: JSON.parse(JSON.stringify(idx.stats)),

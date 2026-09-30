@@ -86,6 +86,11 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "存为 HTML": "Save HTML",
   "浏览器下载目录": "browser downloads folder",
   "保存失败": "Save failed",
+  "净化足迹": "Clean traces",
+  "恢复": "Restore",
+  "全部恢复": "Restore all",
+  "被误拦的元素点「恢复」即可找回；恢复对本站长期生效。":
+    "Click \"Restore\" to bring back a wrongly hidden element; restores persist for this site.",
 
   // 视频嗅探来源
   "媒体元素": "media element",
