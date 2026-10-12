@@ -126,8 +126,9 @@
                   { header: "Origin", operation: "set", value: origin },
                 ],
               },
-              // 只改 XHR：分片抓取走 fetch；页面自己对该 CDN 的请求本来就带同样的值
-              condition: { requestDomains: [host], resourceTypes: ["xmlhttprequest"] },
+              // tabIds:[-1] 只作用于扩展自身发起的请求（下载宿主抓分片、浏览器下载直链），
+              // 不会改动页面自己对该 CDN 的请求；下载 API 的请求类型是 other
+              condition: { requestDomains: [host], resourceTypes: ["xmlhttprequest", "other", "media"], tabIds: [-1] },
             },
           ],
         });
@@ -182,6 +183,8 @@
       },
     };
   })();
+
+  ZZ.FetchSpoof = fetchSpoof;
 
   async function importRules(text, opts) {
     const source = (opts && opts.source) || "import";
@@ -263,7 +266,11 @@
       textRemove: !!payload.textRemove,
       aggressive: !!payload.aggressive,
       unlockScroll: payload.unlockScroll && settings.cosmetic,
-      guard: { enabled: !!settings.popupGuard, notifications: !!settings.popupGuard },
+      guard: (() => {
+        const site = (ZZ.Store.settings().sites || {})[host] || {};
+        const on = !!settings.popupGuard && site.popups !== "allow";
+        return { enabled: on, notifications: !!settings.popupGuard };
+      })(),
       youtube: !!settings.youtubeAuto,
       flowFix: settings.flowFix !== false,
       hide: [],
@@ -293,12 +300,19 @@
     return "";
   }
 
+  const popupLog = new Map();
+
   const Messages = {
     async handle(msg, sender) {
       if (!msg || typeof msg !== "object" || !msg.type) return { ok: false, error: "bad message" };
       await ZZ.Main.init();
       const host = senderHost(sender);
       const tabId = sender && sender.tab ? sender.tab.id : undefined;
+
+      if (/^zz:dl(sw)?:/.test(msg.type) && ZZ.DL) {
+        const res = await ZZ.DL.handle(msg, sender);
+        if (res !== undefined) return res;
+      }
 
       switch (msg.type) {
         case "zz:get-rules": {
@@ -380,6 +394,8 @@
             siteEnabled: eff.profile !== "off",
             host: stateHost,
             whitelistSource: whitelistSourceOf(stateHost, eff),
+            popupsAllowed: (((settings.sites || {})[stateHost] || {}).popups === "allow"),
+            popupLog: targetTab && typeof targetTab.id === "number" ? popupLog.get(targetTab.id) || [] : [],
             counts,
             profile: eff.profile,
             profileSource: eff.source,
@@ -521,6 +537,29 @@
           }
           const info = ZZ.Store.siteInfo(target);
           return { ok: true, undo: (info && info.undo) || [] };
+        }
+
+        // 弹窗拦截：站点级允许新窗口（提示条「本站允许弹窗」/ popup 面板撤销）
+        case "zz:site:popups": {
+          const p = msg.payload || {};
+          const target = p.host || host;
+          if (!target) return { ok: false, error: ZZ.T("缺少 host") };
+          await ZZ.Store.updateSite(target, { popups: p.allow ? "allow" : null });
+          const tab = await getTab(typeof p.tabId === "number" ? p.tabId : tabId, sender);
+          if (tab && typeof tab.id === "number") {
+            ZZ.sendToTab(tab.id, { type: "zz:rules-updated", payload: { host: target, reason: "popups" } });
+          }
+          return { ok: true, allow: !!p.allow };
+        }
+
+        // 页面拦截弹窗的明细（popup 面板「本页拦截」用），只在内存里按标签页保留最近 20 条
+        case "zz:popup:log": {
+          const p = msg.payload || {};
+          if (typeof tabId !== "number") return { ok: true };
+          const list = popupLog.get(tabId) || [];
+          list.unshift({ url: String(p.url || "").slice(0, 300), reason: String(p.reason || ""), at: Date.now() });
+          popupLog.set(tabId, list.slice(0, 20));
+          return { ok: true };
         }
 
         case "zz:sites:list": {
@@ -880,13 +919,26 @@
         case "zz:sniff:list": {
           const p = msg.payload || {};
           const target = typeof p.tabId === "number" ? p.tabId : tabId;
-          return { ok: true, streams: ZZ.Sniffer.list(target) };
+          const tab = await getTab(target, sender);
+          return {
+            ok: true,
+            streams: await ZZ.Sniffer.list(target),
+            title: (tab && tab.title) || "",
+            pageUrl: (tab && tab.url) || "",
+            webRequest: !!(api.webRequest && api.webRequest.onBeforeRequest),
+          };
+        }
+
+        case "zz:sniff:page": {
+          if (typeof tabId !== "number") return { ok: true };
+          ZZ.Sniffer.addFromPage(tabId, msg.payload || {}, (sender && sender.url) || "");
+          return { ok: true };
         }
 
         case "zz:sniff:add": {
           const p = msg.payload || {};
           const target = typeof p.tabId === "number" ? p.tabId : tabId;
-          return { ok: true, streams: ZZ.Sniffer.addManual(target, p.url, p.kind) };
+          return { ok: true, streams: await ZZ.Sniffer.addManual(target, p.url, p.kind) };
         }
 
         case "zz:sniff:clear": {
@@ -894,30 +946,6 @@
           const target = typeof p.tabId === "number" ? p.tabId : tabId;
           ZZ.Sniffer.clear(target);
           return { ok: true, streams: [] };
-        }
-
-        // 下载任务派发：交给已打开的工具箱页执行；没有则后台静默开一个（不抢焦点）。
-        // popup 生命周期短，长下载必须在普通标签页里跑
-        case "zz:dl:dispatch": {
-          const p = msg.payload || {};
-          let target = null;
-          try {
-            const tabs = await ZZ.call(api.tabs, "query", { url: api.runtime.getURL("ui/toolbox.html*") });
-            target = (tabs && tabs.find((t) => typeof t.id === "number")) || null;
-          } catch (e) {}
-          if (target) {
-            try {
-              await ZZ.call(api.tabs, "sendMessage", target.id, { type: "zz:dl:run", payload: { taskId: p.taskId } });
-              return { ok: true, dispatched: true, reused: true };
-            } catch (e) {}
-          }
-          try {
-            const url = api.runtime.getURL("ui/toolbox.html") + "?autostart=" + encodeURIComponent(p.taskId || "");
-            await ZZ.call(api.tabs, "create", { url, active: false });
-            return { ok: true, dispatched: true, opened: true };
-          } catch (e) {
-            return { ok: false, error: (e && e.message) || "dispatch failed" };
-          }
         }
 
         case "zz:reader:toggle": {

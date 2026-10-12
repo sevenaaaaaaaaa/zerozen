@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_appName__",
   "default_locale": "en",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "__MSG_appDesc__",
   "minimum_chrome_version": "105",
   "permissions": [
@@ -14,7 +14,8 @@
     "tabs",
     "contextMenus",
     "webNavigation",
-    "activeTab"
+    "activeTab",
+    "offscreen"
   ],
   "optional_permissions": [
     "bookmarks",
@@ -41,11 +42,13 @@
         "i18n/dict-en-content.js",
         "content/00-lib.js",
         "content/10-css.js",
+        "content/12-overlay.js",
         "content/20-detector.js",
         "content/30-guard.js",
         "content/40-youtube.js",
         "content/50-picker.js",
         "content/60-bridge.js",
+        "content/62-media.js",
         "content/65-antidodge.js",
         "content/70-toolbox.js",
         "content/75-undo.js",

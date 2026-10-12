@@ -100,4 +100,16 @@ globalThis.ZZ_DICT_EN = Object.assign(globalThis.ZZ_DICT_EN || {}, {
   "页面链接": "page link",
   "内嵌页面": "embedded frame",
   "已净化本页": "Page cleaned",
+  // —— 弹窗判定 / 下载中心（v0.9）——
+  "目标是广告联盟": "ad network target",
+  "点击空白处弹出的站外窗口": "off-site window opened by clicking empty space",
+  "一次点击打开了多个窗口": "one click opened several windows",
+  "页面在无操作时自动弹出": "opened without any click",
+  "透明点击劫持层": "invisible click-hijack layer",
+  "打开一次": "Open once",
+  "本站允许弹窗": "Allow on this site",
+  "已允许本站弹出新窗口（可在弹窗面板撤销）": "New windows allowed on this site (undo from the toolbar popup)",
+  "已拦截弹窗": "Popup blocked",
+  "可疑弹窗": "suspicious popup",
+  "通知权限请求": "notification permission request",
 });
