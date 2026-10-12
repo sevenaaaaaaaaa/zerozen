@@ -8,8 +8,11 @@ import { dirname, join } from "node:path";
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 
-const PORT = 9223;
-const HTTP_PORT = 9187;
+// 动态端口：CDP 用 --remote-debugging-port=0 由系统分配（启动后从 profile 的 DevToolsActivePort 读回），
+// HTTP 测试服务器 listen(0) 分配。固定端口会与残留的旧实例/旧脚本冲突，
+// 导致新实例绑不上端口、脚本连到过期浏览器，出现难以排查的假失败。
+let PORT = 0;
+let HTTP_PORT = 0;
 const EXT_PATH = join(dirname(fileURLToPath(import.meta.url)), "..", "dist", "chrome");
 const BROWSER_CANDIDATES = [
   process.env.E2E_BROWSER,
@@ -64,6 +67,17 @@ class Conn {
   }
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function waitForDevToolsPort(profile) {
+  const file = join(profile, "DevToolsActivePort");
+  for (let i = 0; i < 40; i++) {
+    try {
+      const first = readFileSync(file, "utf8").split("\n")[0].trim();
+      if (first && Number(first) > 0) return Number(first);
+    } catch (e) {}
+    await sleep(500);
+  }
+  throw new Error("浏览器调试端口 20 秒未就绪（DevToolsActivePort 未出现）。如有残留的旧 e2e 浏览器进程（ego lite/Chrome），请先退出再跑。");
+}
 async function targets() {
   return fetch(`http://localhost:${PORT}/json`).then((r) => r.json());
 }
@@ -231,7 +245,7 @@ function serveStatic(root) {
       res.writeHead(404).end();
     }
   });
-  return new Promise((resolve) => server.listen(HTTP_PORT, () => resolve(server)));
+  return new Promise((resolve) => server.listen(0, () => { HTTP_PORT = server.address().port; resolve(server); }));
 }
 
 // ---------- 主流程 ----------
@@ -272,7 +286,9 @@ async function main() {
     ...String(process.env.E2E_EXTRA_ARGS || "").split(/\s+/).filter(Boolean),
     "about:blank",
   ], { stdio: "ignore" });
-  await sleep(6000);
+  // 等待浏览器就绪：port=0 时 Chromium 把真实端口写进 profile 的 DevToolsActivePort（首行）
+  PORT = await waitForDevToolsPort(profile);
+  await sleep(1500);
 
   const ok = [];
   const bad = [];
