@@ -69,6 +69,7 @@ const firefoxDir = writeTarget("firefox", (m) => {
   delete m.background.service_worker;
   m.background.scripts = BACKGROUND_SCRIPTS;
   delete m.minimum_chrome_version;
+  m.permissions = m.permissions.filter((x) => x !== "offscreen");
   m.name = m.name + " (Firefox)";
   m.browser_specific_settings = {
     gecko: {
@@ -82,6 +83,7 @@ const safariDir = writeTarget("safari", (m) => {
   delete m.background.scripts;
   delete m.minimum_chrome_version;
   delete m.browser_specific_settings;
+  m.permissions = m.permissions.filter((x) => x !== "offscreen");
   m.name = m.name + " (Safari)";
 });
 

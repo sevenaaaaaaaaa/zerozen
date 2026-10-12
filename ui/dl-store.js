@@ -63,6 +63,22 @@
     await req2p(store(db, "chunks", "readwrite").delete(taskRange(id)));
   }
 
+  // 只清分片，保留任务记录（任务完成后释放磁盘）
+  async function clearChunks(id) {
+    const db = await open();
+    await req2p(store(db, "chunks", "readwrite").delete(taskRange(id)));
+  }
+
+  // 清理没有任务记录的孤儿分片（旧版遗留 / 异常中断）
+  async function clearOrphans(keepIds) {
+    const db = await open();
+    const keep = new Set(keepIds || []);
+    const keys = await req2p(store(db, "chunks", "readonly").getAllKeys());
+    const ids = new Set(keys.map((k) => k[0]).filter((id) => !keep.has(id)));
+    for (const id of ids) await req2p(store(db, "chunks", "readwrite").delete(taskRange(id)));
+    return ids.size;
+  }
+
   async function saveChunk(taskId, key, data) {
     const db = await open();
     const blob = data instanceof Blob ? data : new Blob([data]);
@@ -127,5 +143,5 @@
     return h.toString(16).padStart(8, "0") + "-" + s.length.toString(36);
   }
 
-  globalThis.ZZDLStore = { putTask, getTask, listTasks, removeTask, saveChunk, getChunk, chunkKeys, chunkSizes, cacheSummary, readChunks, taskId };
+  globalThis.ZZDLStore = { putTask, getTask, listTasks, removeTask, clearChunks, clearOrphans, saveChunk, getChunk, chunkKeys, chunkSizes, cacheSummary, readChunks, taskId };
 })();

@@ -7,15 +7,177 @@
     <style>
       body {
         width: 380px;
+        padding-bottom: 4px;
       }
-      .zz-popup-footer {
-        padding: 10px 14px 14px;
+      .zz-header {
+        margin: 12px 14px 0;
+      }
+      .zz-section {
+        margin-top: 10px;
+        padding: 13px 14px;
+      }
+      /* 站点卡片：站点 + 开关 + 三个数字 + 档位，一眼看完 */
+      .site-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 12px -4px 0;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 10px;
+        padding: 4px 0;
+      }
+      .site-stats:hover {
+        background: var(--zz-panel-2);
+      }
+      .site-stats b {
+        display: block;
+        font-size: 19px;
+        line-height: 1.25;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+      .site-stats b.zz-bump {
+        animation: zzBump 0.4s cubic-bezier(0.3, 1.4, 0.6, 1);
+      }
+      .site-stats span {
+        font-size: 11px;
+        color: var(--zz-muted);
+      }
+      .zz-seg {
+        margin-top: 12px;
+      }
+      .site-links {
         display: flex;
-        justify-content: space-between;
+        gap: 14px;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      .site-links a.danger {
+        color: var(--zz-danger);
+      }
+      .notice {
+        display: flex;
         align-items: center;
         gap: 8px;
+        margin-top: 10px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        background: rgba(47, 107, 255, 0.07);
+        color: var(--zz-text);
+      }
+      .notice.warn {
+        background: rgba(217, 119, 6, 0.09);
+      }
+      .notice span {
+        flex: 1;
+      }
+      .notice button {
+        flex-shrink: 0;
+      }
+      /* 本页拦截明细 */
+      #detail {
+        margin-top: 10px;
+        border-top: 1px solid var(--zz-border);
+        padding-top: 8px;
+        font-size: 12px;
+      }
+      #detail .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 2px 0;
+      }
+      #detail .row span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #detail h4 {
+        margin: 6px 0 2px;
+        font-size: 11.5px;
         color: var(--zz-muted);
-        font-size: 11px;
+        font-weight: 600;
+      }
+      /* 下载区 */
+      .sec-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 9px;
+      }
+      .sec-head b {
+        font-size: 13px;
+      }
+      .sec-head a {
+        font-size: 12px;
+      }
+      #mediaList {
+        max-height: 230px;
+        overflow: auto;
+      }
+      #taskList:not(:empty) {
+        margin-top: 4px;
+      }
+      #mediaList .dl-media:last-child,
+      #taskList .dl-task:last-child {
+        margin-bottom: 0;
+      }
+      /* 工具 */
+      .tools {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+      .tools button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 9px 2px 7px;
+        border: 1px solid var(--zz-border);
+        border-radius: 10px;
+        background: var(--zz-panel);
+        font: inherit;
+        font-size: 11.5px;
+        color: var(--zz-text);
+        cursor: pointer;
+      }
+      .tools button:hover:not(:disabled) {
+        border-color: var(--zz-border-strong);
+        background: var(--zz-panel-2);
+      }
+      .tools button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .tools svg {
+        width: 18px;
+        height: 18px;
+        stroke: var(--zz-accent);
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      details.more summary {
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--zz-muted);
+        list-style: none;
+      }
+      details.more summary::-webkit-details-marker {
+        display: none;
+      }
+      details.more summary::after {
+        content: " ▾";
+      }
+      details.more[open] summary::after {
+        content: " ▴";
+      }
+      .zz-chips {
+        margin-top: 8px;
       }
       #findings {
         display: grid;
@@ -28,146 +190,20 @@
         max-height: 44px;
         overflow: hidden;
       }
-      #mediaList {
-        display: grid;
-        gap: 8px;
-        max-height: 190px;
-        overflow: auto;
-      }
-      .zz-media-item {
+      .zz-popup-footer {
+        padding: 10px 16px 10px;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 9px;
-        padding: 9px 11px;
-        border-radius: 10px;
-        border: 1px solid var(--zz-border);
-        background: var(--zz-glass-2);
-        font-size: 12.5px;
-        position: relative;
-        overflow: hidden;
-        transition: border-color 0.15s ease, background 0.15s ease;
-      }
-      .zz-media-item:hover {
-        border-color: var(--zz-border-strong);
-        background: #f2f4f8;
-      }
-      .zz-media-item::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(105deg, transparent 40%, rgba(47, 107, 255, 0.08) 50%, transparent 60%);
-        transform: translateX(-120%);
-        pointer-events: none;
-      }
-      .zz-media-item:hover::after {
-        animation: zzShine 0.6s ease;
-      }
-      @keyframes zzShine {
-        to {
-          transform: translateX(120%);
-        }
-      }
-      .zz-media-item .mi-kind {
-        flex: 0 0 auto;
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 5px;
-        background: rgba(47, 107, 255, 0.09);
-        color: #2563eb;
-        font-weight: 600;
-      }
-      .zz-media-item .mi-url {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--zz-muted);
-      }
-      #taskList {
-        display: grid;
         gap: 8px;
-        max-height: 220px;
-        overflow: auto;
-      }
-      .zz-task-item {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        padding: 9px 11px;
-        border-radius: 10px;
-        border: 1px solid var(--zz-border);
-        background: var(--zz-glass-2);
-        font-size: 12.5px;
-      }
-      .zz-task-item .ti-name {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-weight: 600;
-      }
-      .zz-task-item .ti-meta {
-        flex: 0 0 auto;
         color: var(--zz-muted);
         font-size: 11px;
       }
-      .zz-task-item .ti-bar {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 2px;
-        background: var(--zz-accent);
-        border-radius: 2px;
-        pointer-events: none;
-      }
-      .zz-task-item.run .ti-bar {
-        background: linear-gradient(90deg, var(--zz-accent-2), #6fd3f7, var(--zz-accent-2));
-        background-size: 200% 100%;
-        animation: zzFlow 1.2s linear infinite;
-      }
-      .zz-task-item.err .ti-bar {
-        background: var(--zz-danger);
-        opacity: 0.5;
-      }
-      @keyframes zzFlow {
-        from {
-          background-position: 0% 0;
-        }
-        to {
-          background-position: 200% 0;
-        }
-      }
-      .zz-task-item {
-        position: relative;
-        overflow: hidden;
-      }
-      .zz-chipbar-sm {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 10px;
-      }
-      .zz-chipbar-sm button {
-        font: inherit;
+      .zz-popup-footer a {
         font-size: 11.5px;
-        padding: 4px 11px;
-        border-radius: 999px;
-        border: 1px solid var(--zz-border);
-        background: transparent;
-        color: var(--zz-muted);
-        cursor: pointer;
-        transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
       }
-      .zz-chipbar-sm button:hover {
-        color: var(--zz-text);
-      }
-      .zz-chipbar-sm button.active {
-        border-color: rgba(91, 157, 255, 0.55);
-        color: var(--zz-accent);
-        background: rgba(61, 123, 253, 0.1);
-        font-weight: 600;
+      #msg {
+        margin: 10px 14px 0;
       }
     </style>
   </head>
@@ -175,7 +211,7 @@
     <div class="zz-header">
       <div class="zz-brand">
         <img src="../icons/icon48.png" alt="" />
-        <span data-i18n="零真">零真</span> <b class="zz-brand-sub" data-i18n="广告净化器">广告净化器</b></span>
+        <span data-i18n="零真">零真</span> <b class="zz-brand-sub" data-i18n="广告净化器">广告净化器</b>
       </div>
       <label class="zz-switch" title="总开关" data-i18n-title="总开关">
         <input type="checkbox" id="globalEnabled" />
@@ -183,9 +219,12 @@
       </label>
     </div>
 
-    <div class="zz-section">
+    <div class="zz-toast-inline" id="msg" hidden></div>
+
+    <!-- 站点 -->
+    <div class="zz-section" id="siteSection">
       <div class="zz-row">
-        <div>
+        <div style="min-width: 0">
           <div class="zz-host" id="host">—</div>
           <div class="zz-small zz-muted" id="siteHint" data-i18n="正在读取站点状态…">正在读取站点状态…</div>
         </div>
@@ -194,131 +233,101 @@
           <span></span>
         </label>
       </div>
-    </div>
-
-    <div class="zz-stats">
-      <div class="zz-stat"><b id="statHidden">0</b><span data-i18n="隐藏广告">隐藏广告</span></div>
-      <div class="zz-stat"><b id="statNetwork">0</b><span data-i18n="拦截请求">拦截请求</span></div>
-      <div class="zz-stat"><b id="statPopups">0</b><span data-i18n="拦截弹窗">拦截弹窗</span></div>
-    </div>
-
-    <div class="zz-section" id="mediaSection" hidden>
-      <div class="zz-row">
-        <b class="zz-small" data-i18n="本页媒体">本页媒体</b>
-        <button type="button" class="zz-btn zz-btn-sm" id="btnRescan" data-i18n="重新嗅探">重新嗅探</button>
+      <div class="site-stats" id="stats" title="查看本页拦截明细" data-i18n-title="查看本页拦截明细">
+        <div><b id="statHidden">0</b><span data-i18n="隐藏广告">隐藏广告</span></div>
+        <div><b id="statNetwork">0</b><span data-i18n="拦截请求">拦截请求</span></div>
+        <div><b id="statPopups">0</b><span data-i18n="拦截弹窗">拦截弹窗</span></div>
       </div>
-      <div id="mediaList" style="margin-top: 8px"></div>
-      <div class="zz-small zz-muted" id="mediaHint" style="margin-top: 6px"></div>
-    </div>
-
-    <div class="zz-section" id="taskSection" hidden>
-      <div class="zz-row">
-        <b class="zz-small" data-i18n="任务中心">任务中心</b>
-        <select id="taskSort" class="zz-select" style="flex: 1; max-width: 120px">
-          <option value="time" data-i18n="按时间">按时间</option>
-          <option value="size" data-i18n="按大小">按大小</option>
-          <option value="speed" data-i18n="按速度">按速度</option>
-          <option value="name" data-i18n="按字母">按字母</option>
-          <option value="state" data-i18n="按状态">按状态</option>
-        </select>
-        <button type="button" class="zz-btn zz-btn-sm" id="btnTaskRefresh" data-i18n="刷新">刷新</button>
-      </div>
-      <div class="zz-chipbar-sm" id="taskFilters">
-        <button data-cat="all" class="active" data-i18n="全部">全部</button>
-        <button data-cat="video" data-i18n="视频">视频</button>
-        <button data-cat="audio" data-i18n="音频">音频</button>
-        <button data-cat="image" data-i18n="图片">图片</button>
-        <button data-cat="archive" data-i18n="压缩包">压缩包</button>
-        <button data-cat="doc" data-i18n="文档">文档</button>
-        <button data-cat="other" data-i18n="其他">其他</button>
-      </div>
-      <div class="zz-chipbar-sm" id="taskStateFilters">
-        <button data-state="all" class="active" data-i18n="全部">全部</button>
-        <button data-state="run" data-i18n="下载中">下载中</button>
-        <button data-state="paused" data-i18n="已暂停">已暂停</button>
-        <button data-state="done" data-i18n="已完成">已完成</button>
-        <button data-state="err" data-i18n="失败">失败</button>
-      </div>
-      <div id="taskList" style="margin-top: 8px"></div>
-    </div>
-
-    <div class="zz-section">
-      <div class="zz-row">
-        <b class="zz-small" data-i18n="保护档位">保护档位</b>
-        <span class="zz-small zz-muted" id="profileHint"></span>
-      </div>
+      <div id="detail" hidden></div>
       <div class="zz-seg" id="profileSeg">
         <button class="zz-seg-btn" data-profile="compat" title="仅通用拦截与视频规则，最大化站点兼容性" data-i18n-title="仅通用拦截与视频规则，最大化站点兼容性" data-i18n="兼容">兼容</button>
         <button class="zz-seg-btn" data-profile="standard" title="推荐：全部内置规则" data-i18n-title="推荐：全部内置规则" data-i18n="标准">标准</button>
         <button class="zz-seg-btn" data-profile="strict" title="移除式处理 + 强制解锁滚动，可能影响站点功能" data-i18n-title="移除式处理 + 强制解锁滚动，可能影响站点功能" data-i18n="严格">严格</button>
       </div>
-      <div class="zz-small" id="autoCompatHint" hidden>
-        <span class="zz-tag zz-tag-ai" data-i18n="自动回落">自动回落</span>
-        <span class="zz-muted" id="autoCompatText"></span>
-        <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnResetAuto" data-i18n="恢复本站设置">恢复本站设置</button>
+      <div class="site-links">
+        <a href="#" id="btnTemp" data-i18n="临时放行 30 分钟">临时放行 30 分钟</a>
+        <a href="#" id="btnWhitelist" data-i18n="加入白名单">加入白名单</a>
+        <a href="#" id="btnTempPromote" hidden data-i18n="转为白名单">转为白名单</a>
       </div>
-      <div class="zz-actions" style="margin-top: 8px; grid-template-columns: 1fr 1fr">
-        <button class="zz-btn" id="btnTemp" data-i18n="临时解除 30 分钟">临时解除 30 分钟</button>
-        <button class="zz-btn" id="btnWhitelist" data-i18n="加入白名单">加入白名单</button>
+      <div class="notice warn" id="autoCompatHint" hidden>
+        <span id="autoCompatText"></span>
+        <button class="zz-btn zz-btn-sm" id="btnResetAuto" data-i18n="恢复">恢复</button>
       </div>
-      <div class="zz-actions" style="padding: 8px 0 0; grid-template-columns: 1fr">
-        <button class="zz-btn zz-btn-ghost" id="btnTempPromote" data-i18n="临时放行合用？转正为白名单（长期放行）" hidden>
-          临时放行合用？转正为白名单（长期放行）
+      <div class="notice" id="popupsAllowedHint" hidden>
+        <span data-i18n="本站已允许弹出新窗口">本站已允许弹出新窗口</span>
+        <button class="zz-btn zz-btn-sm" id="btnPopupsRevoke" data-i18n="撤销">撤销</button>
+      </div>
+      <div class="notice" id="reloadHint" hidden>
+        <span data-i18n="设置已更新，刷新页面后完全生效">设置已更新，刷新页面后完全生效</span>
+        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnReload" data-i18n="刷新">刷新</button>
+      </div>
+    </div>
+
+    <!-- 下载 -->
+    <div class="zz-section" id="dlSection" hidden>
+      <div class="sec-head">
+        <b id="mediaTitle" data-i18n="本页视频">本页视频</b>
+        <span style="display: flex; gap: 12px">
+          <a href="#" id="btnRescan" data-i18n="重新检测">重新检测</a>
+          <a href="#" id="btnCenter" data-i18n="下载中心">下载中心</a>
+        </span>
+      </div>
+      <div id="mediaList"></div>
+      <div id="taskList"></div>
+    </div>
+
+    <!-- 工具 -->
+    <div class="zz-section">
+      <div class="tools">
+        <button id="btnReader" title="提取正文，可保存 Markdown / 翻译" data-i18n-title="提取正文，可保存 Markdown / 翻译">
+          <svg viewBox="0 0 24 24"><path d="M4 5h7a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4z" /><path d="M20 5h-4a3 3 0 0 0-3 3" /><path d="M20 5v12h-6" /></svg>
+          <span data-i18n="阅读模式">阅读模式</span>
+        </button>
+        <button id="btnClean" title="隐藏页面上除正文外的干扰元素" data-i18n-title="隐藏页面上除正文外的干扰元素">
+          <svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.4L20 9l-4.4 3.8L17 19l-5-3-5 3 1.4-6.2L4 9l5.8-.6z" /></svg>
+          <span data-i18n="纯净浏览">纯净浏览</span>
+        </button>
+        <button id="btnPick" title="点选页面元素屏蔽（Alt+Z）" data-i18n-title="点选页面元素屏蔽（Alt+Z）">
+          <svg viewBox="0 0 24 24"><path d="M4 4l7 17 2.5-7.5L21 11z" /></svg>
+          <span data-i18n="点选屏蔽">点选屏蔽</span>
+        </button>
+        <button id="btnAi" title="让 AI 找出本页的广告" data-i18n-title="让 AI 找出本页的广告">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5" /><path d="M11 8v6M8 11h6" /></svg>
+          <span data-i18n="AI 识别">AI 识别</span>
         </button>
       </div>
-      <div class="zz-actions" style="padding: 8px 0 0; grid-template-columns: 1fr">
-        <button class="zz-btn" id="btnReload" data-i18n="刷新页面（应用新规则）">刷新页面（应用新规则）</button>
-      </div>
-      <div class="zz-row" style="margin-top: 10px">
-        <b class="zz-small" data-i18n="屏蔽类型">屏蔽类型</b>
-        <span class="zz-small zz-muted" data-i18n="全局生效">全局生效</span>
-      </div>
-      <div class="zz-chips">
-        <label class="zz-chip"><input type="checkbox" data-type="network" /><span data-i18n="网络拦截">网络拦截</span></label>
-        <label class="zz-chip"><input type="checkbox" data-type="cosmetic" /><span data-i18n="外观隐藏">外观隐藏</span></label>
-        <label class="zz-chip"><input type="checkbox" data-type="popup" /><span data-i18n="弹窗守护">弹窗守护</span></label>
-        <label class="zz-chip"><input type="checkbox" data-type="annoyances" /><span data-i18n="烦扰元素">烦扰元素</span></label>
-      </div>
+      <details class="more" style="margin-top: 10px">
+        <summary data-i18n="屏蔽类型（全局）">屏蔽类型（全局）</summary>
+        <div class="zz-chips">
+          <label class="zz-chip"><input type="checkbox" data-type="network" /><span data-i18n="网络拦截">网络拦截</span></label>
+          <label class="zz-chip"><input type="checkbox" data-type="cosmetic" /><span data-i18n="外观隐藏">外观隐藏</span></label>
+          <label class="zz-chip"><input type="checkbox" data-type="popup" /><span data-i18n="弹窗守护">弹窗守护</span></label>
+          <label class="zz-chip"><input type="checkbox" data-type="annoyances" /><span data-i18n="烦扰元素">烦扰元素</span></label>
+        </div>
+      </details>
     </div>
-
-    <div class="zz-section">
-      <div class="zz-actions" style="padding: 0; grid-template-columns: 1fr 1fr">
-        <button type="button" class="zz-btn zz-btn-sm" id="btnClean" data-i18n="纯净浏览">纯净浏览</button>
-        <button type="button" class="zz-btn zz-btn-sm" id="btnReader" data-i18n="阅读模式">阅读模式</button>
-      </div>
-      <div class="zz-actions" style="padding: 8px 0 0">
-        <button class="zz-btn zz-btn-primary" id="btnAi" data-i18n="AI 识别本页烦人广告">AI 识别本页烦人广告</button>
-        <button class="zz-btn" id="btnPick" data-i18n="选取元素屏蔽（或按 Alt+Z）">选取元素屏蔽（或按 Alt+Z）</button>
-        <button class="zz-btn" id="btnOptions" data-i18n="打开净化控制台">打开净化控制台</button>
-      </div>
-    </div>
-
-    <div class="zz-toast-inline" id="msg" hidden></div>
 
     <div class="zz-section" id="findingsSection" hidden>
-      <div class="zz-row">
-        <b class="zz-small" data-i18n="AI 待确认（本页）">AI 待确认（本页）</b>
+      <div class="sec-head">
+        <b data-i18n="AI 待确认（本页）">AI 待确认（本页）</b>
         <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplyAll" data-i18n="全部屏蔽">全部屏蔽</button>
       </div>
-      <div id="findings" style="margin-top: 8px"></div>
-    </div>
-
-    <div class="zz-section" id="hitSection" hidden>
-      <b class="zz-small" data-i18n="本页拦截明细">本页拦截明细</b>
-      <div id="hitDetail" style="margin-top: 6px"></div>
+      <div id="findings"></div>
     </div>
 
     <div class="zz-popup-footer">
       <span id="engineInfo" data-i18n="规则加载中…">规则加载中…</span>
-      <a href="#" id="linkReview"><span data-i18n="待审">待审</span> <b id="pendingCount">0</b></a>
+      <span style="display: flex; gap: 12px">
+        <a href="#" id="linkReview"><span data-i18n="待审">待审</span> <b id="pendingCount">0</b></a>
+        <a href="#" id="btnOptions" data-i18n="控制台">控制台</a>
+      </span>
     </div>
-
     <script src="../background/lib-compat.js"></script>
     <script src="../i18n/i18n.js"></script>
     <script src="../i18n/dict-en.js"></script>
     <script src="ui-lib.js"></script>
-    <script src="dl-store.js"></script>
     <script src="dl-engine.js"></script>
+    <script src="dl-ui.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

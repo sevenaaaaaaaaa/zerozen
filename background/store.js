@@ -156,8 +156,11 @@
       docDir: ZZ.T("ZeroZen/文档"),
       articleDir: ZZ.T("ZeroZen/阅读"),
       downloadDir: ZZ.T("ZeroZen/下载"),
-      concurrency: 4,
-      // TS 容器直接命名 .mp4：macOS 对 .ts 无默认应用（Finder 显示「文稿」且双击打不开）
+      // 下载中心：同时进行的任务数 / 每个 HLS 任务的并发分片
+      maxTasks: 2,
+      concurrency: 6,
+      // 默认把 TS 流真正转封装为 MP4（mux.js）；勾选后保留 .ts 原格式
+      keepTs: false,
       tsAsMp4: true,
       notifyDone: false,
       // 页面内「净化足迹」浮球（误拦快速撤销入口）
@@ -549,6 +552,11 @@
       if (p.autoCompat !== undefined) {
         if (!p.autoCompat) delete cur.autoCompat;
         else cur.autoCompat = p.autoCompat;
+      }
+      // 站点级「允许弹出新窗口」：OAuth/支付/站内多窗口应用被误拦时由用户一键放行
+      if (p.popups !== undefined) {
+        if (p.popups === "allow") cur.popups = "allow";
+        else delete cur.popups;
       }
       // 误拦快速撤销的站点级豁免选择器（浮球「恢复」写入；至多保留 50 条）
       if (p.undoPush) {

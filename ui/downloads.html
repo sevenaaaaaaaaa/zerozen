@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="ZeroZen 下载中心">ZeroZen 下载中心</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      .dc-wrap { max-width: 860px; margin: 0 auto; padding: 8px 20px 40px; }
+      .dc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 14px; }
+      .dc-head h1 { font-size: 18px; margin: 0; display: flex; align-items: center; gap: 10px; }
+      .dc-head h1 img { width: 28px; height: 28px; border-radius: 8px; }
+      .dc-add { display: flex; gap: 8px; margin-bottom: 14px; }
+      .dc-add input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--zz-border-strong); border-radius: 10px; font: inherit; background: var(--zz-panel); color: var(--zz-text); }
+      .dc-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+      .dc-seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--zz-panel-2); border: 1px solid var(--zz-border); border-radius: 10px; }
+      .dc-seg button { font: inherit; font-size: 12.5px; border: 0; background: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; color: var(--zz-muted); }
+      .dc-seg button.active { background: var(--zz-panel); color: var(--zz-text); font-weight: 600; box-shadow: var(--zz-shadow); }
+      .dc-seg b { font-weight: 500; margin-left: 4px; color: var(--zz-muted); font-variant-numeric: tabular-nums; }
+      details.dc-set { margin-top: 22px; border: 1px solid var(--zz-border); border-radius: var(--zz-radius); background: var(--zz-panel); padding: 4px 16px; }
+      details.dc-set summary { cursor: pointer; padding: 10px 0; font-weight: 600; }
+      .dc-grid { display: grid; grid-template-columns: 180px 1fr; gap: 10px 14px; align-items: center; padding: 4px 0 14px; font-size: 13px; }
+      .dc-grid input[type=text] { width: 100%; max-width: 320px; padding: 6px 10px; border: 1px solid var(--zz-border-strong); border-radius: 8px; font: inherit; }
+      .dc-grid input[type=number] { width: 80px; padding: 6px 8px; border: 1px solid var(--zz-border-strong); border-radius: 8px; font: inherit; }
+      .dc-grid .zz-muted { font-size: 12px; }
+      .dc-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: var(--zz-muted); }
+      #msg { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 10; }
+      @media (max-width: 560px) { .dc-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="dc-wrap">
+      <div class="dc-head">
+        <h1><img src="../icons/icon48.png" alt="" /><span data-i18n="下载中心">下载中心</span></h1>
+        <div style="display: flex; gap: 8px">
+          <button class="zz-btn zz-btn-sm" id="btnFolder" data-i18n="打开下载文件夹">打开下载文件夹</button>
+        </div>
+      </div>
+      <form class="dc-add" id="addForm">
+        <input type="text" id="addUrl" placeholder="粘贴视频或文件地址（m3u8 / mp4 / 任意直链）" data-i18n-ph="粘贴视频或文件地址（m3u8 / mp4 / 任意直链）" autocomplete="off" />
+        <button class="zz-btn zz-btn-primary" type="submit" data-i18n="添加下载">添加下载</button>
+      </form>
+      <div class="dc-bar">
+        <div class="dc-seg" id="filters">
+          <button data-f="all" class="active"><span data-i18n="全部">全部</span><b id="nAll">0</b></button>
+          <button data-f="active"><span data-i18n="进行中">进行中</span><b id="nActive">0</b></button>
+          <button data-f="done"><span data-i18n="已完成">已完成</span><b id="nDone">0</b></button>
+          <button data-f="error"><span data-i18n="失败">失败</span><b id="nError">0</b></button>
+        </div>
+        <button class="zz-btn zz-btn-sm zz-btn-ghost" id="btnClearDone" data-i18n="清除已完成">清除已完成</button>
+      </div>
+      <div id="taskList"></div>
+      <div class="dc-foot">
+        <span id="cacheInfo"></span>
+        <a href="#" id="btnClearCache" data-i18n="清理未完成任务的缓存">清理未完成任务的缓存</a>
+      </div>
+      <details class="dc-set" id="settings">
+        <summary data-i18n="下载设置">下载设置</summary>
+        <div class="dc-grid">
+          <label for="sMax" data-i18n="同时下载任务数">同时下载任务数</label>
+          <div><input type="number" id="sMax" min="1" max="5" /> <span class="zz-muted" data-i18n="其余任务排队">其余任务排队</span></div>
+          <label for="sConc" data-i18n="每个视频的并发分片">每个视频的并发分片</label>
+          <div><input type="number" id="sConc" min="1" max="12" /> <span class="zz-muted" data-i18n="网站限速时调低">网站限速时调低</span></div>
+          <label for="sDir" data-i18n="视频保存目录">视频保存目录</label>
+          <div><input type="text" id="sDir" /> <div class="zz-muted" data-i18n="相对于浏览器默认下载目录">相对于浏览器默认下载目录</div></div>
+          <span data-i18n="视频格式">视频格式</span>
+          <label class="zz-check"><input type="checkbox" id="sKeepTs" /> <span data-i18n="保留 TS 原格式（默认自动转为 MP4，Mac/手机可直接播放）">保留 TS 原格式（默认自动转为 MP4，Mac/手机可直接播放）</span></label>
+          <span data-i18n="完成通知">完成通知</span>
+          <label class="zz-check"><input type="checkbox" id="sNotify" /> <span data-i18n="下载完成或失败时发系统通知">下载完成或失败时发系统通知</span></label>
+        </div>
+      </details>
+    </div>
+    <div class="zz-toast-inline" id="msg" hidden></div>
+    <script src="../background/lib-compat.js"></script>
+    <script src="../i18n/i18n.js"></script>
+    <script src="../i18n/dict-en.js"></script>
+    <script src="ui-lib.js"></script>
+    <script src="dl-engine.js"></script>
+    <script src="dl-ui.js"></script>
+    <script src="downloads.js"></script>
+  </body>
+</html>

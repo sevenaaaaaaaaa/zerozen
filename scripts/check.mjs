@@ -171,7 +171,7 @@ for (const id of optional) {
   }
 }
 
-const messagesSrc = readFileSync(join(root, "background", "messages.js"), "utf8");
+const messagesSrc = readFileSync(join(root, "background", "messages.js"), "utf8") + readFileSync(join(root, "background", "dl-relay.js"), "utf8");
 const cases = new Set([...messagesSrc.matchAll(/case "(zz:[a-z:-]+)"/g)].map((m) => m[1]));
 const sent = new Set();
 for (const file of ["ui/popup.js", "ui/options.js", "content/10-css.js", "content/30-guard.js", "content/60-bridge.js", "content/20-detector.js"]) {

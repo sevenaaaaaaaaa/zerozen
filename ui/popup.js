@@ -4,13 +4,12 @@
   const T = UI.T;
   const api = globalThis.ZZ.browser;
 
-  ZZDLEngine.init({ UI, T, referrerOf: () => (tab && tab.url) || "" });
-
   let tab = null;
   let host = "";
   let refreshTimer = null;
-  let mediaStreams = [];
-  let currentTaskItems = [];
+  let lastState = null;
+  let media = null;
+  let tasks = null;
 
   function bumpStat(id, value) {
     const el = $(id);
@@ -20,6 +19,18 @@
     el.classList.remove("zz-bump");
     void el.offsetWidth; // 重启动画
     el.classList.add("zz-bump");
+  }
+
+  const REASON = {
+    "ad-host": "广告联盟",
+    popunder: "点空白处弹出",
+    "double-open": "一次点击多开",
+    "no-gesture": "自动弹出",
+    clickjack: "透明劫持层",
+  };
+
+  function needReload() {
+    $("#reloadHint").hidden = false;
   }
 
   function renderState(state) {
@@ -33,19 +44,8 @@
     const profile = state.profile || state.globalProfile || "standard";
     for (const btn of document.querySelectorAll("#profileSeg .zz-seg-btn")) {
       btn.classList.toggle("active", btn.getAttribute("data-profile") === profile);
-      btn.disabled = !state.enabled;
+      btn.disabled = !state.enabled || !state.siteEnabled;
     }
-    const sourceLabel =
-      state.profileSource === "site"
-        ? T("本站设置")
-        : state.profileSource === "auto"
-        ? T("自动回落")
-        : state.profileSource === "global"
-        ? T("跟随全局")
-        : state.profileSource === "temporary"
-        ? T("临时放行")
-        : T("已关闭");
-    $("#profileHint").textContent = sourceLabel;
     const auto = state.autoCompat;
     $("#autoCompatHint").hidden = !auto;
     if (auto) {
@@ -56,60 +56,77 @@
     const tempBtn = $("#btnTemp");
     if (until > Date.now()) {
       const mins = Math.max(1, Math.round((until - Date.now()) / 60000));
-      tempBtn.textContent = T("已临时放行 · 剩余 $1 分钟 · 点击恢复", mins);
-      tempBtn.classList.add("zz-btn-danger");
+      tempBtn.textContent = T("放行中 · 剩 $1 分钟 · 恢复", mins);
+      tempBtn.classList.add("danger");
     } else {
-      tempBtn.textContent = T("临时解除 $1 分钟", state.tempMinutes || 30);
-      tempBtn.classList.remove("zz-btn-danger");
+      tempBtn.textContent = T("临时放行 $1 分钟", state.tempMinutes || 30);
+      tempBtn.classList.remove("danger");
     }
-    // 临时放行期间给出转正入口，方便把「这个站临时关掉挺好用」沉淀为长期白名单
-    const promote = $("#btnTempPromote");
-    if (promote) promote.hidden = !(until > Date.now());
+    $("#btnTempPromote").hidden = !(until > Date.now());
     const types = state.types || {};
     for (const input of document.querySelectorAll(".zz-chip input[data-type]")) {
       input.checked = !!types[input.getAttribute("data-type")];
     }
     const wl = $("#btnWhitelist");
-    if (wl) {
-      wl.textContent = state.siteEnabled ? T("加入白名单") : T("移出白名单");
-      wl.classList.toggle("zz-btn-danger", !state.siteEnabled);
-    }
+    wl.textContent = state.siteEnabled ? T("加入白名单") : T("移出白名单");
+    wl.classList.toggle("danger", !state.siteEnabled);
     $("#siteHint").textContent = state.siteEnabled
-      ? T("本站已启用") + (state.index && state.index.invalid ? T("（$1 条规则无效已跳过）", state.index.invalid) : "")
+      ? until > Date.now()
+        ? T("临时放行中")
+        : T("保护中") + " · " + T(profileName(profile))
       : state.whitelistSource
-      ? T("已随 $1 加入白名单，本站及其子域不再拦截", state.whitelistSource)
+      ? T("已随 $1 加入白名单", state.whitelistSource)
       : T("本站已停用，不会隐藏或拦截任何内容");
+    $("#popupsAllowedHint").hidden = !state.popupsAllowed;
     const dnr = state.dnr || {};
-    $("#engineInfo").textContent =
-      T("网络规则 $1 条 · 外观规则 $2 条", dnr.applied || 0, (state.index && state.index.cosmetic) || 0);
-    const hitList = (state.counts && state.counts.packs) || [];
-    const hitSection = $("#hitSection");
-    if (hitList.length) {
-      const nameOf = (key) => {
-        if (key === "@user") return T("自定义规则");
-        if (key === "@other") return T("其他来源");
-        const pack = (state.packs || []).find((p) => p.id === key);
-        return pack ? pack.name : key;
-      };
-      $("#hitDetail").innerHTML = hitList
-        .map(
-          (h) =>
-            "<div class='zz-small' style='display:flex;justify-content:space-between;gap:10px'><span>" +
-            escapeHtml(nameOf(h.key)) +
-            "</span><span>" +
-            h.n +
-            "</span></div>"
-        )
-        .join("");
-      hitSection.hidden = false;
-    } else {
-      hitSection.hidden = true;
-    }
+    $("#engineInfo").textContent = T("网络规则 $1 条 · 外观规则 $2 条", dnr.applied || 0, (state.index && state.index.cosmetic) || 0);
+    renderDetail(state);
     $("#pendingCount").textContent = state.findingsPending || 0;
-    $("#btnAi").title = state.aiConfigured ? "" : T("请先在控制台配置 AI 接口");
+    $("#btnAi").title = state.aiConfigured ? T("让 AI 找出本页的广告") : T("请先在控制台配置 AI 接口");
   }
 
-  let lastState = null;
+  function profileName(p) {
+    return p === "compat" ? "兼容" : p === "strict" ? "严格" : "标准";
+  }
+
+  // 本页拦截明细：命中的规则包 + 被拦的新窗口（含原因），点三个数字展开
+  function renderDetail(state) {
+    const hitList = (state.counts && state.counts.packs) || [];
+    const pops = state.popupLog || [];
+    const nameOf = (key) => {
+      if (key === "@user") return T("自定义规则");
+      if (key === "@other") return T("其他来源");
+      const pack = (state.packs || []).find((p) => p.id === key);
+      return pack ? pack.name : key;
+    };
+    let html = "";
+    if (hitList.length) {
+      html += "<h4>" + escapeHtml(T("命中规则")) + "</h4>";
+      html += hitList.map((h) => "<div class='row'><span>" + escapeHtml(nameOf(h.key)) + "</span><span>" + h.n + "</span></div>").join("");
+    }
+    if (pops.length) {
+      html += "<h4>" + escapeHtml(T("拦截的弹窗")) + "</h4>";
+      html += pops
+        .slice(0, 6)
+        .map((p) => {
+          let h = p.url;
+          try {
+            h = new URL(p.url).hostname;
+          } catch (e) {}
+          return "<div class='row'><span title='" + escapeHtml(p.url) + "'>" + escapeHtml(h || T("通知权限请求")) + "</span><span class='zz-muted'>" + escapeHtml(T(REASON[p.reason] || "可疑")) + "</span></div>";
+        })
+        .join("");
+      if (!state.popupsAllowed) {
+        html += "<div style='margin-top:6px'><a href='#' id='btnPopupsAllow'>" + escapeHtml(T("误拦了？允许本站弹出新窗口")) + "</a></div>";
+      }
+    }
+    if (!html) html = "<div class='zz-muted'>" + escapeHtml(T("本页还没有拦截记录")) + "</div>";
+    const box = $("#detail");
+    if (box._sig !== html) {
+      box._sig = html;
+      box.innerHTML = html;
+    }
+  }
 
   function fmtTime(ts) {
     try {
@@ -173,90 +190,6 @@
     };
   }
 
-  // ---------- 嗅探：网络请求 + 页面 DOM/脚本扫描 ----------
-  async function scanMedia() {
-    if (!tab || !/^https?:/i.test(tab.url || "")) return;
-    const [sniff, dom] = await Promise.all([
-      UI.send({ type: "zz:sniff:list", payload: { tabId: tab.id } }).catch(() => null),
-      UI.sendToTab(tab.id, { type: "zz:toolbox:streams" }).catch(() => null),
-    ]);
-    const map = new Map();
-    for (const s of (sniff && sniff.streams) || []) map.set(s.url, { url: s.url, kind: s.kind, note: T("网络请求") });
-    for (const s of (dom && dom.streams) || []) if (!map.has(s.url)) map.set(s.url, s);
-    const score = (s) => {
-      let n = 0;
-      if (/\.m3u8|\/hls\//i.test(s.url)) n += 5;
-      if (/\.mpd/i.test(s.url)) n += 4;
-      if (/\.mp4|\.webm/i.test(s.url)) n += 3;
-      if (/master|index|playlist/i.test(s.url)) n += 1;
-      return n;
-    };
-    mediaStreams = Array.from(map.values()).sort((a, b) => score(b) - score(a)).slice(0, 8);
-    renderMedia();
-  }
-
-  function streamName(url) {
-    try {
-      const base = decodeURIComponent((url.split(/[?#]/)[0].split("/").pop() || "").slice(0, 60));
-      return base || url.slice(0, 60);
-    } catch (e) {
-      return url.slice(0, 60);
-    }
-  }
-
-  // 下载命名：页面标题（多为视频标题）优先，URL 末段回退。
-  // 标题按常见分隔符去掉尾部站名，避免「标题 - 某站」直接落成文件名。
-  function taskName(url, pageTitle) {
-    const raw = String(pageTitle || "").trim();
-    if (!raw) return streamName(url);
-    let brand = "";
-    try {
-      brand = new URL(url).hostname.replace(/^www\./, "").split(".")[0];
-    } catch (e) {}
-    const parts = raw.split(/\s*[-–—_|｜]\s*/);
-    if (parts.length > 1) {
-      const last = parts[parts.length - 1].trim();
-      if (
-        last.length <= 16 &&
-        (last.toLowerCase().includes(brand) ||
-          /^(youtube|bilibili|哔哩哔哩|腾讯视频|爱奇艺|优酷|芒果|抖音|快手|微博|知乎|csdn|github|x|twitter|facebook|reddit|twitch|vimeo|netflix)$/i.test(last))
-      ) {
-        return parts.slice(0, -1).join(" - ").trim() || raw;
-      }
-    }
-    return raw;
-  }
-
-  // 直链保留原始扩展名（视频/音频/文档分类内），避免产物变「文稿」
-  function extOf(url) {
-    if (ZZDLEngine.classifyExt(url) === "other") return "";
-    const m = /\.([a-z0-9]{2,5})(?:[?#]|$)/i.exec(url.split(/[?#]/)[0]);
-    return m ? "." + m[1].toLowerCase() : "";
-  }
-
-  function renderMedia() {
-    const section = $("#mediaSection");
-    const box = $("#mediaList");
-    const hint = $("#mediaHint");
-    if (!mediaStreams.length) {
-      section.hidden = true;
-      return;
-    }
-    section.hidden = false;
-    box.innerHTML = "";
-    for (const s of mediaStreams) {
-      const item = document.createElement("div");
-      item.className = "zz-media-item";
-      const kindLabel = s.kind === "m3u8" ? "HLS" : s.kind === "mpd" ? "DASH" : s.kind === "ts" ? "TS" : "VIDEO";
-      item.innerHTML =
-        '<span class="mi-kind">' + kindLabel + "</span>" +
-        '<span class="mi-url" title="' + escapeHtml(s.url) + '">' + escapeHtml(streamName(s.url)) + "</span>" +
-        '<button class="zz-btn zz-btn-sm zz-btn-primary" data-dl="' + escapeHtml(s.url) + '" data-kind="' + (s.kind || "media") + '">' + T("下载") + "</button>";
-      box.appendChild(item);
-    }
-    hint.textContent = T("点「下载」直接创建任务（弹窗关闭进度也会保留）");
-  }
-
   // 下载按钮魔法特效：迸发六颗光点
   function playSparkle(btn) {
     if (!btn || !btn.getBoundingClientRect) return;
@@ -291,304 +224,67 @@
     } catch (e) {}
   }
 
-  const busyStreams = new Set();
-  $("#mediaList").addEventListener("click", async (event) => {
-    const btn = event.target.closest("button[data-dl]");
-    if (!btn || busyStreams.has(btn.getAttribute("data-dl"))) return;
-    const url = btn.getAttribute("data-dl");
-    const kind = btn.getAttribute("data-kind") || "media";
-    busyStreams.add(url);
-    btn.disabled = true;
-    btn.textContent = T("创建中…");
-    try {
-      // 入队 + 派发到工具箱页后台执行（popup 生命周期短，长下载不在弹窗里跑）
-      const Store = globalThis.ZZDLStore;
-      let queued = false;
-      if (Store && (/\.m3u8|\/hls\//i.test(url) || /\.(mp4|webm|mkv|avi|mov|flv|m4v|mp3|m4a|zip|rar|7z|apk|pdf|iso|ts)(\?|#|$)/i.test(url))) {
-        const isHls = /\.m3u8|\/hls\//i.test(url);
-        const record = {
-          id: Store.taskId("queue", url, streamName(url)),
-          queued: true,
-          status: "queued",
-          kind: isHls ? "m3u8" : "multi",
-          url,
-          name: isHls ? undefined : ZZDLEngine.sanitize(taskName(url, tab && tab.title)) + extOf(url),
-          nameBase: isHls ? ZZDLEngine.sanitize(taskName(url, tab && tab.title)) : undefined,
-          dir: ZZDLEngine.dirForType(isHls ? "video" : ZZDLEngine.classifyExt(url)),
-          concurrency: 6,
-          threads: 4,
-          // TS 容器直接命名 .mp4：macOS 对 .ts 无默认应用（Finder 显示「文稿」）
-          tsAsMp4: true,
-          createdAt: Date.now(),
-        };
-        await Store.putTask(record);
-        const res = await UI.send({ type: "zz:dl:dispatch", payload: { taskId: record.id } });
-        queued = !!(res && res.ok);
-      }
-      if (!queued) {
-        // 无法入队（无存储或类型不适用）：直接走浏览器默认下载
-        const dir = ZZDLEngine.dirForType(ZZDLEngine.classifyExt(url));
-        await ZZDLEngine.download(url, dir + "/" + ZZDLEngine.sanitize(streamName(url)));
-      }
-      playSparkle(btn);
-      UI.toast($("#msg"), queued ? T("任务已创建，正在后台下载") : T("已加入下载"), "ok");
-      await refreshTasks(true);
-    } catch (e) {
-      UI.toast($("#msg"), T("创建失败：$1", (e && e.message) || e), "err");
-    } finally {
-      busyStreams.delete(url);
-      if (btn.isConnected) {
-        btn.disabled = false;
-        btn.textContent = T("下载");
-      }
-    }
-  });
-  $("#btnRescan").addEventListener("click", scanMedia);
-
-  // ---------- 任务中心：浏览器下载记录 + 本地未完成任务 ----------
-  // 分类/目录/错误分析逻辑在 dl-engine，popup 与工具箱共用
-  const taskState = { filter: "all", stateFilter: "all", sort: "time" };
-  const taskSpeeds = new Map(); // key -> { bytes, at, speed }
-  const CAT_LABEL = {
-    video: T("视频"),
-    audio: T("音频"),
-    image: T("图片"),
-    archive: T("压缩包"),
-    doc: T("文档"),
-    other: T("其他"),
-  };
-
-  function taskNameOf(path) {
-    return String(path || "").split(/[\\/]/).pop() || "—";
+  // ---------- 下载：本页视频 + 进行中的任务 ----------
+  let mediaCount = 0;
+  let taskCount = 0;
+  function syncDlSection() {
+    $("#dlSection").hidden = !(mediaCount || taskCount);
+    $("#mediaTitle").textContent = mediaCount ? T("本页视频（$1）", mediaCount) : T("下载任务");
+    $("#mediaList").hidden = !mediaCount;
   }
 
-  function sortByMode(items, mode) {
-    const byName = (a, b) => String(a.name).localeCompare(String(b.name), "zh-Hans-CN", { numeric: true });
-    const arr = items.slice();
-    if (mode === "size") arr.sort((a, b) => (b.totalBytes || 0) - (a.totalBytes || 0) || byName(a, b));
-    else if (mode === "name") arr.sort(byName);
-    else if (mode === "speed") arr.sort((a, b) => (b.speed || 0) - (a.speed || 0) || (b.at || 0) - (a.at || 0));
-    else if (mode === "state") {
-      const order = { run: 0, paused: 1, err: 2, done: 3 };
-      arr.sort((a, b) => order[a.state] - order[b.state] || byName(a, b));
-    } else arr.sort((a, b) => (b.at || 0) - (a.at || 0)); // time
-    return arr;
-  }
-
-  async function refreshTasks(interactive) {
-    const section = $("#taskSection");
-    let items = [];
-    // downloads 是可选权限：只允许用户手势触发申请；定时刷新静默跳过，已授权才读取记录
-    let granted = false;
-    try {
-      if (interactive) granted = await UI.ensurePermission("downloads");
-      else granted = !!(api.downloads && api.downloads.search);
-    } catch (e) {}
-    if (granted && api.downloads && api.downloads.search) {
-      const records = await new Promise((resolve) =>
-        api.downloads.search({ orderBy: ["-startTime"], limit: 60 }, (r) => resolve(r || []))
-      );
-      const now = Date.now();
-      for (const it of records) {
-        const name = taskNameOf(it.filename || it.url);
-        // 速度采样：两次刷新的字节差 / 时间差
-        const prev = taskSpeeds.get("d" + it.id);
-        let speed = prev ? prev.speed : 0;
-        if (prev && now > prev.at && it.state === "in_progress") {
-          const inst = ((it.bytesReceived || 0) - prev.bytes) / ((now - prev.at) / 1000);
-          if (inst > 0) speed = inst;
-        }
-        taskSpeeds.set("d" + it.id, { bytes: it.bytesReceived || 0, at: now, speed });
-        const hint = it.state === "interrupted" && it.error !== "USER_CANCELED" ? ZZDLEngine.errorHint({ error: it.error }) : null;
-        items.push({
-          key: "d" + it.id,
-          id: it.id,
-          src: "chrome",
-          name,
-          cat: ZZDLEngine.classifyExt(name),
-          url: it.url || "",
-          path: it.filename || "",
-          state: it.state === "complete" ? "done" : it.state === "interrupted" ? "err" : it.paused ? "paused" : "run",
-          pct: it.totalBytes > 0 ? Math.min(100, Math.round(((it.bytesReceived || 0) / it.totalBytes) * 100)) : it.state === "complete" ? 100 : 0,
-          totalBytes: it.totalBytes || 0,
-          hint,
-          at: it.startTime ? new Date(it.startTime).getTime() : 0,
-          speed,
-        });
-      }
-    }
-    try {
-      const local = (globalThis.ZZDLStore ? await ZZDLStore.listTasks() : []) || [];
-      for (const t of local) {
-        const name = t.kind === "m3u8" ? t.nameBase : t.name;
-        items.unshift({
-          key: "l" + t.id,
-          id: t.id,
-          src: "local",
-          name,
-          cat: ZZDLEngine.classifyExt(name),
-          url: t.url || "",
-          path: (t.dir || "") + "/" + name,
-          state: t.status === "error" ? "err" : t.status === "queued" ? "queued" : "paused",
-          pct: t.total ? Math.min(100, Math.round(((t.done || 0) / t.total) * 100)) : 0,
-          totalBytes: t.total || 0,
-          hint: t.status === "error" ? ZZDLEngine.errorHint({ message: t.error }) : null,
-          at: t.createdAt || 0,
-          speed: 0,
-          resume: t,
-        });
-      }
-    } catch (e) {}
-    items = items.filter(
-      (it) =>
-        (taskState.filter === "all" || it.cat === taskState.filter) &&
-        (taskState.stateFilter === "all" || it.state === taskState.stateFilter || (taskState.stateFilter === "paused" && it.state === "queued"))
-    );
-    items = sortByMode(items, taskState.sort).slice(0, 16);
-    currentTaskItems = items;
-    // 渲染签名：内容没变就不重建 DOM，避免定时刷新导致滚动位置跳动
-    const sig = items.map((it) => it.key + ":" + it.state + ":" + it.pct + ":" + Math.round(it.speed || 0)).join("|");
-    if (sig === taskRenderSig) {
-      section.hidden = !items.length;
-      return;
-    }
-    taskRenderSig = sig;
-    section.hidden = !items.length;
-    const box = $("#taskList");
-    box.innerHTML = "";
-    const stateLabel = { done: T("已完成"), err: T("失败"), paused: T("已暂停"), run: T("下载中"), queued: T("排队中") };
-    for (const it of items) {
-      const row = document.createElement("div");
-      row.className = "zz-task-item" + (it.state === "run" ? " run" : "") + (it.state === "err" ? " err" : "");
-      const metaParts = [CAT_LABEL[it.cat] || ""];
-      if (it.totalBytes) metaParts.push(ZZDLEngine.bytes(it.totalBytes) + (it.pct ? " · " + it.pct + "%" : ""));
-      if (it.state === "run" && it.speed) metaParts.push(ZZDLEngine.bytes(it.speed) + "/s");
-      metaParts.push(stateLabel[it.state]);
-      if (it.hint) metaParts.push(it.hint.reason);
-      const btns = [];
-      const b = (attr, key, cls) => '<button class="zz-btn zz-btn-sm ' + (cls || "") + '" ' + attr + ">" + T(key) + "</button>";
-      if (it.state === "done" && it.src === "chrome") {
-        btns.push(b('data-tact="open" data-key="' + it.key + '"', "打开"));
-        btns.push(b('data-tact="show" data-key="' + it.key + '"', "Finder"));
-      }
-      if (it.state === "run" && it.src === "chrome") btns.push(b('data-tact="pause" data-key="' + it.key + '"', "暂停"));
-      if (it.state === "paused" && it.src === "chrome") btns.push(b('data-tact="resume" data-key="' + it.key + '"', "继续"));
-      if (it.state === "err") btns.push(b('data-tact="report" data-key="' + it.key + '"', "反馈", "zz-btn-danger"));
-      if (it.src === "local") {
-        btns.push(b('data-tact="localresume" data-key="' + escapeHtml(it.id) + '"', "继续", "zz-btn-primary"));
-        btns.push(b('data-tact="drop" data-key="' + escapeHtml(it.id) + '"', "删除", "zz-btn-danger"));
-      } else if (it.state === "err" && it.url) {
-        btns.push(b('data-tact="retry" data-key="' + it.key + '"', "重试"));
-      }
-      if (it.url) btns.push(b('data-tact="copyurl" data-key="' + it.key + '" data-url="' + escapeHtml(it.url) + '"', "链接"));
-      if (it.path) btns.push(b('data-tact="copypath" data-key="' + it.key + '" data-path="' + escapeHtml(it.path) + '"', "路径"));
-      row.innerHTML =
-        '<span class="ti-name" title="' + escapeHtml(it.name + (it.path ? "\n" + it.path : "")) + '">' + escapeHtml(it.name) + "</span>" +
-        '<span class="ti-meta">' + metaParts.filter(Boolean).join(" · ") + "</span>" +
-        btns.join("") +
-        '<i class="ti-bar" style="width:' + (it.state === "err" ? 100 : it.pct) + "%;opacity:" + (it.state === "err" ? 0.5 : 1) + '"></i>';
-      box.appendChild(row);
-    }
-    if (!box.childElementCount && taskState.filter !== "all") section.hidden = true;
-  }
-
-  async function reportTask(item) {
-    const report = ZZDLEngine.buildReport(item);
-    try {
-      await navigator.clipboard.writeText(report);
-    } catch (e) {}
-    api.tabs.create({ url: ZZDLEngine.issueUrl(report) });
-    UI.toast($("#msg"), T("诊断报告已复制，已打开 GitHub 反馈页，粘贴到正文即可"), "ok");
-  }
-
-  const busyTasks = new Set();
-  let taskRenderSig = "";
-  $("#taskList").addEventListener("click", async (event) => {
-    const btn = event.target.closest("button[data-tact]");
-    if (!btn) return;
-    const act = btn.getAttribute("data-tact");
-    const key = btn.getAttribute("data-key") || "";
-    const byKey = () => currentTaskItems.find((x) => x.key === key);
-    const call = (fn) => {
-      try {
-        const ret = fn();
-        if (ret && typeof ret.catch === "function") ret.catch(() => {});
-      } catch (e) {}
-    };
-    try {
-      if (act === "drop") {
-        await ZZDLStore.removeTask(key);
-        await refreshTasks(false);
-        return;
-      }
-      if (act === "copyurl") {
-        await navigator.clipboard.writeText(btn.getAttribute("data-url") || "");
-        UI.toast($("#msg"), T("链接已复制"), "ok");
-        return;
-      }
-      if (act === "copypath") {
-        await navigator.clipboard.writeText(btn.getAttribute("data-path") || "");
-        UI.toast($("#msg"), T("路径已复制，可在 Finder「前往文件夹」粘贴"), "ok");
-        return;
-      }
-      if (act === "report") {
-        const item = byKey();
-        if (item) await reportTask(item);
-        return;
-      }
-      const item = byKey();
-      if (!item) return;
-      if (act === "open") call(() => api.downloads.open(item.id));
-      else if (act === "show") call(() => api.downloads.show(item.id));
-      else if (act === "pause") call(() => api.downloads.pause(item.id));
-      else if (act === "resume") call(() => api.downloads.resume(item.id));
-      else if (act === "retry" && item.url) {
-        call(() => api.downloads.erase({ id: item.id }));
-        await new Promise((r) => setTimeout(r, 250));
-        const dir = ZZDLEngine.dirForType(item.cat);
-        await ZZDLEngine.download(item.url, dir + "/" + item.name);
-        UI.toast($("#msg"), T("已重新下载到 $1", dir), "ok");
+  function initDownloads() {
+    media = ZZDLUI.mediaList($("#mediaList"), {
+      tabId: tab.id,
+      compact: true,
+      toastEl: $("#msg"),
+      onCount: (n) => {
+        mediaCount = n;
+        syncDlSection();
+      },
+      onAdded: (task, btn) => {
         playSparkle(btn);
-      } else if (act === "localresume") {
-        // 统一派发到工具箱页后台执行（popup 关闭也不中断）
-        const res = await UI.send({ type: "zz:dl:dispatch", payload: { taskId: key } });
-        if (res && res.ok) {
-          playSparkle(btn);
-          UI.toast($("#msg"), T("已交给下载器后台执行"), "ok");
-        } else {
-          UI.toast($("#msg"), T("派发失败：$1", (res && res.error) || T("未知错误")), "err");
-        }
-      }
-    } catch (e) {
-      UI.toast($("#msg"), T("操作失败：$1", (e && e.message) || e), "err");
-    } finally {
-      setTimeout(() => refreshTasks(false), 400);
-    }
-  });
-  $("#taskFilters").addEventListener("click", (event) => {
-    const btn = event.target.closest("button[data-cat]");
-    if (!btn) return;
-    taskState.filter = btn.getAttribute("data-cat");
-    for (const b of document.querySelectorAll("#taskFilters button")) b.classList.toggle("active", b === btn);
-    taskRenderSig = "";
-    refreshTasks(false);
-  });
-  $("#taskStateFilters").addEventListener("click", (event) => {
-    const btn = event.target.closest("button[data-state]");
-    if (!btn) return;
-    taskState.stateFilter = btn.getAttribute("data-state");
-    for (const b of document.querySelectorAll("#taskStateFilters button")) b.classList.toggle("active", b === btn);
-    taskRenderSig = "";
-    refreshTasks(false);
-  });
-  $("#taskSort").addEventListener("change", (event) => {
-    taskState.sort = event.target.value;
-    taskRenderSig = "";
-    refreshTasks(false);
-  });
-  $("#btnTaskRefresh").addEventListener("click", () => refreshTasks(true));
+        tasks.refresh();
+      },
+    });
+    tasks = ZZDLUI.taskList($("#taskList"), {
+      compact: true,
+      toastEl: $("#msg"),
+      onChange: (all, shown) => {
+        taskCount = (shown || []).length;
+        syncDlSection();
+      },
+    });
+    media.refresh();
+  }
 
-  async function refresh(interactive) {
+  $("#btnRescan").addEventListener("click", (e) => {
+    e.preventDefault();
+    media && media.refresh();
+  });
+  $("#btnCenter").addEventListener("click", async (e) => {
+    e.preventDefault();
+    await UI.send({ type: "zz:dl:open-center" });
+    window.close();
+  });
+  $("#stats").addEventListener("click", () => {
+    $("#detail").hidden = !$("#detail").hidden;
+  });
+  $("#detail").addEventListener("click", async (e) => {
+    const a = e.target.closest("#btnPopupsAllow");
+    if (!a) return;
+    e.preventDefault();
+    await UI.send({ type: "zz:site:popups", payload: { host, allow: true, tabId: tab && tab.id } });
+    UI.toast($("#msg"), T("已允许本站弹出新窗口"), "ok");
+    refresh();
+  });
+  $("#btnPopupsRevoke").addEventListener("click", async () => {
+    await UI.send({ type: "zz:site:popups", payload: { host, allow: false, tabId: tab && tab.id } });
+    UI.toast($("#msg"), T("已恢复本站的弹窗拦截"), "ok");
+    refresh();
+  });
+
+  async function refresh() {
     if (!tab) return;
     const res = await UI.send({ type: "zz:state:get", payload: { tabId: tab.id } });
     if (res && res.ok) {
@@ -596,14 +292,13 @@
       $("#host").textContent = host || tab.title || T("当前页面");
       renderState(res);
     }
-    // 嗅探只在打开弹窗或手动触发时全量扫描，定时刷新不做（页面源码正则扫描开销大）
-    if (interactive || !mediaStreams.length) await scanMedia();
-    await refreshTasks(!!interactive);
   }
 
   async function init() {
     await UI.initLocale();
-    tab = await UI.currentTab();
+    // ?tab=<id>：调试/自动化测试时以指定标签页为上下文打开弹窗
+    const forced = /[?&]tab=(\d+)/.exec(location.search);
+    tab = forced ? await api.tabs.get(Number(forced[1])).catch(() => null) : await UI.currentTab();
     if (!tab) return;
     try {
       host = new URL(tab.url).hostname.toLowerCase();
@@ -613,15 +308,26 @@
     if (!/^https?:/i.test(tab.url || "")) {
       $("#host").textContent = T("此页面不支持");
       $("#siteHint").textContent = T("ZeroZen 仅作用于 http/https 页面");
-      $("#btnAi").disabled = true;
-      $("#btnPick").disabled = true;
-      $("#siteEnabled").disabled = true;
+      for (const id of ["#btnAi", "#btnPick", "#btnReader", "#btnClean", "#siteEnabled"]) $(id).disabled = true;
+      $("#stats").hidden = true;
+      $("#profileSeg").hidden = true;
+      document.querySelector(".site-links").hidden = true;
+      // 非网页也能看下载任务
+      tasks = ZZDLUI.taskList($("#taskList"), {
+        compact: true,
+        toastEl: $("#msg"),
+        onChange: (all, shown) => {
+          taskCount = (shown || []).length;
+          syncDlSection();
+        },
+      });
       return;
     }
     $("#host").textContent = host || tab.title || T("当前页面");
-    await refresh(true);
+    initDownloads();
+    await refresh();
     await loadFindings();
-    refreshTimer = setInterval(() => refresh(), 3000);
+    refreshTimer = setInterval(() => refresh(), 2500);
   }
 
   $("#globalEnabled").addEventListener("change", async (event) => {
@@ -644,6 +350,7 @@
       return;
     }
     UI.toast($("#msg"), T(enabled ? "已在此站点启用" : "已在此站点停用"), enabled ? "ok" : "");
+    needReload();
     setTimeout(refresh, 300);
   });
 
@@ -663,10 +370,12 @@
       return;
     }
     UI.toast($("#msg"), T("已切换为「$1」档", btn.textContent.trim()), "ok");
+    needReload();
     setTimeout(refresh, 300);
   });
 
-  $("#btnTemp").addEventListener("click", async () => {
+  $("#btnTemp").addEventListener("click", async (event) => {
+    event.preventDefault();
     const until = (lastState && lastState.until) || 0;
     if (until > Date.now()) {
       await UI.send({ type: "zz:site:temp", payload: { host, minutes: 0, tabId: tab && tab.id } });
@@ -679,7 +388,8 @@
     setTimeout(refresh, 300);
   });
 
-  $("#btnTempPromote").addEventListener("click", async () => {
+  $("#btnTempPromote").addEventListener("click", async (event) => {
+    event.preventDefault();
     // enabled:false 落为白名单；until:0 清掉临时到期时间，clearAuto 顺带清掉自动回落标记
     const res = await UI.send({
       type: "zz:site:set",
@@ -693,7 +403,8 @@
     setTimeout(refresh, 300);
   });
 
-  $("#btnWhitelist").addEventListener("click", async () => {
+  $("#btnWhitelist").addEventListener("click", async (event) => {
+    event.preventDefault();
     const enable = !(lastState && lastState.siteEnabled);
     const res = await UI.send({ type: "zz:site:set", payload: { host, enabled: enable, tabId: tab && tab.id } });
     if (res && res.ok) {
@@ -751,16 +462,18 @@
       await UI.send({ type: "zz:settings:set", payload: { settings } });
     }
     UI.toast($("#msg"), T("已更新屏蔽类型"), "ok");
+    needReload();
     setTimeout(refresh, 300);
   });
 
   $("#btnAi").addEventListener("click", async (event) => {
-    const btn = event.target;
+    const btn = event.currentTarget;
+    const label = btn.querySelector("span");
     btn.disabled = true;
-    btn.textContent = T("正在识别…（会调用一次 AI）");
+    label.textContent = T("识别中…");
     const res = await UI.send({ type: "zz:ai:recognize-tab", payload: { tabId: tab && tab.id } });
     btn.disabled = false;
-    btn.textContent = T("AI 识别本页烦人广告");
+    label.textContent = T("AI 识别");
     if (!res || !res.ok) {
       UI.toast($("#msg"), T("识别失败：$1", (res && res.error) || T("未知错误")), "err");
       return;
@@ -783,7 +496,8 @@
     window.close();
   });
 
-  $("#btnOptions").addEventListener("click", async () => {
+  $("#btnOptions").addEventListener("click", async (event) => {
+    event.preventDefault();
     const ok = await UI.openOptions();
     if (!ok) {
       UI.toast($("#msg"), T("打不开控制台，请重载扩展后再试"), "err");
@@ -814,6 +528,7 @@
 
   window.addEventListener("unload", () => {
     if (refreshTimer) clearInterval(refreshTimer);
+    if (tasks) tasks.stop();
   });
 
   init();

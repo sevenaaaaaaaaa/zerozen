@@ -211,13 +211,6 @@
   }
 
   const PLAYER_HINT = /(player|plyr|video-js|jwplayer|dplayer|artplayer|html5-video|fp-player|vjs-|mediaelement)/i;
-  const AD_HOST_RE =
-    /magsrv|pemsrv|wpadmngr|exoclick|exosrv|realsrv|exdynsrv|juicyads|juicycdn|trafficjunky|tsyndicate|trafficstars|popads|popcash|propeller|onclasrv|clickadu|adcash|adsterra|adskeeper|hilltopads|adspyglass|traffichunt|zeropark|plugrush|twinrd|trafficfactory|galaksion|clickaine|ad-maven/i;
-  // 不含 popup/overlay：正常登录框、cookie 提示常用这两个词命名，误伤率远高于命中率
-  const AD_NAME_RE = /(^|[^a-z0-9])(ad|ads|adv|sponsor|sponsored|popunder|interstitial|exo|juicy|tsad|ts_ad)([^a-z0-9]|$)/i;
-  // iframe src 判广告：必须命中明确的广告词边界，"broadcast"/"downloads" 这类词不能中招
-  const AD_SRC_RE = /(^|[./_?#-])(ads?|adsystem|adservice|adserver|advert|banner|popunder|popads|popcash)([./_?#-]|$)/i;
-
   function isPlayerish(el) {
     if (!el || !el.closest) return false;
     if (el.closest("video, audio, [data-zz-ui]")) return true;
@@ -247,19 +240,23 @@
     }
   }
 
+  const waitTimers = { t: null };
+
   function sweepOverlays() {
     const root = document.body;
-    if (!root || document.fullscreenElement) return 0;
+    if (!root || document.fullscreenElement || !ZZ.Overlay) return 0;
     const vw = window.innerWidth || 1;
     const vh = window.innerHeight || 1;
     let killed = 0;
+    let fullKilled = 0;
+    let needRecheck = false;
     let nodes;
     try {
-      nodes = root.querySelectorAll("div,section,aside,iframe,a");
+      nodes = root.querySelectorAll("div,section,aside,iframe,a,ins");
     } catch (e) {
       return 0;
     }
-    const limit = Math.min(nodes.length, 700);
+    const limit = Math.min(nodes.length, 900);
     for (let i = 0; i < limit; i++) {
       const el = nodes[i];
       if (el.getAttribute && (el.getAttribute("data-zz-ui") || el.getAttribute("data-zz-overlay"))) continue;
@@ -277,42 +274,44 @@
       if (!(z >= 50)) continue;
       const r = el.getBoundingClientRect();
       if (r.width < 80 || r.height < 60) continue;
+      if (r.bottom <= 0 || r.right <= 0 || r.top >= vh || r.left >= vw) continue;
       const cover = (r.width * r.height) / (vw * vh);
-      const fullish = cover >= 0.32 || (r.width >= vw * 0.82 && r.height >= vh * 0.32);
-      const stickyBar =
-        cs.position === "fixed" && (r.bottom >= vh - 10 || r.top <= 10) && r.height <= 160 && r.width >= vw * 0.55;
-      const idc = String((el.id || "") + " " + (typeof el.className === "string" ? el.className : ""));
-      const adName = AD_NAME_RE.test(idc);
-      let iframe = null;
+      const geo = {
+        pos: cs.position,
+        z,
+        fullish: cover >= 0.32 || (r.width >= vw * 0.82 && r.height >= vh * 0.32),
+        stickyBar: cs.position === "fixed" && (r.bottom >= vh - 10 || r.top <= 10) && r.height <= 160 && r.width >= vw * 0.55,
+        corner: cs.position === "fixed" && r.width <= vw * 0.45 && r.height <= vh * 0.5 && (r.right >= vw - 60 || r.left <= 60) && (r.bottom >= vh - 220 || r.top <= 160),
+      };
+      const verdict = ZZ.Overlay.judge(el, cs, geo);
+      if (verdict.verdict === "wait") {
+        needRecheck = true;
+        continue;
+      }
+      if (verdict.verdict !== "ad") continue;
       try {
-        iframe = el.tagName === "IFRAME" ? el : el.querySelector("iframe");
-      } catch (e) {}
-      const src = iframe ? iframe.src || iframe.getAttribute("src") || "" : "";
-      const iframeAd = !!(iframe && (AD_HOST_RE.test(src) || AD_SRC_RE.test(src)));
-      // 空全屏点击层 / 透明点击劫持层照杀；普通 iframe（嵌入式登录/OAuth/客服）不再当广告依据
-      const emptyFull = fullish && el.childElementCount === 0 && (cs.cursor === "pointer" || z >= 9999);
-      const clickjack = fullish && z >= 100 && (parseFloat(cs.opacity || "1") < 0.2 || cs.backgroundColor === "transparent" || cs.backgroundColor === "rgba(0, 0, 0, 0)");
-      if (!(iframeAd || (fullish && adName) || emptyFull || clickjack || (stickyBar && adName))) continue;
-      // 含表单/输入/验证码/普通 iframe 的浮层可能是登录、注册、客服窗，一律不碰
-      let interactive = false;
-      try {
-        interactive = !!el.querySelector("input, textarea, select, form, iframe[src*='captcha'], iframe[src*='recaptcha']");
-        if (!interactive && iframe && !iframeAd) interactive = true;
-      } catch (e) {}
-      if (interactive) continue;
-      try {
-        if (ZZ.Undo) ZZ.Undo.record(el, { kind: "sweep" });
+        if (ZZ.Undo) ZZ.Undo.record(el, { kind: "sweep", why: verdict.reasons.join(",") });
         softHide(el);
-        el.setAttribute("data-zz-overlay", "1");
+        el.setAttribute("data-zz-overlay", verdict.reasons.join(",") || "1");
         killed++;
+        if (geo.fullish) fullKilled++;
       } catch (e) {}
       if (killed >= 16) break;
     }
+    if (needRecheck && !waitTimers.t) {
+      waitTimers.t = setTimeout(() => {
+        waitTimers.t = null;
+        schedulePass();
+      }, 900);
+    }
     if (killed) {
-      try {
-        document.documentElement.style.setProperty("overflow", "auto", "important");
-        if (document.body) document.body.style.setProperty("overflow", "auto", "important");
-      } catch (e) {}
+      // 只有整屏层被处理时才恢复滚动：页面常因广告遮罩锁住 body 滚动
+      if (fullKilled) {
+        try {
+          document.documentElement.style.setProperty("overflow", "auto", "important");
+          if (document.body) document.body.style.setProperty("overflow", "auto", "important");
+        } catch (e) {}
+      }
       report({ popups: killed });
     }
     return killed;
@@ -344,6 +343,15 @@
     state.observer = new MutationObserver((records) => {
       let meaningful = false;
       for (const rec of records) {
+        // 预渲染隐藏、靠切换 class/style 显示的弹层也要复查
+        if (rec.type === "attributes") {
+          const t = rec.target;
+          if (t && t.nodeType === 1 && !(t.hasAttribute && t.hasAttribute("data-zz-ui")) && t !== document.documentElement && t !== document.body) {
+            meaningful = true;
+            break;
+          }
+          continue;
+        }
         if (rec.addedNodes && rec.addedNodes.length) {
           for (const node of rec.addedNodes) {
             if (node.nodeType === 1) {
@@ -356,14 +364,20 @@
       }
       if (!meaningful) return;
       const delay = passCost > 150 ? 2000 : 600;
-      if (mutationTimer) clearTimeout(mutationTimer);
+      // 节流而非防抖：持续动画/轮播不断触发变更时，防抖会让扫描永远推迟
+      if (mutationTimer) return;
       mutationTimer = setTimeout(() => {
         mutationTimer = null;
         runPass();
       }, delay);
     });
     try {
-      state.observer.observe(document.documentElement || document, { childList: true, subtree: true });
+      state.observer.observe(document.documentElement || document, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["class", "style", "hidden", "open"],
+      });
     } catch (e) {}
   }
 

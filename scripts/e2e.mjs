@@ -140,6 +140,42 @@ async function prepareFixtures(dir) {
 <div class="popup-login" id="gPopupLogin"><form><input><button>登录</button></form></div>
 </body></html>`
   );
+  writeFileSync(
+    join(pages, "modals.html"),
+    `<!doctype html><html><head><meta charset="utf-8"><title>Modals</title><style>
+body{margin:0;font:14px sans-serif;height:3000px}
+.box1{position:fixed;inset:0;z-index:1000;background:transparent;display:flex;align-items:center;justify-content:center}
+.box1 .in{background:#fff;border:1px solid #ccc;padding:20px;width:300px}
+.lb{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center}
+.cookie-bar{position:fixed;left:0;right:0;bottom:0;height:80px;z-index:500;background:#222;color:#fff}
+.fade{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.5);opacity:0;transition:opacity 1.2s ease;color:#fff}
+.fade.on{opacity:1}
+.backdrop{position:fixed;inset:0;z-index:999;background:transparent}
+#btns{position:relative;z-index:5000;background:#eee;padding:8px}
+.hidden{display:none}
+</style></head><body>
+<div id="btns"><button id="bOauth">登录 Google</button> <button id="bAsync">异步打开</button> <button id="bCross">打开站外</button> <button id="bMenu">菜单</button> <span id="plain">普通文字区域</span></div>
+<div class="box1" id="L1"><div class="in"><p>确认删除这条记录吗？</p><button>取消</button><button>确定</button></div></div>
+<div class="lb" id="L3"><img width="200" height="150" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>
+<div class="cookie-bar" id="L4">本站使用 Cookie 改善体验 <button>同意</button></div>
+<div role="dialog" aria-modal="true" id="L5" style="position:fixed;inset:0;z-index:4000;background:transparent"><div style="margin:100px auto;width:200px;background:#fff">分享到…</div></div>
+<a id="A1" href="https://evil-ads.example/landing" style="position:fixed;inset:0;z-index:9999;background:transparent;display:block"></a>
+<div id="A2" style="position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.85);color:#fff"><a href="https://shop.example/x"><img width="300" height="200" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></a><span>广告 5 秒后关闭</span></div>
+<div id="A3" style="position:fixed;right:10px;bottom:100px;width:300px;height:250px;z-index:7000;background:#fff"><span>广告</span><a href="https://shop.example/y"><img width="280" height="200" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></a></div>
+<div id="A4" style="position:fixed;left:10px;bottom:100px;width:320px;height:260px;z-index:7000"><iframe width="300" height="250" src="https://googleads.g.doubleclick.net/pagead/ads?x=1"></iframe></div>
+<script>
+window.__opens = {};
+const track = (k, url) => { try { const w = window.open(url, "_blank"); window.__opens[k] = !!w; if (w) w.close(); } catch (e) { window.__opens[k] = "err:" + e.message; } };
+document.getElementById("bOauth").onclick = () => track("oauth", "https://accounts.google.com/o/oauth2/auth");
+document.getElementById("bAsync").onclick = () => setTimeout(() => track("async", "/pages/article.html"), 2000);
+document.getElementById("bCross").onclick = () => track("cross", "https://example.org/");
+document.getElementById("bMenu").onclick = () => { const d = document.createElement("div"); d.className = "backdrop"; d.id = "L6"; document.body.appendChild(d); };
+document.addEventListener("click", (e) => { if (e.target.id === "plain") track("popunder", "https://popunder.example/"); });
+setTimeout(() => { const f = document.createElement("div"); f.className = "fade"; f.id = "L2"; f.textContent = "欢迎回来，这是一条站内公告。"; document.body.appendChild(f); requestAnimationFrame(() => requestAnimationFrame(() => f.classList.add("on"))); }, 2500);
+setTimeout(() => track("auto", "https://auto.example/"), 1500);
+</script>
+</body></html>`
+  );
   let hasHls = false;
   try {
     execSync("ffmpeg -version", { stdio: "ignore" });
@@ -155,7 +191,16 @@ async function prepareFixtures(dir) {
         `-hls_segment_filename "enc%d.ts" enc.m3u8`,
       { cwd: enc, stdio: "ignore" }
     );
-    hasHls = existsSync(join(enc, "enc.m3u8"));
+    // 长一点的明文 TS 流：暂停/续传/宿主崩溃恢复用；/prot/ 路径要求 Referer（防盗链）
+    execSync(
+      `ffmpeg -y -loglevel error -f lavfi -i "testsrc2=size=320x240:rate=12:duration=24" -f lavfi -i "sine=frequency=330:duration=24" ` +
+        `-c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest -g 12 -keyint_min 12 -sc_threshold 0 ` +
+        `-f hls -hls_time 1 -hls_list_size 0 -hls_playlist_type vod -hls_segment_filename "long%d.ts" long.m3u8`,
+      { cwd: enc, stdio: "ignore" }
+    );
+    mkdirSync(join(enc, "prot"), { recursive: true });
+    execSync(`cp long*.ts long.m3u8 prot/`, { cwd: enc, stdio: "ignore", shell: "/bin/sh" });
+    hasHls = existsSync(join(enc, "enc.m3u8")) && existsSync(join(enc, "long.m3u8"));
   } catch (e) {
     console.log("  (ffmpeg 不可用，跳过 m3u8 下载项)");
   }
@@ -163,8 +208,14 @@ async function prepareFixtures(dir) {
 }
 
 function serveStatic(root) {
-  const server = createServer((req, res) => {
+  const server = createServer(async (req, res) => {
     const url = (req.url || "/").split("?")[0];
+    if (url.startsWith("/prot/") && !String(req.headers.referer || "").includes("/pages/player.html")) {
+      res.writeHead(403).end();
+      return;
+    }
+    // 慢速分片：让暂停/中断能落在下载中途
+    if (/long\d+\.ts$/.test(url)) await new Promise((r) => setTimeout(r, 900));
     const path = join(root, decodeURIComponent(url));
     if (!path.startsWith(root)) {
       res.writeHead(403).end();
@@ -199,15 +250,26 @@ async function main() {
   const outDir = join(work, "dl-out");
   mkdirSync(outDir, { recursive: true });
   const { hasHls } = await prepareFixtures(work);
+  // 测试副本：把可选的 downloads 权限放进必需权限（真实用户由点击手势授权，CDP 无法模拟授权弹窗）
+  const extCopy = join(work, "ext");
+  execSync(`cp -R "${EXT_PATH}" "${extCopy}"`);
+  {
+    const mf = JSON.parse(readFileSync(join(extCopy, "manifest.json"), "utf8"));
+    mf.permissions = Array.from(new Set(mf.permissions.concat(["downloads", "webRequest"])));
+    mf.optional_permissions = (mf.optional_permissions || []).filter((x) => x !== "downloads" && x !== "webRequest");
+    writeFileSync(join(extCopy, "manifest.json"), JSON.stringify(mf, null, 2));
+  }
   const server = await serveStatic(work);
 
   const proc = spawn(browser, [
     `--user-data-dir=${profile}`,
-    `--load-extension=${EXT_PATH}`,
+    `--load-extension=${extCopy}`,
     `--remote-debugging-port=${PORT}`,
     "--no-first-run",
     "--no-default-browser-check",
     "--disable-sync",
+    // CI / 容器环境（root、无桌面）用 E2E_EXTRA_ARGS 追加 --no-sandbox 等参数
+    ...String(process.env.E2E_EXTRA_ARGS || "").split(/\s+/).filter(Boolean),
     "about:blank",
   ], { stdio: "ignore" });
   await sleep(6000);
@@ -290,38 +352,102 @@ async function main() {
       await closeTab(art.id);
     }
 
-    // —— m3u8 AES-128 下载（engine 全链路到合并，保存因权限由真实用户手势授权）——
+    // —— 下载链路：常驻宿主 + 队列 + Referer 伪装 + 暂停续传 + 宿主崩溃恢复 + TS→MP4 ——
     if (hasHls) {
-      const tb = await newTab(`chrome-extension://invalid/ui/toolbox.html`).catch(() => null);
-      await closeTab(tb.id).catch(() => {});
-      const extId = await c.evaluate(`new URL(chrome.runtime.getURL("manifest.json")).host`);
-      const tbt = await newTab(`chrome-extension://${extId}/ui/toolbox.html`);
-      await sleep(2500);
-      const p = await new Conn(tbt.webSocketDebuggerUrl).connect();
-      const r = await p.evaluate(`(async () => {
-        const log = [];
-        try {
-          await ZZDLEngine.downloadM3u8("http://localhost:${HTTP_PORT}/enc.m3u8", {
-            concurrency: 4, onProgress: (t) => log.push(t), isCancelled: () => false, nameBase: "qa-e2e", dir: "ZeroZen/视频",
-          });
-          return { saved: true };
-        } catch (e) {
-          return { permFail: /downloads|下载/.test(String(e.message)), err: String(e.message) };
+      const bws = await fetch(`http://localhost:${PORT}/json/version`).then((r) => r.json());
+      const bc = await new Conn(bws.webSocketDebuggerUrl).connect();
+      await bc.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: outDir });
+      const dl = (type, payload) => c.evaluate(`ZZ.DL.handle(${JSON.stringify({ type, payload })})`);
+      const waitFor = async (id, pred, ms) => {
+        const end = Date.now() + ms;
+        let t = null;
+        while (Date.now() < end) {
+          const res = await dl("zz:dl:list", {});
+          t = (res.tasks || []).find((x) => x.id === id);
+          if (t && pred(t)) return t;
+          await sleep(300);
         }
-      })()`);
-      check("m3u8 AES-128 分片/解密/合并", r.saved || r.permFail);
-      const idb = await p.evaluate(`(async () => {
-        const tasks = await ZZDLStore.listTasks();
-        const t = tasks.find((x) => x.nameBase === "qa-e2e");
-        if (!t) return { cleaned: true };
-        const sizes = await ZZDLStore.chunkSizes(t.id);
-        return { done: t.done, total: t.total, chunks: Object.keys(sizes.sizes).length };
-      })()`);
-      check("分片缓存完整（断点续传）", idb.cleaned || (idb.done === idb.total && idb.chunks >= 3));
-      p.close();
-      await closeTab(tbt.id);
+        return t;
+      };
+      const base = `http://localhost:${HTTP_PORT}`;
+
+      // AES-128 + TS→MP4
+      const a = await dl("zz:dl:add", { url: `${base}/enc.m3u8`, title: "qa-aes", pageUrl: `${base}/pages/qa.html` });
+      const ta = await waitFor(a.task && a.task.id, (t) => t.status === "done" || t.status === "error", 30000);
+      console.log("  aes task:", ta && ta.status, ta && (ta.error || ta.saved));
+      check("m3u8 AES-128 下载完成（常驻宿主）", ta && ta.status === "done");
+
+      // 防盗链 + 暂停 + 续传
+      const b = await dl("zz:dl:add", { url: `${base}/prot/long.m3u8`, title: "qa-prot", pageUrl: `${base}/pages/player.html` });
+      const idb = b.task && b.task.id;
+      await waitFor(idb, (t) => t.progress && t.progress.done >= 5, 20000);
+      await dl("zz:dl:pause", { id: idb });
+      const tp = await waitFor(idb, (t) => t.status === "paused", 8000);
+      const doneAtPause = tp && tp.progress ? tp.progress.done : 0;
+      console.log("  paused:", tp && tp.status, JSON.stringify(tp && tp.progress));
+      check("暂停后保留进度", tp && tp.status === "paused" && doneAtPause >= 5 && doneAtPause < 24);
+      await dl("zz:dl:resume", { id: idb });
+      await waitFor(idb, (t) => t.progress && t.progress.done >= doneAtPause + 3, 20000);
+
+      // 模拟浏览器重启：直接关掉宿主，再次访问时自动拉起并续传
+      await c.evaluate(`chrome.offscreen.closeDocument().catch(() => {})`);
+      await sleep(800);
+      const tb = await waitFor(idb, (t) => t.status === "done" || t.status === "error", 40000);
+      console.log("  prot task:", tb && tb.status, tb && (tb.error || tb.saved));
+      check("防盗链 Referer 伪装 + 续传 + 宿主崩溃自动恢复", tb && tb.status === "done");
+
+      await sleep(1500);
+      const files = execSync(`ls "${outDir}"/ZeroZen/*/ 2>/dev/null || ls -R "${outDir}"`).toString();
+      console.log("  saved files:", files.replace(/\n/g, " | "));
+      let probe = "";
+      try {
+        // CDP 接管的下载目录以 GUID 命名文件：取最大的 mp4（qa-prot 时长最长）
+        const f = execSync(`ls -S "${outDir}"/*.mp4 "${outDir}"/*/*/*.mp4 2>/dev/null | head -1`, { shell: "/bin/bash" }).toString().trim();
+        probe = f ? execSync(`ffprobe -v error -count_frames -select_streams v -show_entries stream=nb_read_frames -of csv=p=0 "${f}"`).toString().trim() : "";
+      } catch (e) {}
+      console.log("  qa-prot frames:", probe);
+      check("TS 转封装为可播放 MP4（帧数完整）", Number(probe) >= 280);
+      bc.close();
     }
 
+    // —— 弹层判定：正常弹窗不误杀、广告弹层要拦；新窗口按交互判定 ——
+    {
+      const m = await newTab(`http://localhost:${HTTP_PORT}/pages/modals.html`);
+      await sleep(2000);
+      const p = await new Conn(m.webSocketDebuggerUrl).connect();
+      const clickEl = async (sel) => {
+        const pt = await p.evaluate(`(() => { const r = document.querySelector(${JSON.stringify(sel)}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+        for (const type of ["mousePressed", "mouseReleased"]) {
+          await p.send("Input.dispatchMouseEvent", { type, x: pt.x, y: pt.y, button: "left", clickCount: 1 });
+        }
+        await sleep(300);
+      };
+      await sleep(1500);
+      await clickEl("#bOauth");
+      await clickEl("#bCross");
+      await clickEl("#bAsync");
+      await clickEl("#plain");
+      await clickEl("#bMenu");
+      await sleep(5500);
+      const r = await p.evaluate(`(() => {
+        const vis = (id) => { const el = document.getElementById(id); if (!el) return false; const cs = getComputedStyle(el); return cs.display !== "none" && cs.visibility !== "hidden" && parseFloat(cs.opacity) > 0.5; };
+        return {
+          legit: ["L1","L2","L3","L4","L5","L6"].map((id) => [id, vis(id)]),
+          ads: ["A1","A2","A3","A4"].map((id) => [id, vis(id)]),
+          opens: window.__opens,
+        };
+      })()`);
+      console.log("  modals:", JSON.stringify(r));
+      const legitOk = r.legit.filter(([, v]) => v).length;
+      const adsHidden = r.ads.filter(([, v]) => !v).length;
+      check(`正常弹窗保留 ${legitOk}/6`, legitOk === 6);
+      check(`广告弹层拦截 ${adsHidden}/4`, adsHidden === 4);
+      const o = r.opens || {};
+      check("OAuth/站外按钮/异步同源 新窗口放行", o.oauth === true && o.cross === true && o.async === true);
+      check("popunder/无手势 新窗口拦截", o.popunder === false && o.auto === false);
+      p.close();
+      await closeTab(m.id);
+    }
 
     // —— 黄金样本：正常 UI（登录/订阅/搜索/播放器/购物车/评论区）绝不被隐藏 ——
     {
