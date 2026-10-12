@@ -236,7 +236,33 @@
     try {
       if (el.querySelector("a[href],img,video,iframe,canvas,svg,button,input,select,textarea")) return false;
     } catch (e) {}
+    // fixed 高层浮层内部的占位文字不删：角落广告的「广告」角标是浮层判定（12-overlay）
+    // 的广告证据，这里删掉会让整层识别失去依据。整层去留由浮层判定统一处理。
+    if (insideOverlayLayer(el)) return false;
     return true;
+  }
+
+  // 祖先里是否有浮层判定关心的 fixed 层：fixed + z-index≥50 + 达到浮层尺寸门槛
+  // （与 10-css sweepOverlays 的候选前置过滤一致，只是不要求整屏）
+  function insideOverlayLayer(el) {
+    let n = el.parentElement;
+    for (let i = 0; i < 6 && n && n !== document.documentElement; i++) {
+      let cs;
+      try {
+        cs = window.getComputedStyle(n);
+      } catch (e) {
+        return false;
+      }
+      if (cs.position === "fixed") {
+        const z = parseInt(cs.zIndex, 10);
+        if (z >= 50) {
+          const r = n.getBoundingClientRect();
+          if (r.width >= 80 && r.height >= 60) return true;
+        }
+      }
+      n = n.parentElement;
+    }
+    return false;
   }
 
   function sweepGlobalShells() {
