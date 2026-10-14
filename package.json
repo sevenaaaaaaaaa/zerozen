@@ -13,6 +13,7 @@
     "test": "node scripts/check.mjs && node scripts/validate-rules.mjs && node scripts/selftest.mjs",
     "build": "node scripts/gen-icons.mjs && node scripts/build.mjs",
     "build:safari": "bash scripts/build-safari.sh",
+    "release:all": "node scripts/release-all.mjs",
     "e2e": "node scripts/e2e.mjs"
   },
   "engines": {

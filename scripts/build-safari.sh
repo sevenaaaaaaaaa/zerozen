@@ -25,6 +25,7 @@ xcrun safari-web-extension-converter "$SRC" \
   --bundle-identifier "$BUNDLE_ID" \
   --project-location "$OUT_DIR" \
   --no-open \
+  --no-prompt \
   --force
 
 cat <<EOF
