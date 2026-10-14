@@ -4,8 +4,8 @@
 
 **Cross-browser ad & popup cleaner — rule engine + AI detection + resumable download toolbox**
 
-[![Version](https://img.shields.io/badge/version-0.8.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
-[![Rules](https://img.shields.io/badge/rules-39%20packs%20·%207270-1fa971)](#-rules)
+[![Version](https://img.shields.io/badge/version-0.9.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
+[![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207273-1fa971)](#-rules)
 [![Chrome](https://img.shields.io/badge/Chrome%20%2F%20Edge%20%2F%20Arc-MV3-4285F4)](#-install)
 [![Firefox](https://img.shields.io/badge/Firefox-128%2B-FF7139)](#-install)
 [![Safari](https://img.shields.io/badge/Safari-macOS%2013%2B-0FB5EE)](#-install)
@@ -37,7 +37,7 @@
 
 **⚡ LAN-friendly** — disabled by default on private networks / NAS / router consoles / online docs (Feishu, Tencent Docs, Notion…), so admin panels and document editing just work
 
-**🌍 39 rule packs · 7,270 rules** — covering CN/JP/KR/RU/EU/SEA/IN/LATAM sites, each pack individually switchable
+**🌍 41 rule packs · 7,273 rules** — covering CN/JP/KR/RU/EU/SEA/IN/LATAM sites, each pack individually switchable
 
 ## 🚀 Install
 
@@ -53,7 +53,7 @@
 
 > Firefox 128+
 
-Load `dist/firefox/manifest.json` via about:debugging, or install `dist/zerozen-firefox-0.8.1.xpi` for long-term use.
+Load `dist/firefox/manifest.json` via about:debugging, or install `dist/zerozen-firefox-0.9.1.xpi` for long-term use.
 
 ### Safari (macOS 13+ / iOS 16.4+)
 
@@ -76,7 +76,7 @@ Full policy: [docs/privacy-policy.md](docs/privacy-policy.md)
 
 ## 🧩 Rules
 
-**39 rule packs, 7,270 rules**, individually switchable, with word-boundary selector hygiene to avoid false positives. Conflict order: custom rules > built-in packs > subscriptions.
+**41 rule packs, 7,273 rules**, individually switchable, with word-boundary selector hygiene to avoid false positives. Conflict order: custom rules > built-in packs > subscriptions.
 
 <details>
 <summary><b>All rule packs</b></summary>
@@ -209,7 +209,7 @@ npm run build        # dist/{chrome,firefox,safari} + zip/xpi
 npm run import:lists # rebuild merged OSS rules
 ```
 
-Directories: `background/` engine · `content/` page scripts · `ui/` three surfaces · `rules/` 39 packs · `i18n/` dictionaries
+Directories: `background/` engine · `content/` page scripts · `ui/` three surfaces · `rules/` 41 packs · `i18n/` dictionaries
 
 ## ⚠️ Known limitations
 

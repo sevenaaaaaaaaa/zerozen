@@ -21,7 +21,7 @@ ui/               popup / options / toolbox / downloads 页面
 rules/            规则包 pack-*.json
 i18n/ _locales/   多语言
 scripts/          构建、校验、自测、e2e、规则导入
-docs/             使用指南、规则格式、隐私政策、商店文案
+docs/             使用指南、规则格式、隐私政策（商店上架清单在 gitignored ops/）
 dist/             构建产物（chrome/arc/ego/firefox/safari + zip/xpi + safari-app，不入库）
 ```
 

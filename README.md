@@ -4,10 +4,10 @@
 
 **跨浏览器广告与弹窗净化扩展 — 规则引擎 + AI 识别 + 断点续传下载工具箱**
 
-装上即净:41 个规则包、7283 条规则本地拦截;规则覆盖不到的,交给 AI 识别;顺手把视频也存下来。
+装上即净:41 个规则包、7273 条规则本地拦截;规则覆盖不到的,交给 AI 识别;顺手把视频也存下来。
 
-[![Version](https://img.shields.io/badge/version-0.8.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
-[![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207283-1fa971)](#-核心能力)
+[![Version](https://img.shields.io/badge/version-0.9.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
+[![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207273-1fa971)](#-核心能力)
 [![Chrome](https://img.shields.io/badge/Chrome%20%2F%20Edge%20%2F%20Arc-MV3-4285F4)](#-快速上手)
 [![Firefox](https://img.shields.io/badge/Firefox-128%2B-FF7139)](#-快速上手)
 [![Safari](https://img.shields.io/badge/Safari-macOS%2013%2B-0FB5EE)](#-快速上手)
@@ -28,7 +28,7 @@ English: [README.en.md](README.en.md)
 
 打开一个资讯站,先看到的是弹窗、浮层、信息流里的"内容";想下载个视频,又要在层层诱导按钮里找出真链接。零真把这两件事一起解决:**规则引擎负责把广告和弹窗清干净,AI 识别负责补规则覆盖不到的新花样,下载工具箱负责把视频完整存下来**。
 
-它是一个纯本地扩展:没有服务器、没有账号,拦截由浏览器自带的 `declarativeNetRequest` 引擎完成,扩展本身看不到任何请求内容。规则内置 41 个包、7283 条,覆盖中 / 日 / 韩 / 俄 / 欧 / 东南亚 / 印度 / 拉美 / 港澳台站点,也可以订阅 EasyList / EasyPrivacy / anti-AD / AdGuard / uBlock / CJX 等 10 个预设源自动更新。
+它是一个纯本地扩展:没有服务器、没有账号,拦截由浏览器自带的 `declarativeNetRequest` 引擎完成,扩展本身看不到任何请求内容。规则内置 41 个包、7273 条,覆盖中 / 日 / 韩 / 俄 / 欧 / 东南亚 / 印度 / 拉美 / 港澳台站点,也可以订阅 EasyList / EasyPrivacy / anti-AD / AdGuard / uBlock / CJX 等 10 个预设源自动更新。
 
 遇到规则没见过的原生广告或假下载按钮?AI 识别把你填的任意 OpenAI 兼容接口(OpenAI / DeepSeek / 智谱 / 通义 / 硅基流动 / 本地 Ollama)请出来,只发送元素的结构化描述,不传网页正文、不截图、不传 Cookie——默认关闭,你开了才算数。
 
@@ -36,7 +36,7 @@ English: [README.en.md](README.en.md)
 
 - **四层协同净化** — 网络层 `declarativeNetRequest` 拦截 + 外观层 CSS 隐藏/移除 + 弹窗守护 + 信息流空位自动回填,不留空洞
 - **不误杀正常弹窗** — 浮层按「广告证据」打分:登录框、确认框、图片灯箱、Cookie 同意框、你刚点开的菜单一律不碰;新窗口按触发方式判定(按钮/链接打开放行,点空白处弹站外页、无操作自动弹出才拦),拦截时页面底部给出「打开一次 / 本站允许弹窗」
-- **41 规则包 · 7283 条规则** — 按分组独立开关,选择器做词边界处理不误伤正常类名;冲突时自定义规则 > 内置包 > 订阅规则
+- **41 规则包 · 7273 条规则** — 按分组独立开关,选择器做词边界处理不误伤正常类名;冲突时自定义规则 > 内置包 > 订阅规则
 - **AI 自主识别** — 你自己填的 OpenAI 兼容接口识别规则覆盖不到的原生广告与假下载按钮;带缓存(同元素 14 天)与限额,结果先进「待审」
 - **点选即规则** — `Alt+Z` 选中页面元素直接生成隐藏 / 移除 / 放行规则;从 AI 结果与批量扫描自动学习选择器,多站点复现自动通用化
 - **规则订阅** — 10 个预设源,条件请求自动更新、备用地址自动切换;Adblock / hosts / 纯域名 / JSON 四种格式通吃
@@ -73,7 +73,7 @@ English: [README.en.md](README.en.md)
 
 ### Firefox(要求 128+)
 
-「临时载入附加组件」选 `dist/firefox/manifest.json`;长期使用安装 `dist/zerozen-firefox-0.8.1.xpi`(Firefox 请用 dist 产物,根目录清单是 Chrome MV3 专用)。
+「临时载入附加组件」选 `dist/firefox/manifest.json`;长期使用安装 `dist/zerozen-firefox-0.9.1.xpi`(Firefox 请用 dist 产物,根目录清单是 Chrome MV3 专用)。
 
 ### Safari(macOS 13+ / iOS 16.4+)
 
@@ -88,7 +88,7 @@ Xcode 中 Run 一次后,Safari → 设置 → 扩展 → 勾选零真并允许�
 
 ## 定位说明
 
-零真是芭乐派产品矩阵里的**独立引流品**,归入**第三层:Studio 套件**。矩阵的分层是:
+零真是林下 Understory 产品矩阵里的**独立引流品**,归入**第三层:Studio 套件**。矩阵的分层是:
 
 - **OpenFlow = 入口层**:TIPS all-in-one,让一人团队(OPC)与中小团队低门槛完成数字化 + AI 化。
 - **Flow 家族 = 进阶层**:MFlow / inFlow / UserLoop / PayFlow / LearnFlow / WebsFlow 按需进阶,各自深耕一个业务场景。
