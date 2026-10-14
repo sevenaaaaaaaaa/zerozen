@@ -59,11 +59,17 @@ function writeTarget(name, mutate) {
 
 console.log("building extension targets:");
 
-const chromeDir = writeTarget("chrome", (m) => {
+function chromium(m) {
   delete m.background.scripts;
   delete m.browser_specific_settings;
   // 商店发布用纯净名；本地多浏览器共存靠目录名区分即可
-});
+}
+
+const chromeDir = writeTarget("chrome", chromium);
+// Arc（Chromium 155）与 ego lite（Chromium 152）都是标准 Chromium 扩展运行时，
+// 已支持本扩展用到的全部 API（含 offscreen / DNR），直接复用 Chrome 清单，仅产物名区分。
+const arcDir = writeTarget("arc", chromium);
+const egoDir = writeTarget("ego", chromium);
 
 const firefoxDir = writeTarget("firefox", (m) => {
   delete m.background.service_worker;
@@ -99,10 +105,14 @@ function zip(fromDir, outFile) {
 
 zip(join(DIST, "chrome"), join(DIST, `zerozen-chrome-${version}.zip`));
 zip(join(DIST, "firefox"), join(DIST, `zerozen-firefox-${version}.xpi`));
+zip(arcDir, join(DIST, `zerozen-arc-v${version}.zip`));
+zip(egoDir, join(DIST, `zerozen-ego-v${version}.zip`));
 
 console.log(`
 install:
   Chrome/Edge   chrome://extensions -> 开发者模式 -> 加载已解压的扩展程序 -> ${relative(ROOT, chromeDir)}
+  Arc           arc://extensions    -> 开发者模式 -> 加载已解压的扩展程序 -> ${relative(ROOT, arcDir)}
+  ego lite      chrome://extensions -> 开发者模式 -> 加载已解压的扩展程序 -> ${relative(ROOT, egoDir)}
   Firefox       about:debugging#/runtime/this-firefox -> 临时载入附加组件 -> ${relative(ROOT, firefoxDir)}/manifest.json
   Safari        npm run build:safari   （需要 Xcode）
 `);
