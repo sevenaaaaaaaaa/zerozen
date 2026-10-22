@@ -11,3 +11,6 @@ node_modules/
 
 # Local working material (process docs, purge plans) — never on GitHub
 /ops/
+
+# 站点调研（含成人 / 盗版站清单，仅本地参考，勿提交或用于商店材料）
+/docs/research-sites-*.md

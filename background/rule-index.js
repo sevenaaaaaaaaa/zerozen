@@ -4,6 +4,7 @@
 
   const GROUPS = [
     { id: "common", name: "通用拦截", desc: "所有站点生效的基础规则" },
+    { id: "safety", name: "安全 / 反诈", desc: "仿冒站、假 App 下载页与钓鱼中转" },
     { id: "region", name: "区域站点", desc: "日本、韩国、俄罗斯、欧洲、东南亚、印度、拉美、港澳台" },
     { id: "social", name: "搜索 / 社交 / 社区", desc: "搜索引擎、社交平台、论坛" },
     { id: "video", name: "视频 / 直播", desc: "长视频、短视频、直播平台" },
@@ -19,6 +20,8 @@
     { id: "annoyances", group: "common", file: "rules/pack-annoyances.json", name: "弹窗骚扰", desc: "Cookie 同意框、登录墙、邮件订阅、App 下载浮层" },
     { id: "longtail", group: "common", file: "rules/pack-longtail.json", name: "长尾站点通用", desc: "小说/漫画/小型站点模板的经典广告位与弹层" },
     { id: "oss", group: "common", file: "rules/pack-oss.json", name: "开源合并规则", desc: "EasyList/EasyPrivacy/AdGuard/uBlock/CJX/1Hosts 等开源列表去重合并" },
+    { id: "piracy-tv", group: "common", file: "rules/pack-piracy-tv.json", name: "盗版站广告基建", desc: "影视/资源盗版站共用的弹窗联盟、TDS 中转与 DGA 注入源，跨站生效" },
+    { id: "antifraud", group: "safety", file: "rules/pack-antifraud.json", name: "仿冒 / 反诈", desc: "已证实的仿冒站与假 App 下载页；钓鱼站寿命短，请配合订阅页的反钓鱼源使用" },
 
     { id: "search", group: "social", file: "rules/pack-search.json", name: "搜索引擎广告", desc: "Google/Bing/百度/搜狗/360/DDG/Yandex 结果页推广位" },
     { id: "social-cn", group: "social", file: "rules/pack-social-cn.json", name: "国内社交资讯", desc: "微博/小红书/豆瓣/贴吧/头条/门户新闻" },

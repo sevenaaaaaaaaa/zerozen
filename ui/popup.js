@@ -66,14 +66,26 @@
     const types = state.types || {};
     for (const input of document.querySelectorAll(".zz-chip input[data-type]")) {
       input.checked = !!types[input.getAttribute("data-type")];
+      if (input.getAttribute("data-type") === "popup") {
+        // 广告平台 / 代理商后台：弹窗判定强制关闭，开关置灰说明原因
+        input.disabled = !!state.workbench;
+        input.title = state.workbench ? T("广告平台后台不启用弹窗判定") : "";
+      }
     }
+    const defaultOff = !!state.defaultOff || state.profileSource === "default-off";
     const wl = $("#btnWhitelist");
-    wl.textContent = state.siteEnabled ? T("加入白名单") : T("移出白名单");
+    wl.textContent = state.siteEnabled ? T("加入白名单") : defaultOff ? T("仍然启用") : T("移出白名单");
     wl.classList.toggle("danger", !state.siteEnabled);
-    $("#siteHint").textContent = state.siteEnabled
+    $("#siteHint").textContent = state.workbench
+      ? state.siteEnabled
+        ? T("广告平台后台 · 弹窗判定始终关闭")
+        : T("广告平台 / 代理商后台 · 默认不净化，弹窗判定已关闭")
+      : state.siteEnabled
       ? until > Date.now()
         ? T("临时放行中")
         : T("保护中") + " · " + T(profileName(profile))
+      : defaultOff
+      ? T("本站默认关闭（内网 / 文档 / 工作台）")
       : state.whitelistSource
       ? T("已随 $1 加入白名单", state.whitelistSource)
       : T("本站已停用，不会隐藏或拦截任何内容");
@@ -409,7 +421,8 @@
     const res = await UI.send({ type: "zz:site:set", payload: { host, enabled: enable, tabId: tab && tab.id } });
     if (res && res.ok) {
       playSparkle($("#btnWhitelist"));
-      UI.toast($("#msg"), T(enable ? "已移出白名单，恢复正常拦截" : "已加入白名单，本站不再拦截"), "ok");
+      const wasDefaultOff = !!(lastState && (lastState.defaultOff || lastState.profileSource === "default-off"));
+      UI.toast($("#msg"), T(enable ? (wasDefaultOff ? "已在此站点启用" : "已移出白名单，恢复正常拦截") : "已加入白名单，本站不再拦截"), "ok");
     } else {
       UI.toast($("#msg"), T("操作失败：$1", (res && res.error) || T("后台无响应")), "err");
     }

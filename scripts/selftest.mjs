@@ -246,6 +246,36 @@ assert(S.siteEnabled("vip.example.org") === false, "removing explicit enable res
 await S.updateSite("example.org", { enabled: true });
 assert(S.siteEnabled("www.example.org") === true, "base host re-enable clears inheritance");
 
+console.log("\n广告平台 / 代理商后台");
+
+assert(S.workbenchHost("ads.google.com") === true, "google ads console is workbench");
+assert(S.workbenchHost("business.facebook.com") === true, "meta business suite is workbench");
+assert(S.workbenchHost("ad.oceanengine.com") === true, "oceanengine ad console is workbench");
+assert(S.workbenchHost("agent.oceanengine.com") === true, "oceanengine agency subdomain is workbench");
+assert(S.workbenchHost("one.alimama.com") === true, "alimama console is workbench");
+assert(S.workbenchHost("ads.example.com") === false, "lookalike host is not workbench");
+assert(S.workbenchHost("example.com") === false, "normal site is not workbench");
+assert(S.popupGuardOff("ads.tiktok.com") === true, "popup guard forced off on workbench");
+assert(S.popupGuardFor("www.example.com", "https://www.example.com/").enabled === true, "popup guard on by default");
+assert(S.popupGuardFor("ads.google.com", "https://ads.google.com/aw/").enabled === false, "popup guard off on workbench page");
+assert(S.popupGuardFor("www.linkedin.com", "https://www.linkedin.com/campaignmanager/x").reason === "workbench", "path workbench reason reported");
+await S.updateSite("popups.example.com", { popups: "allow" });
+assert(S.popupGuardFor("popups.example.com", "").enabled === false, "site popups allow disables guard");
+await S.saveSettings({ popupGuard: false });
+assert(S.popupGuardFor("www.example.com", "").enabled === false, "global popup setting disables guard");
+await S.saveSettings({ popupGuard: true });
+assert(S.popupGuardOff("www.example.com") === false, "popup guard stays on for normal sites");
+assert(S.siteEnabled("ads.google.com") === false, "workbench is off by default");
+assert(S.profileFor("ads.google.com").source === "default-off", "workbench reports default-off");
+assert(S.siteEnabled("docs.google.com") === false, "online docs still default off");
+assert(S.workbenchUrl("https://www.linkedin.com/campaignmanager/accounts") === true, "linkedin campaign manager path is workbench");
+assert(S.workbenchUrl("https://www.linkedin.com/feed/") === false, "linkedin feed is not workbench");
+assert(S.workbenchUrl("https://ads.google.com/aw/campaigns") === true, "google ads url is workbench");
+assert(S.workbenchUrl("") === false, "empty url is not workbench");
+await S.updateSite("ads.google.com", { enabled: true });
+assert(S.siteEnabled("ads.google.com") === true, "explicit enable still works on workbench");
+assert(S.popupGuardOff("ads.google.com") === true, "popup guard stays off after explicit enable");
+
 console.log("\n规则订阅");
 
 const subSandbox = makeSandbox();

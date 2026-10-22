@@ -6,7 +6,7 @@
 
 装上即净:41 个规则包、7273 条规则本地拦截;规则覆盖不到的,交给 AI 识别;顺手把视频也存下来。
 
-[![Version](https://img.shields.io/badge/version-0.9.1-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
+[![Version](https://img.shields.io/badge/version-0.9.3-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
 [![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207273-1fa971)](#-核心能力)
 [![Chrome](https://img.shields.io/badge/Chrome%20%2F%20Edge%20%2F%20Arc-MV3-4285F4)](#-快速上手)
 [![Firefox](https://img.shields.io/badge/Firefox-128%2B-FF7139)](#-快速上手)
@@ -73,7 +73,7 @@ English: [README.en.md](README.en.md)
 
 ### Firefox(要求 128+)
 
-「临时载入附加组件」选 `dist/firefox/manifest.json`;长期使用安装 `dist/zerozen-firefox-0.9.1.xpi`(Firefox 请用 dist 产物,根目录清单是 Chrome MV3 专用)。
+「临时载入附加组件」选 `dist/firefox/manifest.json`;长期使用安装 `dist/zerozen-firefox-0.9.3.xpi`(Firefox 请用 dist 产物,根目录清单是 Chrome MV3 专用)。
 
 ### Safari(macOS 13+ / iOS 16.4+)
 

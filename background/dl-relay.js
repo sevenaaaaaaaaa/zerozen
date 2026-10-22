@@ -215,6 +215,8 @@
         const prev = speedTrack.get(r.downloadId);
         if (prev && now - prev[0] > 300) v.speed = ((item.bytesReceived - prev[1]) * 1000) / (now - prev[0]);
         speedTrack.set(r.downloadId, [now, item.bytesReceived || 0]);
+        // 原生下载也给出剩余时间：按当前速度估算，界面里与其他任务一致
+        if (v.speed > 0 && v.progress.total > v.progress.bytes) v.eta = (v.progress.total - v.progress.bytes) / v.speed;
       }
       return v;
     });

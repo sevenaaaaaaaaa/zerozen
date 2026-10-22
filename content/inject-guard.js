@@ -16,6 +16,8 @@
   const state = {
     enabled: true,
     notifications: true,
+    // 配置到达前只拦「明确的广告联盟域名」：站点可能是投放后台，误关窗口的代价比漏拦一次高
+    configured: false,
   };
 
   const AD_HOST_RE =
@@ -129,6 +131,7 @@
   function judgeOpen(url) {
     const href = url === undefined || url === null ? "" : String(url);
     if (isAdUrl(href)) return "ad-host";
+    if (!state.configured) return null;
     const since = Date.now() - last.t;
     const gesture = userActive() || since < 1200;
     const blank = !href || /^about:blank/i.test(href);
@@ -170,7 +173,7 @@
     const origPermission = window.Notification.requestPermission.bind(window.Notification);
     try {
       window.Notification.requestPermission = function (callback) {
-        if (state.enabled && state.notifications && !userActive()) {
+        if (state.enabled && state.configured && state.notifications && !userActive()) {
           report("notification", "", "no-gesture");
           if (typeof callback === "function") callback("denied");
           return Promise.resolve("denied");
@@ -207,6 +210,7 @@
       if (event.source !== window) return;
       const data = event.data;
       if (!data || data.__zz !== "guard-config" || data.token !== token) return;
+      state.configured = true;
       state.enabled = data.enabled !== false;
       if (typeof data.notifications === "boolean") state.notifications = data.notifications;
     });
@@ -226,6 +230,11 @@
       },
       true
     );
+  } catch (e) {}
+
+  // 告诉内容脚本「监听已就绪」，让它补发一次配置（首次配置可能比脚本更早到）
+  try {
+    window.postMessage({ __zz: "guard-ready", token }, "*");
   } catch (e) {}
 
   window.__zzGuardState = state;

@@ -403,6 +403,8 @@
       state.texts = [];
       state.flowFix = false;
       stopObserver();
+      // 站点停用/默认关闭时同步关掉弹窗判定，避免后台类页面仍被自动关窗口
+      ZZ.bus.emit("guard-config", p.guard || { enabled: false, notifications: false });
       return;
     }
     state.enabled = true;
@@ -424,7 +426,7 @@
   }
 
   async function requestRules() {
-    const res = await ZZ.send({ type: "zz:get-rules", payload: { host: u.host() } });
+    const res = await ZZ.send({ type: "zz:get-rules", payload: { host: u.host(), url: u.url() } });
     if (!res) return null;
     if (res.lang && ZZ.I18n) ZZ.I18n.setLang(res.lang);
     applyPayload(res);

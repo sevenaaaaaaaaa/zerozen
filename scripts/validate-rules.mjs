@@ -13,6 +13,7 @@ const packs = [];
 let ruleCount = 0;
 let errors = 0;
 const canonical = new Map();
+const byFile = new Map();
 
 for (const file of files) {
   let data;
@@ -28,6 +29,7 @@ for (const file of files) {
     errors++;
     continue;
   }
+  byFile.set(file, data.id);
   if (!Array.isArray(data.rules) || !data.rules.length) {
     console.error(`FAIL ${file}: no rules`);
     errors++;
@@ -106,10 +108,40 @@ for (const p of packs) {
 }
 console.log(`\ntotal rules: ${ruleCount}`);
 
-const sandbox = makeSandbox();
+// 用磁盘上的规则包模拟扩展内的 fetch，下面的 loadPacks 才会真正读到文件
+const sandbox = makeSandbox({
+  fetch: async (url) => {
+    const rel = String(url).replace("chrome-extension://test/", "");
+    return { json: async () => JSON.parse(readFileSync(join(ROOT, rel), "utf8")) };
+  },
+});
 loadRuleEngine(sandbox);
 const ZZ = sandbox.ZZ;
 const F = ZZ.RuleFormat;
+
+// 注册一致性：磁盘上的包必须挂进 RuleIndex.PACKS，否则校验能过、运行时却永远不加载
+// （0.9.x 的 pack-antifraud / pack-piracy-tv 就是这样漏掉的）
+const registered = new Map(ZZ.RuleIndex.PACKS.map((p) => [p.id, p.file.replace(/^rules\//, "")]));
+assertEqual(
+  [...byFile.entries()].filter(([, id]) => !registered.has(id)).map(([f]) => f),
+  [],
+  "every pack file is registered in RuleIndex.PACKS"
+);
+assertEqual(
+  ZZ.RuleIndex.PACKS.filter((p) => !byFile.has(p.file.replace(/^rules\//, ""))).map((p) => p.id),
+  [],
+  "every registered pack has a pack file"
+);
+assertEqual(
+  ZZ.RuleIndex.PACKS.filter((p) => byFile.get(p.file.replace(/^rules\//, "")) !== p.id).map((p) => p.id),
+  [],
+  "pack registry id matches file id"
+);
+assertEqual(
+  ZZ.RuleIndex.PACKS.filter((p) => !ZZ.RuleIndex.GROUPS.some((g) => g.id === p.group)).map((p) => p.id),
+  [],
+  "every pack belongs to a known group"
+);
 
 const allRules = [];
 for (const file of files) {
@@ -164,6 +196,19 @@ const otherPayload = ZZ.RuleIndex.payload("example.org");
 assert(
   !otherPayload.css.includes(".TopstoryItem--advertCard"),
   "domain scoped rule does not leak to other hosts"
+);
+
+// 运行时加载：每个注册包都要真的读到规则，且总数与磁盘一致
+const packsLoaded = await ZZ.RuleIndex.loadPacks();
+assertEqual(
+  ZZ.RuleIndex.PACKS.filter((p) => !(packsLoaded[p.id] || []).length).map((p) => p.id),
+  [],
+  "every registered pack loads rules at runtime"
+);
+assertEqual(
+  Object.values(packsLoaded).reduce((n, list) => n + list.length, 0),
+  ruleCount,
+  "runtime pack load covers every rule on disk"
 );
 
 console.log("");

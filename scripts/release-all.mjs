@@ -46,6 +46,7 @@ step("版本号");
 const manifestPath = join(ROOT, "manifest.json");
 const pkgPath = join(ROOT, "package.json");
 let version = readJSON(manifestPath).version;
+const prevVersion = version;
 const pkgVersion = readJSON(pkgPath).version;
 const bump = opt("--bump");
 if (bump) {
@@ -65,6 +66,22 @@ if (bump) {
 } else {
   console.log(`  v${version}（manifest.json = package.json）`);
 }
+
+// 文档里的版本号（badge、产物文件名）跟着版本走，避免每次发版留下旧号
+function syncDocVersions(from, to) {
+  if (!from || from === to) return;
+  for (const rel of ["README.md", "README.en.md", "docs/USAGE-GUIDE.md"]) {
+    const file = join(ROOT, rel);
+    if (!existsSync(file)) continue;
+    const src = readFileSync(file, "utf8");
+    const out = src.split(from).join(to);
+    if (out !== src) {
+      writeFileSync(file, out);
+      console.log(`  ${rel}: ${from} -> ${to}`);
+    }
+  }
+}
+syncDocVersions(prevVersion, version);
 
 // ---------- 2. 测试 ----------
 step("测试 npm test");

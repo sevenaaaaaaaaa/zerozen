@@ -44,6 +44,73 @@
     ".nas",
   ];
 
+  // 广告平台 / 代理商后台（工作台）：投放后台里的弹窗、抽屉、素材预览、二次确认都是正常业务 UI，
+  // 被当成广告关掉会直接打断投放操作。两类处理：
+  //   1. 默认不净化（与内网、在线文档一致），避免通用选择器误伤后台控件；
+  //   2. 弹窗判定强制关闭——即使用户显式启用了本站，也绝不自动关这些页面的窗口。
+  const WORKBENCH_EXACT = new Set([
+    // 海外平台
+    "ads.google.com",
+    "adwords.google.com",
+    "business.facebook.com", // Meta Business Suite / 广告管理
+    "adsmanager.facebook.com",
+    "ads.tiktok.com",
+    "business.tiktok.com",
+    "advertising.amazon.com",
+    "ads.amazon.com",
+    "ads.microsoft.com", // Microsoft Advertising
+    "ui.ads.microsoft.com",
+    "ads.twitter.com",
+    "ads.x.com",
+    "business.twitter.com",
+    "business.x.com",
+    "ads.linkedin.com",
+    "business.linkedin.com", // Campaign Manager
+    "ads.pinterest.com",
+    "ads.snapchat.com",
+    "ads.reddit.com",
+    "ads.taboola.com",
+    "backstage.taboola.com",
+    "my.outbrain.com",
+    "app.adroll.com",
+    "app.searchads.apple.com", // Apple Search Ads
+    "ads.spotify.com",
+    "ads.huawei.com",
+    "direct.yandex.com",
+    "direct.yandex.ru",
+    "ads.vk.com",
+    "admanager.line.biz", // LINE Ads Platform
+    "dsp.yahoo.com",
+    "advertising.walmart.com", // Walmart Connect
+    // 国内平台
+    "e.qq.com", // 腾讯广告（含代理商）
+    "ad.qq.com", // 广点通
+    "ad.weixin.qq.com", // 微信广告
+    "e.baidu.com", // 百度营销
+    "jzt.jd.com", // 京东京准通
+    "ad.pinduoduo.com", // 多多推广
+    "ad.xiaohongshu.com", // 小红书聚光
+    "pgy.xiaohongshu.com", // 小红书蒲公英
+    "ad.e.kuaishou.com", // 快手磁力引擎
+    "juxing.kuaishou.com", // 快手磁力聚星
+    "tui.weibo.com", // 微博粉丝通
+    "e.360.cn", // 360 点睛
+    "huahuo.bilibili.com", // B 站花火
+    "qianchuan.jinritemai.com", // 巨量千川
+    "subway.simba.taobao.com", // 阿里直通车
+  ]);
+  // 整个平台域都是后台的，用后缀命中（子域含代理商入口）
+  const WORKBENCH_SUFFIXES = [
+    ".oceanengine.com", // 巨量引擎：ad / business / agent / school
+    ".alimama.com", // 阿里妈妈 / 万相台
+    ".xingtu.cn", // 巨量星图
+  ];
+  // 后台挂在主域某个路径下的平台（不能整站关闭，只关弹窗判定）
+  const WORKBENCH_PATHS = [
+    { host: "www.linkedin.com", prefix: "/campaignmanager" }, // LinkedIn Campaign Manager
+    { host: "linkedin.com", prefix: "/campaignmanager" },
+  ];
+
   const DEFAULT_SETTINGS = {
     schema: SCHEMA,
     enabled: true,
@@ -66,6 +133,8 @@
       annoyances: true,
       longtail: true,
       oss: true,
+      "piracy-tv": true,
+      antifraud: true,
       search: true,
       "social-cn": true,
       "intl-social": true,
@@ -96,6 +165,10 @@
       travel: true,
       edu: true,
       tools: true,
+      "local-life": true,
+      "clouddrive-cn": true,
+      "portal-cn": true,
+      "ai-tools": true,
     },
     sites: {},
     ai: {
@@ -470,10 +543,51 @@
       return out;
     },
 
+    // 广告平台 / 代理商后台：投放工作台，判定逻辑见上方 WORKBENCH_* 注释
+    workbenchHost(host) {
+      const h = String(host || "").toLowerCase().replace(/\.$/, "");
+      if (!h) return false;
+      if (WORKBENCH_EXACT.has(h)) return true;
+      const dotted = "." + h;
+      for (const suffix of WORKBENCH_SUFFIXES) if (dotted.endsWith(suffix)) return true;
+      return false;
+    },
+
+    // 广告后台（含路径型）：host 命中工作台，或页面落在后台路径下
+    workbenchUrl(url) {
+      try {
+        const u = new URL(String(url || ""));
+        const host = u.hostname.toLowerCase().replace(/\.$/, "");
+        if (Store.workbenchHost(host)) return true;
+        const path = u.pathname.toLowerCase();
+        for (const entry of WORKBENCH_PATHS) if (host === entry.host && path.startsWith(entry.prefix)) return true;
+      } catch (e) {}
+      return false;
+    },
+
+    // 弹窗判定是否强制关闭：后台即使被用户显式启用，也不自动关窗口
+    popupGuardOff(host) {
+      return Store.workbenchHost(host);
+    },
+
+    // 弹窗判定的最终开关：全局设置 / 站点级「允许弹窗」/ 广告后台强制关闭，三处收敛在这里
+    popupGuardFor(host, url) {
+      const s = Store.settings();
+      const site = (s.sites || {})[host] || {};
+      const workbench = Store.workbenchUrl(url) || Store.workbenchHost(host);
+      const allowSite = site.popups === "allow";
+      return {
+        enabled: !!s.popupGuard && !allowSite && !workbench,
+        notifications: !!s.popupGuard && !workbench,
+        reason: workbench ? "workbench" : allowSite ? "site-allow" : "",
+      };
+    },
+
     // 内网/本地服务/在线文档默认关闭拦截，避免管理后台与文档编辑功能异常。
     // 用户对站点做过显式设置（开关/档位/临时放行）时，以用户设置为准
     defaultOffHost(host) {
       if (!host) return false;
+      if (Store.workbenchHost(host)) return true;
       if (host === "localhost" || host.endsWith(".localhost")) return true;
       // 私网/链路本地/CGNAT（Tailscale 等）IPv4
       if (/^(10\.|127\.|0\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(host)) return true;

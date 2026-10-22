@@ -231,9 +231,11 @@
     };
   }
 
-  async function rulesForHost(host, tabId) {
+  async function rulesForHost(host, tabId, url) {
     const settings = ZZ.Store.settings();
     const eff = ZZ.Store.profileFor(host);
+    // 广告平台后台（host 型 + 路径型）：弹窗判定一律不启用
+    const workbench = ZZ.Store.workbenchUrl(url) || ZZ.Store.workbenchHost(host);
     if (!settings.enabled || eff.profile === "off") {
       return {
         ok: true,
@@ -248,6 +250,12 @@
         textRules: false,
         unlockScroll: false,
         version: ZZ.RuleIndex.version(),
+        // 站点停用 / 默认关闭时，弹窗判定也必须停；之前只在显式白名单时才下发，默认关闭页仍会误关窗口
+        guard: {
+          enabled: false,
+          notifications: false,
+          reason: workbench ? "workbench" : ZZ.Store.defaultOffHost(host) ? "default-off" : "site-off",
+        },
       };
     }
     const payload = ZZ.RuleIndex.payload(host, { profile: eff.profile });
@@ -266,11 +274,7 @@
       textRemove: !!payload.textRemove,
       aggressive: !!payload.aggressive,
       unlockScroll: payload.unlockScroll && settings.cosmetic,
-      guard: (() => {
-        const site = (ZZ.Store.settings().sites || {})[host] || {};
-        const on = !!settings.popupGuard && site.popups !== "allow";
-        return { enabled: on, notifications: !!settings.popupGuard };
-      })(),
+      guard: ZZ.Store.popupGuardFor(host, url),
       youtube: !!settings.youtubeAuto,
       flowFix: settings.flowFix !== false,
       hide: [],
@@ -317,7 +321,7 @@
       switch (msg.type) {
         case "zz:get-rules": {
           const target = (msg.payload && msg.payload.host) || host;
-          return rulesForHost(target, tabId);
+          return rulesForHost(target, tabId, (msg.payload && msg.payload.url) || "");
         }
 
         case "zz:page-ready": {
@@ -395,6 +399,8 @@
             host: stateHost,
             whitelistSource: whitelistSourceOf(stateHost, eff),
             popupsAllowed: (((settings.sites || {})[stateHost] || {}).popups === "allow"),
+            workbench: ZZ.Store.workbenchUrl(targetTab && targetTab.url) || ZZ.Store.workbenchHost(stateHost),
+            defaultOff: ZZ.Store.defaultOffHost(stateHost),
             popupLog: targetTab && typeof targetTab.id === "number" ? popupLog.get(targetTab.id) || [] : [],
             counts,
             profile: eff.profile,

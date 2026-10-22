@@ -117,6 +117,8 @@
   }
 
   const guardCfg = { enabled: true, notifications: true };
+  // 页面主世界的守卫脚本可能比配置消息晚就绪：它装好监听后会发 guard-ready，这里补发一次
+  let cfgKnown = false;
 
   function pushConfig(enabled, notifications) {
     try {
@@ -131,6 +133,11 @@
     if (event.source !== window) return;
     const data = event.data;
     if (!data || data.token !== token) return;
+    if (data.__zz === "guard-ready") {
+      // 配置还没到就先按「关闭」处理：后台页误关窗口的代价比漏拦一次大
+      pushConfig(cfgKnown ? guardCfg.enabled : false, cfgKnown ? guardCfg.notifications : false);
+      return;
+    }
     if (data.__zz === "media-found") {
       ZZ.send({ type: "zz:sniff:page", payload: { url: data.url, type: data.type || "" } });
       return;
@@ -148,11 +155,15 @@
     init() {
       injectGuard();
       ZZ.bus.on("guard-config", (cfg) => {
+        cfgKnown = true;
         guardCfg.enabled = cfg.enabled !== false;
         guardCfg.notifications = cfg.notifications !== false;
         pushConfig(guardCfg.enabled, guardCfg.notifications);
       });
-      ZZ.bus.on("site-disabled", () => pushConfig(false, false));
+      ZZ.bus.on("site-disabled", () => {
+        cfgKnown = true;
+        pushConfig(false, false);
+      });
     },
     popups() {
       return popups;
@@ -161,6 +172,7 @@
       return lastBlocked;
     },
     configure(enabled, notifications) {
+      cfgKnown = true;
       guardCfg.enabled = enabled !== false;
       guardCfg.notifications = notifications !== false;
       pushConfig(enabled, notifications);

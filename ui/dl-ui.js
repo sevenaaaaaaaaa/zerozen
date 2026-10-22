@@ -232,7 +232,8 @@
       if (t.kind === "hls" && p.total) parts.push(T("分片 $1/$2", p.done || 0, p.total));
       if (p.bytes) parts.push(E.bytes(p.bytes) + (t.kind === "file" && p.total ? " / " + E.bytes(p.total) : ""));
       if (t.speed) parts.push(E.bytes(t.speed) + "/s");
-      if (t.eta) parts.push(T("剩余 $1", eta(t.eta)));
+      // eta() 自带「约」，这里不要再套「剩余」，否则显示成「剩余 约 3 分钟」
+      if (t.eta) parts.push(eta(t.eta));
       if (t.live && p.duration) parts.push(T("已录 $1", E.duration(p.duration)));
     } else if (t.status === "done") {
       if (t.size) parts.push(E.bytes(t.size));

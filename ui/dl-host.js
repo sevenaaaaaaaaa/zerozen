@@ -285,9 +285,20 @@
         return { ok: false, error: String((e && e.message) || e) };
       }
     },
+    // 「清理缓存」只释放分片，任务记录与队列状态保留：
+    // 之前这里直接 removeTask，暂停中的任务会连记录一起消失，和按钮文案「清理未完成任务的缓存」不符
     async clearCache() {
       for (const t of await allTasks()) {
-        if (!running.has(t.id) && t.status !== "done") await Store.removeTask(t.id);
+        // 只清暂停 / 失败的任务：排队中的可能马上被 pump 拉起，清分片会和新任务抢数据
+        if (running.has(t.id) || (t.status !== "paused" && t.status !== "error")) continue;
+        await Store.clearChunks(t.id);
+        const p = t.progress || {};
+        if (p.bytes || p.done) {
+          await save(t, {
+            progress: { done: 0, total: p.total || 0, bytes: 0, duration: 0 },
+            note: T("缓存已清理，继续时会从第一个分片重新下载"),
+          });
+        }
       }
       await Store.clearOrphans((await allTasks()).map((t) => t.id));
       broadcast(null, "reload");
