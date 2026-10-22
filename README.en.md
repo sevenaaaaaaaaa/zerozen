@@ -4,7 +4,7 @@
 
 **Cross-browser ad & popup cleaner — rule engine + AI detection + resumable download toolbox**
 
-[![Version](https://img.shields.io/badge/version-0.9.3-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
+[![Version](https://img.shields.io/badge/version-0.9.4-2f6bff)](https://github.com/sevenaaaaaaaaa/zerozen/releases)
 [![Rules](https://img.shields.io/badge/rules-41%20packs%20·%207273-1fa971)](#-rules)
 [![Chrome](https://img.shields.io/badge/Chrome%20%2F%20Edge%20%2F%20Arc-MV3-4285F4)](#-install)
 [![Firefox](https://img.shields.io/badge/Firefox-128%2B-FF7139)](#-install)
@@ -53,7 +53,7 @@
 
 > Firefox 128+
 
-Load `dist/firefox/manifest.json` via about:debugging, or install `dist/zerozen-firefox-0.9.3.xpi` for long-term use.
+Load `dist/firefox/manifest.json` via about:debugging, or install `dist/zerozen-firefox-0.9.4.xpi` for long-term use.
 
 ### Safari (macOS 13+ / iOS 16.4+)
 

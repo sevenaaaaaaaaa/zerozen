@@ -267,45 +267,86 @@
     else if (ctype && TYPE_RE.test(ctype)) report(url, ctype);
   }
 
-  const origFetch = window.fetch;
-  if (typeof origFetch === "function") {
-    const wrapped = function (input) {
-      const p = origFetch.apply(this, arguments);
+  // 只在页面真的出现音视频元素后才挂钩：播放器必须先有 <video>/<audio> 才能拉流，
+  // 而管理后台、数据看板、文档页永远没有它们，没必要改写这些页面的 fetch
+  // （改写会把我们自己的栈帧混进页面自己的错误上报里，例如 Sentry 的 Failed to parse URL）
+  let hooked = false;
+  function hookNetwork() {
+    if (hooked) return;
+    hooked = true;
+    window.__zzMediaHooked = true;
+
+    const origFetch = window.fetch;
+    if (typeof origFetch === "function") {
+      const wrapped = function (input) {
+        const p = origFetch.apply(this, arguments);
+        try {
+          if (p && typeof p.then === "function") {
+            p.then(
+              (res) => {
+                try {
+                  const url = (res && res.url) || (typeof input === "string" ? input : input && input.url) || "";
+                  check(url, res && res.headers && res.headers.get("content-type"));
+                } catch (e) {}
+              },
+              () => {}
+            );
+          }
+        } catch (e) {}
+        return p;
+      };
       try {
-        p.then(
-          (res) => {
-            try {
-              const url = (res && res.url) || (typeof input === "string" ? input : input && input.url) || "";
-              check(url, res && res.headers && res.headers.get("content-type"));
-            } catch (e) {}
-          },
-          () => {}
-        );
+        Object.defineProperty(wrapped, "toString", { value: () => "function fetch() { [native code] }" });
       } catch (e) {}
-      return p;
-    };
-    try {
-      Object.defineProperty(wrapped, "toString", { value: () => "function fetch() { [native code] }" });
-    } catch (e) {}
-    window.fetch = wrapped;
+      window.fetch = wrapped;
+    }
+
+    const XHR = window.XMLHttpRequest && XMLHttpRequest.prototype;
+    if (XHR && XHR.open) {
+      const origOpen = XHR.open;
+      XHR.open = function (method, url) {
+        try {
+          this.__zzUrl = url;
+          if (!this.__zzHooked) {
+            this.__zzHooked = true;
+            this.addEventListener("load", () => {
+              try {
+                check(this.responseURL || this.__zzUrl, this.getResponseHeader("content-type"));
+              } catch (e) {}
+            });
+          }
+        } catch (e) {}
+        return origOpen.apply(this, arguments);
+      };
+    }
   }
 
-  const XHR = window.XMLHttpRequest && XMLHttpRequest.prototype;
-  if (XHR && XHR.open) {
-    const origOpen = XHR.open;
-    XHR.open = function (method, url) {
-      try {
-        this.__zzUrl = url;
-        if (!this.__zzHooked) {
-          this.__zzHooked = true;
-          this.addEventListener("load", () => {
-            try {
-              check(this.responseURL || this.__zzUrl, this.getResponseHeader("content-type"));
-            } catch (e) {}
-          });
+  function hasMedia() {
+    try {
+      return !!(document.querySelector("video,audio"));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  if (hasMedia()) hookNetwork();
+  else {
+    try {
+      // 只看新增的子树里有没有媒体元素，避免无媒体页面每次 DOM 变化都做一次全文档查询
+      const mo = new MutationObserver((records) => {
+        for (const rec of records) {
+          for (const node of rec.addedNodes) {
+            if (!node || node.nodeType !== 1) continue;
+            const tag = node.tagName;
+            if (tag === "VIDEO" || tag === "AUDIO" || (node.querySelector && node.querySelector("video,audio"))) {
+              mo.disconnect();
+              hookNetwork();
+              return;
+            }
+          }
         }
-      } catch (e) {}
-      return origOpen.apply(this, arguments);
-    };
+      });
+      mo.observe(document.documentElement || document, { childList: true, subtree: true });
+    } catch (e) {}
   }
 })();

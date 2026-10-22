@@ -39,7 +39,7 @@ EasyList / EasyPrivacy / anti-AD / AdGuard / uBlock / CJX 等,条件请求自动
 ## 具体用例(可直接照抄的实战路径)
 
 ### 用例 A · 日常浏览净化(所有人)
-1. 加载扩展:Chrome 打开 `chrome://extensions` → 开「开发者模式」→「加载已解压的扩展程序」选 `dist/chrome`;Firefox 装 `dist/zerozen-firefox-0.9.3.xpi`;
+1. 加载扩展:Chrome 打开 `chrome://extensions` → 开「开发者模式」→「加载已解压的扩展程序」选 `dist/chrome`;Firefox 装 `dist/zerozen-firefox-0.9.4.xpi`;
 2. 打开你常刷的资讯站,弹窗与信息流广告已经消失,空位被自动回填;
 3. 个别站想看原始状态?点扩展图标进控制台,按分组关掉对应规则包或加白名单;
 4. 顺手记住两个快捷键:`Alt+Z` 点选元素屏蔽、`Alt+A` AI 识别本页——后面两个用例全靠它们;
