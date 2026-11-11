@@ -95,6 +95,83 @@
     renderDetail(state);
     $("#pendingCount").textContent = state.findingsPending || 0;
     $("#btnAi").title = state.aiConfigured ? T("让 AI 找出本页的广告") : T("请先在控制台配置 AI 接口");
+    syncChrome(state);
+  }
+
+  // 把后台状态收敛成用户能直接读的一句话：全局关闭 > 本站关闭 > 暂停 > 保护中
+  function syncChrome(state) {
+    const c = state.counts || {};
+    const blocked = (c.cosmetic || 0) + (c.texts || 0) + (c.removed || 0) + (c.network || 0) + (c.popups || 0);
+    const until = state.until || 0;
+    const paused = until > Date.now();
+    const globalOff = !state.enabled;
+    const siteOff = !state.siteEnabled;
+    const title = $("#stateTitle");
+    const pill = $("#statusPill");
+    const evidence = $("#evidenceText");
+    const primary = $("#btnPrimary");
+    if (!title || !pill || !evidence || !primary) return;
+
+    let label = "防护中";
+    let cls = "is-ok";
+    let headline = "本页已保护";
+    let line =
+      blocked > 0
+        ? T("已拦截 $1 项 · $2 个视频", blocked, mediaCount || 0)
+        : T("本页暂无拦截记录");
+    let action = "暂停本页 30 分钟";
+    let stateName = "protected";
+
+    if (globalOff) {
+      label = "全局关闭";
+      cls = "is-off";
+      headline = "全局已关闭";
+      line = T("所有网站均不会拦截或隐藏内容");
+      action = "开启全局防护";
+      stateName = "global-off";
+    } else if (siteOff) {
+      label = "本站已关闭";
+      cls = "is-off";
+      headline = "本站已关闭";
+      line = T("此站点不会拦截或隐藏内容，直到重新开启");
+      action = "重新开启本站";
+      stateName = "site-off";
+    } else if (paused) {
+      label = "暂停中";
+      cls = "is-warn";
+      headline = "本页已暂停";
+      const mins = Math.max(1, Math.round((until - Date.now()) / 60000));
+      line = T("$1 分钟后恢复防护", mins);
+      action = "恢复防护";
+      stateName = "paused";
+    }
+
+    title.textContent = T(headline);
+    evidence.textContent = line;
+    primary.textContent = T(action);
+    const span = pill.querySelector("span");
+    if (span) span.textContent = T(label);
+    pill.className = "zz2-pill " + cls;
+    document.body.dataset.zzState = stateName;
+    if (globalOff) {
+      const hint = $("#siteHint");
+      if (hint) hint.textContent = T("所有网站的防护均已关闭");
+    }
+
+    const pending = Number(state.findingsPending || 0);
+    const quick = $("#pendingQuick");
+    if (quick) {
+      quick.hidden = !pending;
+      const text = $("#pendingQuickText");
+      if (text) text.textContent = T("AI 发现 $1 个待确认项", pending);
+    }
+  }
+
+  function togglePanel(el, force) {
+    if (!el) return false;
+    const next = typeof force === "boolean" ? force : el.hidden;
+    el.hidden = !next;
+    return next;
   }
 
   function profileName(p) {
@@ -243,6 +320,7 @@
     $("#dlSection").hidden = !(mediaCount || taskCount);
     $("#mediaTitle").textContent = mediaCount ? T("本页视频（$1）", mediaCount) : T("下载任务");
     $("#mediaList").hidden = !mediaCount;
+    if (lastState) syncChrome(lastState);
   }
 
   function initDownloads() {
@@ -477,6 +555,38 @@
     UI.toast($("#msg"), T("已更新屏蔽类型"), "ok");
     needReload();
     setTimeout(refresh, 300);
+  });
+
+  $("#btnPrimary").addEventListener("click", () => {
+    if (!$("#globalEnabled").checked) {
+      $("#globalEnabled").checked = true;
+      $("#globalEnabled").dispatchEvent(new Event("change"));
+      return;
+    }
+    if (!$("#siteEnabled").checked) {
+      $("#siteEnabled").checked = true;
+      $("#siteEnabled").dispatchEvent(new Event("change"));
+      return;
+    }
+    $("#btnTemp").click();
+  });
+
+  $("#btnDetail").addEventListener("click", () => {
+    const open = togglePanel($("#detail"));
+    $("#btnDetail").setAttribute("aria-expanded", String(open));
+    $("#btnDetail").textContent = T(open ? "收起明细" : "拦截明细");
+    if (open) $("#detail").scrollIntoView({ block: "nearest", behavior: "smooth" });
+  });
+
+  $("#btnMore").addEventListener("click", () => {
+    const open = togglePanel($("#morePanel"));
+    $("#btnMore").setAttribute("aria-expanded", String(open));
+    $("#btnMore").textContent = T(open ? "收起" : "更多…");
+  });
+
+  $("#btnReviewQuick").addEventListener("click", (event) => {
+    event.preventDefault();
+    $("#linkReview").click();
   });
 
   $("#btnAi").addEventListener("click", async (event) => {
