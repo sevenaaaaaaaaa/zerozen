@@ -10,7 +10,7 @@
   const CATEGORY_ORDER = ["all", "user", "ai", "scan", "import"];
 
   const state = {
-    tab: "rules",
+    tab: "overview",
     settings: null,
     presets: [],
     packs: [],

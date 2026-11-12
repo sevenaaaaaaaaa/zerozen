@@ -208,8 +208,9 @@
         display: none !important;
       }
     </style>
+    <link rel="stylesheet" href="ui-redesign.css" />
   </head>
-  <body>
+  <body class="zz-options">
     <div class="zz-topbar">
       <div class="zz-topbar-inner">
         <div class="zz-brand">
@@ -222,13 +223,18 @@
           <span></span>
         </label>
         <div class="zz-tabs">
-          <button class="zz-tab active" data-tab="rules" data-i18n="规则">规则</button>
+          <div class="zz-nav-label">工作台</div>
+          <button class="zz-tab active" data-tab="overview" data-i18n="概览">概览</button>
+          <div class="zz-nav-label">配置</div>
+          <button class="zz-tab" data-tab="rules" data-i18n="规则">规则</button>
           <button class="zz-tab" data-tab="subs" data-i18n="订阅">订阅</button>
           <button class="zz-tab" data-tab="sites" data-i18n="白名单">白名单</button>
+          <div class="zz-nav-label">AI 与自动化</div>
           <button class="zz-tab" data-tab="ai" data-i18n="AI 识别">AI 识别</button>
           <button class="zz-tab" data-tab="scan" data-i18n="批量扫描">批量扫描</button>
           <button class="zz-tab" data-tab="autopilot" data-i18n="自主增强">自主增强</button>
           <button class="zz-tab" data-tab="findings"><span data-i18n="待审">待审</span> <b id="findingsBadge">0</b></button>
+          <div class="zz-nav-label">维护</div>
           <button class="zz-tab" data-tab="stats" data-i18n="统计与诊断">统计与诊断</button>
         </div>
       </div>
@@ -237,7 +243,47 @@
     <div class="zz-shell">
       <div class="zz-toast-inline" id="msg" hidden></div>
 
-      <section class="zz-panel active" id="panel-rules">
+      <section class="zz-panel active" id="panel-overview">
+        <div class="zz-ov-hero">
+          <div>
+            <h1 id="ovTitle">防护正在运行</h1>
+            <p id="ovSub" data-i18n="正在读取规则状态…">正在读取规则状态…</p>
+          </div>
+          <span class="zz-ov-pill" id="ovPill"><i class="dot"></i><span>正常</span></span>
+        </div>
+        <div class="zz-ov-metrics">
+          <div class="zz-ov-metric"><b id="ovRules">—</b><span data-i18n="已生效规则">已生效规则</span></div>
+          <div class="zz-ov-metric"><b id="ovPending">0</b><span data-i18n="等待审阅">等待审阅</span></div>
+          <div class="zz-ov-metric"><b id="ovCustom">—</b><span data-i18n="自定义规则">自定义规则</span></div>
+        </div>
+        <div class="zz-ov-grid">
+          <div class="zz-ov-card">
+            <h3 data-i18n="需要处理">需要处理</h3>
+            <div class="zz-ov-row">
+              <div><strong data-i18n="AI 待确认项">AI 待确认项</strong><br /><span id="ovTodoText" class="zz-small zz-muted">当前没有待审项</span></div>
+              <button type="button" data-goto="findings" data-i18n="去审阅">去审阅</button>
+            </div>
+            <div class="zz-ov-row">
+              <div><strong data-i18n="规则与订阅">规则与订阅</strong><br /><span class="zz-small zz-muted" data-i18n="检查规则更新与订阅状态">检查规则更新与订阅状态</span></div>
+              <button type="button" data-goto="rules" data-i18n="查看">查看</button>
+            </div>
+            <div class="zz-ov-row">
+              <div><strong data-i18n="权限与诊断">权限与诊断</strong><br /><span class="zz-small zz-muted" data-i18n="导出数据或处理可选权限">导出数据或处理可选权限</span></div>
+              <button type="button" data-goto="stats" data-i18n="打开">打开</button>
+            </div>
+          </div>
+          <div class="zz-ov-card">
+            <h3 data-i18n="快速入口">快速入口</h3>
+            <div class="zz-ov-row"><strong data-i18n="默认保护档位">默认保护档位</strong><button type="button" data-goto="rules" data-i18n="设置">设置</button></div>
+            <div class="zz-ov-row"><strong data-i18n="白名单">白名单</strong><button type="button" data-goto="sites" data-i18n="管理">管理</button></div>
+            <div class="zz-ov-row"><strong data-i18n="下载工具箱">下载工具箱</strong><button type="button" data-goto="stats" data-i18n="打开">打开</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="zz-panel" id="panel-rules">
+        <h2 data-i18n="防护">防护</h2>
+        <div class="zz-small zz-muted" style="margin-bottom: 12px" data-i18n="调整拦截档位，管理规则包与自定义规则。">调整拦截档位，管理规则包与自定义规则。</div>
         <div class="zz-card" style="margin-bottom: 14px">
           <div class="zz-row" style="flex-wrap: wrap; gap: 12px">
             <label class="zz-small"><span data-i18n="默认保护档位">默认保护档位</span>
@@ -597,5 +643,6 @@
     <script src="../content/20-detector.js"></script>
     <script src="ui-lib.js"></script>
     <script src="options.js"></script>
+    <script src="ui-redesign.js"></script>
   </body>
 </html>

@@ -2,302 +2,130 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <title>ZeroZen</title>
+    <title data-i18n="零真">零真</title>
     <link rel="stylesheet" href="ui.css" />
-    <style>
-      body {
-        width: 380px;
-        padding-bottom: 4px;
-      }
-      .zz-header {
-        margin: 12px 14px 0;
-      }
-      .zz-section {
-        margin-top: 10px;
-        padding: 13px 14px;
-      }
-      /* 站点卡片：站点 + 开关 + 三个数字 + 档位，一眼看完 */
-      .site-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        margin: 12px -4px 0;
-        text-align: center;
-        cursor: pointer;
-        border-radius: 10px;
-        padding: 4px 0;
-      }
-      .site-stats:hover {
-        background: var(--zz-panel-2);
-      }
-      .site-stats b {
-        display: block;
-        font-size: 19px;
-        line-height: 1.25;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-      }
-      .site-stats b.zz-bump {
-        animation: zzBump 0.4s cubic-bezier(0.3, 1.4, 0.6, 1);
-      }
-      .site-stats span {
-        font-size: 11px;
-        color: var(--zz-muted);
-      }
-      .zz-seg {
-        margin-top: 12px;
-      }
-      .site-links {
-        display: flex;
-        gap: 14px;
-        margin-top: 10px;
-        font-size: 12px;
-      }
-      .site-links a.danger {
-        color: var(--zz-danger);
-      }
-      .notice {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 10px;
-        padding: 8px 10px;
-        border-radius: 10px;
-        font-size: 12px;
-        background: rgba(47, 107, 255, 0.07);
-        color: var(--zz-text);
-      }
-      .notice.warn {
-        background: rgba(217, 119, 6, 0.09);
-      }
-      .notice span {
-        flex: 1;
-      }
-      .notice button {
-        flex-shrink: 0;
-      }
-      /* 本页拦截明细 */
-      #detail {
-        margin-top: 10px;
-        border-top: 1px solid var(--zz-border);
-        padding-top: 8px;
-        font-size: 12px;
-      }
-      #detail .row {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 2px 0;
-      }
-      #detail .row span:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      #detail h4 {
-        margin: 6px 0 2px;
-        font-size: 11.5px;
-        color: var(--zz-muted);
-        font-weight: 600;
-      }
-      /* 下载区 */
-      .sec-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 9px;
-      }
-      .sec-head b {
-        font-size: 13px;
-      }
-      .sec-head a {
-        font-size: 12px;
-      }
-      #mediaList {
-        max-height: 230px;
-        overflow: auto;
-      }
-      #taskList:not(:empty) {
-        margin-top: 4px;
-      }
-      #mediaList .dl-media:last-child,
-      #taskList .dl-task:last-child {
-        margin-bottom: 0;
-      }
-      /* 工具 */
-      .tools {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-      }
-      .tools button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-        padding: 9px 2px 7px;
-        border: 1px solid var(--zz-border);
-        border-radius: 10px;
-        background: var(--zz-panel);
-        font: inherit;
-        font-size: 11.5px;
-        color: var(--zz-text);
-        cursor: pointer;
-      }
-      .tools button:hover:not(:disabled) {
-        border-color: var(--zz-border-strong);
-        background: var(--zz-panel-2);
-      }
-      .tools button:disabled {
-        opacity: 0.45;
-        cursor: default;
-      }
-      .tools svg {
-        width: 18px;
-        height: 18px;
-        stroke: var(--zz-accent);
-        fill: none;
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      details.more summary {
-        cursor: pointer;
-        font-size: 12px;
-        color: var(--zz-muted);
-        list-style: none;
-      }
-      details.more summary::-webkit-details-marker {
-        display: none;
-      }
-      details.more summary::after {
-        content: " ▾";
-      }
-      details.more[open] summary::after {
-        content: " ▴";
-      }
-      .zz-chips {
-        margin-top: 8px;
-      }
-      #findings {
-        display: grid;
-        gap: 6px;
-        max-height: 150px;
-        overflow: auto;
-      }
-      #findings .zz-code {
-        margin-top: 4px;
-        max-height: 44px;
-        overflow: hidden;
-      }
-      .zz-popup-footer {
-        padding: 10px 16px 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-        color: var(--zz-muted);
-        font-size: 11px;
-      }
-      .zz-popup-footer a {
-        font-size: 11.5px;
-      }
-      #msg {
-        margin: 10px 14px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="ui-redesign.css" />
   </head>
-  <body>
-    <div class="zz-header">
-      <div class="zz-brand">
-        <img src="../icons/icon48.png" alt="" />
-        <span data-i18n="零真">零真</span> <b class="zz-brand-sub" data-i18n="广告净化器">广告净化器</b>
+  <body class="zz-popup">
+    <div class="zz2-top">
+      <div class="zz2-brand">
+        <span class="zz2-mark" aria-hidden="true"></span>
+        <b data-i18n="零真">零真</b>
+        <span class="zz2-sub">ZeroZen</span>
       </div>
-      <label class="zz-switch" title="总开关" data-i18n-title="总开关">
-        <input type="checkbox" id="globalEnabled" />
-        <span></span>
+      <label class="zz2-global" title="总开关" data-i18n-title="总开关">
+        <span data-i18n="全局">全局</span>
+        <span class="zz-switch">
+          <input type="checkbox" id="globalEnabled" />
+          <span></span>
+        </span>
       </label>
     </div>
 
     <div class="zz-toast-inline" id="msg" hidden></div>
 
-    <!-- 站点 -->
-    <div class="zz-section" id="siteSection">
-      <div class="zz-row">
-        <div style="min-width: 0">
-          <div class="zz-host" id="host">—</div>
-          <div class="zz-small zz-muted" id="siteHint" data-i18n="正在读取站点状态…">正在读取站点状态…</div>
-        </div>
-        <label class="zz-switch" title="在此站点启用" data-i18n-title="在此站点启用">
-          <input type="checkbox" id="siteEnabled" />
-          <span></span>
-        </label>
+    <main class="zz2-state" id="siteSection">
+      <div class="zz2-state-top">
+        <h1 id="stateTitle" data-i18n="本页已保护">本页已保护</h1>
+        <span class="zz2-pill is-ok" id="statusPill"><i></i><span data-i18n="防护中">防护中</span></span>
       </div>
-      <div class="site-stats" id="stats" title="查看本页拦截明细" data-i18n-title="查看本页拦截明细">
+      <div class="zz2-host" id="host">—</div>
+      <div class="zz2-evidence">
+        <span id="evidenceText">—</span>
+        <span class="zz2-hint" id="siteHint" data-i18n="正在读取站点状态…">正在读取站点状态…</span>
+      </div>
+
+      <div class="zz2-stats" id="stats" aria-hidden="true">
         <div><b id="statHidden">0</b><span data-i18n="隐藏广告">隐藏广告</span></div>
         <div><b id="statNetwork">0</b><span data-i18n="拦截请求">拦截请求</span></div>
         <div><b id="statPopups">0</b><span data-i18n="拦截弹窗">拦截弹窗</span></div>
       </div>
-      <div id="detail" hidden></div>
-      <div class="zz-seg" id="profileSeg">
-        <button class="zz-seg-btn" data-profile="compat" title="仅通用拦截与视频规则，最大化站点兼容性" data-i18n-title="仅通用拦截与视频规则，最大化站点兼容性" data-i18n="兼容">兼容</button>
-        <button class="zz-seg-btn" data-profile="standard" title="推荐：全部内置规则" data-i18n-title="推荐：全部内置规则" data-i18n="标准">标准</button>
-        <button class="zz-seg-btn" data-profile="strict" title="移除式处理 + 强制解锁滚动，可能影响站点功能" data-i18n-title="移除式处理 + 强制解锁滚动，可能影响站点功能" data-i18n="严格">严格</button>
-      </div>
-      <div class="site-links">
-        <a href="#" id="btnTemp" data-i18n="临时放行 30 分钟">临时放行 30 分钟</a>
-        <a href="#" id="btnWhitelist" data-i18n="加入白名单">加入白名单</a>
-        <a href="#" id="btnTempPromote" hidden data-i18n="转为白名单">转为白名单</a>
-      </div>
-      <div class="notice warn" id="autoCompatHint" hidden>
-        <span id="autoCompatText"></span>
-        <button class="zz-btn zz-btn-sm" id="btnResetAuto" data-i18n="恢复">恢复</button>
-      </div>
-      <div class="notice" id="popupsAllowedHint" hidden>
-        <span data-i18n="本站已允许弹出新窗口">本站已允许弹出新窗口</span>
-        <button class="zz-btn zz-btn-sm" id="btnPopupsRevoke" data-i18n="撤销">撤销</button>
-      </div>
-      <div class="notice" id="reloadHint" hidden>
-        <span data-i18n="设置已更新，刷新页面后完全生效">设置已更新，刷新页面后完全生效</span>
-        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnReload" data-i18n="刷新">刷新</button>
-      </div>
-    </div>
 
-    <!-- 下载 -->
-    <div class="zz-section" id="dlSection" hidden>
-      <div class="sec-head">
+      <div id="detail" hidden class="zz2-detail"></div>
+
+      <button type="button" class="zz2-primary" id="btnPrimary">暂停本页 30 分钟</button>
+      <div class="zz2-actions">
+        <button type="button" class="zz2-secondary" id="btnDetail" aria-expanded="false" data-i18n="拦截明细">拦截明细</button>
+        <button type="button" class="zz2-secondary" id="btnMore" aria-expanded="false" data-i18n="更多…">更多…</button>
+      </div>
+
+      <div class="zz2-more" id="morePanel" hidden>
+        <div class="zz2-more-row">
+          <div>
+            <b data-i18n="在此站点启用">在此站点启用</b>
+            <span class="zz2-small" data-i18n="关闭后本站持续不拦截，直到重新开启">关闭后本站持续不拦截，直到重新开启</span>
+          </div>
+          <label class="zz-switch" title="在此站点启用" data-i18n-title="在此站点启用">
+            <input type="checkbox" id="siteEnabled" />
+            <span></span>
+          </label>
+        </div>
+
+        <div class="zz2-seg" id="profileSeg" role="group" aria-label="保护档位">
+          <button type="button" class="zz-seg-btn" data-profile="compat" data-i18n="兼容">兼容</button>
+          <button type="button" class="zz-seg-btn" data-profile="standard" data-i18n="标准">标准</button>
+          <button type="button" class="zz-seg-btn" data-profile="strict" data-i18n="严格">严格</button>
+        </div>
+
+        <div class="site-links">
+          <a href="#" id="btnTemp" data-i18n="临时放行 30 分钟">临时放行 30 分钟</a>
+          <a href="#" id="btnWhitelist" data-i18n="加入白名单">加入白名单</a>
+          <a href="#" id="btnTempPromote" hidden data-i18n="转为白名单">转为白名单</a>
+        </div>
+
+        <div class="notice warn" id="autoCompatHint" hidden>
+          <span id="autoCompatText"></span>
+          <button type="button" class="zz-btn zz-btn-sm" id="btnResetAuto" data-i18n="恢复">恢复</button>
+        </div>
+        <div class="notice" id="popupsAllowedHint" hidden>
+          <span data-i18n="本站已允许弹出新窗口">本站已允许弹出新窗口</span>
+          <button type="button" class="zz-btn zz-btn-sm" id="btnPopupsRevoke" data-i18n="撤销">撤销</button>
+        </div>
+        <div class="notice" id="reloadHint" hidden>
+          <span data-i18n="设置已更新，刷新页面后完全生效">设置已更新，刷新页面后完全生效</span>
+          <button type="button" class="zz-btn zz-btn-sm zz-btn-primary" id="btnReload" data-i18n="刷新">刷新</button>
+        </div>
+      </div>
+    </main>
+
+    <section class="zz2-quick" id="dlSection" hidden>
+      <div class="zz2-quick-head">
         <b id="mediaTitle" data-i18n="本页视频">本页视频</b>
-        <span style="display: flex; gap: 12px">
+        <span>
           <a href="#" id="btnRescan" data-i18n="重新检测">重新检测</a>
           <a href="#" id="btnCenter" data-i18n="下载中心">下载中心</a>
         </span>
       </div>
       <div id="mediaList"></div>
       <div id="taskList"></div>
-    </div>
+    </section>
 
-    <!-- 工具 -->
-    <div class="zz-section">
-      <div class="tools">
-        <button id="btnReader" title="提取正文，可保存 Markdown / 翻译" data-i18n-title="提取正文，可保存 Markdown / 翻译">
-          <svg viewBox="0 0 24 24"><path d="M4 5h7a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4z" /><path d="M20 5h-4a3 3 0 0 0-3 3" /><path d="M20 5v12h-6" /></svg>
-          <span data-i18n="阅读模式">阅读模式</span>
-        </button>
-        <button id="btnClean" title="隐藏页面上除正文外的干扰元素" data-i18n-title="隐藏页面上除正文外的干扰元素">
-          <svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.4L20 9l-4.4 3.8L17 19l-5-3-5 3 1.4-6.2L4 9l5.8-.6z" /></svg>
-          <span data-i18n="纯净浏览">纯净浏览</span>
-        </button>
-        <button id="btnPick" title="点选页面元素屏蔽（Alt+Z）" data-i18n-title="点选页面元素屏蔽（Alt+Z）">
-          <svg viewBox="0 0 24 24"><path d="M4 4l7 17 2.5-7.5L21 11z" /></svg>
-          <span data-i18n="点选屏蔽">点选屏蔽</span>
-        </button>
-        <button id="btnAi" title="让 AI 找出本页的广告" data-i18n-title="让 AI 找出本页的广告">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5" /><path d="M11 8v6M8 11h6" /></svg>
-          <span data-i18n="AI 识别">AI 识别</span>
-        </button>
+    <section class="zz2-quick zz2-pending" id="pendingQuick" hidden>
+      <div class="zz2-quick-head">
+        <span id="pendingQuickText"></span>
+        <a href="#" id="btnReviewQuick" data-i18n="去审阅">去审阅</a>
       </div>
-      <details class="more" style="margin-top: 10px">
-        <summary data-i18n="屏蔽类型（全局）">屏蔽类型（全局）</summary>
+    </section>
+
+    <section class="zz2-tools" aria-label="页面工具">
+      <button type="button" id="btnReader" class="zz2-tool" title="提取正文，可保存 Markdown / 翻译" data-i18n-title="提取正文，可保存 Markdown / 翻译">
+        <svg viewBox="0 0 24 24"><path d="M4 5h7a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4z" /><path d="M20 5h-4a3 3 0 0 0-3 3" /><path d="M20 5v12h-6" /></svg>
+        <span data-i18n="阅读模式">阅读模式</span>
+      </button>
+      <button type="button" id="btnClean" class="zz2-tool" title="隐藏页面上除正文外的干扰元素" data-i18n-title="隐藏页面上除正文外的干扰元素">
+        <svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.4L20 9l-4.4 3.8L17 19l-5-3-5 3 1.4-6.2L4 9l5.8-.6z" /></svg>
+        <span data-i18n="纯净浏览">纯净浏览</span>
+      </button>
+      <button type="button" id="btnPick" class="zz2-tool" title="点选页面元素屏蔽（Alt+Z）" data-i18n-title="点选页面元素屏蔽（Alt+Z）">
+        <svg viewBox="0 0 24 24"><path d="M4 4l7 17 2.5-7.5L21 11z" /></svg>
+        <span data-i18n="点选屏蔽">点选屏蔽</span>
+      </button>
+      <button type="button" id="btnAi" class="zz2-tool" title="让 AI 找出本页的广告" data-i18n-title="让 AI 找出本页的广告">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5" /><path d="M11 8v6M8 11h6" /></svg>
+        <span data-i18n="AI 识别">AI 识别</span>
+      </button>
+      <details class="zz2-chips">
+        <summary data-i18n="屏蔽类型">屏蔽类型</summary>
         <div class="zz-chips">
           <label class="zz-chip"><input type="checkbox" data-type="network" /><span data-i18n="网络拦截">网络拦截</span></label>
           <label class="zz-chip"><input type="checkbox" data-type="cosmetic" /><span data-i18n="外观隐藏">外观隐藏</span></label>
@@ -305,23 +133,24 @@
           <label class="zz-chip"><input type="checkbox" data-type="annoyances" /><span data-i18n="烦扰元素">烦扰元素</span></label>
         </div>
       </details>
-    </div>
+    </section>
 
-    <div class="zz-section" id="findingsSection" hidden>
-      <div class="sec-head">
+    <section class="zz2-findings" id="findingsSection" hidden>
+      <div class="zz2-quick-head">
         <b data-i18n="AI 待确认（本页）">AI 待确认（本页）</b>
-        <button class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplyAll" data-i18n="全部屏蔽">全部屏蔽</button>
+        <button type="button" class="zz-btn zz-btn-sm zz-btn-primary" id="btnApplyAll" data-i18n="全部屏蔽">全部屏蔽</button>
       </div>
       <div id="findings"></div>
-    </div>
+    </section>
 
     <div class="zz-popup-footer">
       <span id="engineInfo" data-i18n="规则加载中…">规则加载中…</span>
-      <span style="display: flex; gap: 12px">
+      <span class="zz2-footer-links">
         <a href="#" id="linkReview"><span data-i18n="待审">待审</span> <b id="pendingCount">0</b></a>
         <a href="#" id="btnOptions" data-i18n="控制台">控制台</a>
       </span>
     </div>
+
     <script src="../background/lib-compat.js"></script>
     <script src="../i18n/i18n.js"></script>
     <script src="../i18n/dict-en.js"></script>
